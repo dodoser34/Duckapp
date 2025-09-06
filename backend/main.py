@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
-from app import auth, db
-from app.auth import get_current_user
+from backend import auth, db
+from backend.auth import get_current_user
 
 app = FastAPI(title="Messenger Auth with MySQL (no ORM)")
 
