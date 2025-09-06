@@ -1,0 +1,6 @@
+fastapi==0.116.1
+uvicorn==0.35.0
+mysql-connector-python==9.4.0
+passlib==1.7.4
+python-jose==3.5.0
+pydantic==1.*
