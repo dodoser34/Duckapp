@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from jose import jwt, JWTError
@@ -57,7 +57,6 @@ async def register(payload: UserCreate):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # проверяем дубликаты
     cursor.execute("SELECT * FROM users WHERE username=%s OR email=%s", (payload.username, payload.email))
     if cursor.fetchone():
         cursor.close()

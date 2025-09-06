@@ -14,10 +14,15 @@
       <input type="email" id="email" placeholder="Email" required>
       <input type="password" id="password" placeholder="Пароль" required>
       <input type="password" id="confirmPassword" placeholder="Подтверждение пароля" required>
-      <button type="submit">Зарегистрироваться</button>
+
+      <div class="form-buttons">
+        <button type="submit">Зарегистрироваться</button>
+        <button type="button" id="goBack">Назад</button>
+      </div>
+
       <div class="error" id="errorMsg"></div>
     </form>
   </div>
-<script src="js/register.js"></script>
+  <script type="module" src="js/register.js"></script>
 </body>
 </html>

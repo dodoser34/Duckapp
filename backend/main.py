@@ -1,19 +1,20 @@
-# main.py
 from fastapi import FastAPI, Depends
 from backend import auth, db
 from backend.auth import get_current_user
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Messenger Auth with MySQL (no ORM)")
+app = FastAPI(title="DuckApp Messenger")
 
+# Разрешаем фронту коннектиться
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # на проде лучше ограничить
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Подключаем маршруты авторизации
 app.include_router(auth.router, prefix="/api/auth")
 
 @app.on_event("startup")

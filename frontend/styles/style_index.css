@@ -1,36 +1,123 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f7f7f7;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: 0;
 }
 
-.container {
-  background: white;
-  padding: 80px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  width: 300px;
+.authorization-container {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 360px;
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.authorization-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 22px;
+}
+
+.authorization-container .link-continue {
+  color: #0084ff;
+  display: block;
+  margin-top: 20px;
+  font-size: 15px;
   text-align: center;
 }
 
-input, button {
-  display: block;
-  width: 100%;
+.logo {
+  font-size: 50px;
+  margin-bottom: 15px;
+  animation: bounceRubber 1.5s infinite;
+}
+
+
+.authorization-container input {
+  width: 90%;
+  padding: 14px;
   margin: 10px 0;
-  padding: 10px;
-}
-
-button {
-  background: #2563eb;
-  color: white;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 14px;
+  background: #f5f7fa;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.1),
+              inset -2px -2px 6px rgba(255,255,255,0.7);
 }
 
-button:hover {
-  background: #1d4ed8;
+.authorization-container input:focus {
+  background: #fff;
+  outline: none;
+  box-shadow: 0 0 8px #66a6ff;
+}
+
+.authorization-container button {
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  border: none;
+  padding: 14px;
+  width: 100%;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(251,133,0,0.4);
+}
+
+.authorization-container button:hover {
+  background: linear-gradient(135deg, #fb8500, #ff6b00);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(251,133,0,0.5);
+}
+
+/* Ошибки */
+.error {
+  color: #e63946;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+/* Ссылка */
+.authorization-container p {
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+.authorization-container a {
+  color: #0077cc;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.authorization-container a:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceRubber {
+  0%, 100% {
+    transform: translateY(0) scale(1,1);
+  }
+  30% {
+    transform: translateY(-20px) scale(1.1, 0.9); /* растягивание */
+  }
+  50% {
+    transform: translateY(0) scale(1.0, 1.1); /* сжатие */
+  }
+  70% {
+    transform: translateY(-10px) scale(1.05, 0.95); /* маленький отскок */
+  }
 }
