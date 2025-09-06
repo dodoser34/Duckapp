@@ -2,21 +2,22 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Регистрация</title>
+  <title>DuckApp — Регистрация</title>
   <link rel="stylesheet" href="styles/style_register.css">
-  <script defer src="app.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>Регистрация</h1>
+  <div class="register-container">
+    <div class="logo">🦆</div>
+    <h2>Регистрация в DuckApp</h2>
     <form id="registerForm">
-      <input type="text" name="username" placeholder="Логин" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <input type="password" name="password" placeholder="Пароль" required>
+      <input type="text" id="username" placeholder="Логин" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Пароль" required>
+      <input type="password" id="confirmPassword" placeholder="Подтверждение пароля" required>
       <button type="submit">Зарегистрироваться</button>
+      <div class="error" id="errorMsg"></div>
     </form>
-    <p id="registerMsg"></p>
-    <a href="index.html">Уже есть аккаунт? Войти</a>
   </div>
+<script src="js/register.js"></script>
 </body>
 </html>
