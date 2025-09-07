@@ -7,7 +7,7 @@ if (!token) {
   // если нет токена — просто показываем заглушку
   profileDiv.innerHTML = `
     <p>🦆 Вы не авторизованы.</p>
-    <p><a href="index.html">Войти</a> или <a href="register.html">Зарегистрироваться</a></p>
+    <p><a href="authorization_frame.html">Войти</a> или <a href="register_frame.html">Зарегистрироваться</a></p>
   `;
 } else {
   getProfile(token)
@@ -21,14 +21,14 @@ if (!token) {
 
       document.getElementById("logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("token");
-        window.location = "index.html";
+        window.location = "authorization_frame.html";
       });
     })
     .catch(() => {
       localStorage.removeItem("token");
       profileDiv.innerHTML = `
         <p>⚠️ Ошибка авторизации.</p>
-        <p><a href="index.html">Попробовать войти снова</a></p>
+        <p><a href="authorization_frame.html">Попробовать войти снова</a></p>
       `;
     });
 }

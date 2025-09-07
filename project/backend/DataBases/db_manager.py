@@ -5,6 +5,7 @@ import os
 load_dotenv()
 
 import pymysql
+from pymysql.cursors import DictCursor 
 
 def get_connection():
     return pymysql.connect(
@@ -13,7 +14,8 @@ def get_connection():
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
-        ssl={"ssl": {}}
+        ssl={"ssl": {}},
+        cursorclass=DictCursor
     )
 
 def init_db():

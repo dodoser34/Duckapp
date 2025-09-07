@@ -21,7 +21,7 @@ form.addEventListener("submit", async (e) => {
 
   if (ok) {
     msg.textContent = "✅ Регистрация успешна! Теперь войдите.";
-    setTimeout(() => (window.location = "index.html"), 1500);
+    setTimeout(() => (window.location = "authorization_frame.html"), 1500);
   } else {
     msg.textContent = "❌ Ошибка: " + (result.detail || "Неизвестно");
   }
@@ -29,5 +29,5 @@ form.addEventListener("submit", async (e) => {
 
 // обработка кнопки "Назад"
 goBackBtn.addEventListener("click", () => {
-  window.location = "index.html";
+  window.location = "authorization_frame.html";
 });

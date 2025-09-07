@@ -21,5 +21,5 @@ form.addEventListener("submit", async (e) => {
 
 // обработчик кнопки "Регистрация"
 goRegisterBtn.addEventListener("click", () => {
-  window.location = "register.html";
+  window.location = "register_frame.html";
 });
