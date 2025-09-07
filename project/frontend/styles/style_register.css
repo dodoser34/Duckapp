@@ -31,7 +31,7 @@ body {
 .logo {
   font-size: 50px;
   margin-bottom: 15px;
-  animation: bounce 1.5s infinite;
+  animation: bounceRubber 1.5s infinite;
 }
 
 /* Поля ввода */
@@ -106,7 +106,17 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+@keyframes bounceRubber {
+  0%, 100% {
+    transform: translateY(0) scale(1,1);
+  }
+  30% {
+    transform: translateY(-20px) scale(1.1, 0.9); /* растягивание */
+  }
+  50% {
+    transform: translateY(0) scale(1.0, 1.1); /* сжатие */
+  }
+  70% {
+    transform: translateY(-10px) scale(1.05, 0.95); /* маленький отскок */
+  }
 }
