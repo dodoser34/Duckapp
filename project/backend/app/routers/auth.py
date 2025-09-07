@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from jose import jwt, JWTError
-from duckapp.project.backend.app.core.db import get_connection
-from duckapp.project.backend.app.schemas.user import UserCreate, UserRead, Token
+from project.backend.app.core.db import get_connection
+from project.backend.app.schemas.user import UserCreate, UserRead, Token
 
 router = APIRouter(tags=["auth"])
 

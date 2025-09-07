@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends
-from duckapp.project.backend.app.core import db
-from duckapp.project.backend.app.routers.auth import get_current_user
+from project.backend.app.core import db
+from project.backend.app.routers.auth import get_current_user
 from fastapi.middleware.cors import CORSMiddleware
 
-from duckapp.project.backend.app.routers import auth
+from backend.app.routers import auth
 
 app = FastAPI(title="DuckApp Messenger")
 
