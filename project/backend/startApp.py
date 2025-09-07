@@ -38,4 +38,4 @@ async def read_me(user=Depends(get_current_user)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("startApp:app", host="127.0.0.1", port=8000, reload=True)
