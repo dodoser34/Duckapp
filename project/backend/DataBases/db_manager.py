@@ -1,13 +1,19 @@
+from dotenv import load_dotenv
 import os
-import mysql.connector
+
+# загружаем переменные из .env
+load_dotenv()
+
+import pymysql
 
 def get_connection():
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASSWORD", "password"),
-        database=os.getenv("DB_NAME", "messenger"),
-        auth_plugin="mysql_native_password"
+    return pymysql.connect(
+        host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT")),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        ssl={"ssl": {}}
     )
 
 def init_db():
