@@ -1,34 +1,98 @@
-import { getProfile } from "./api.js";
 
-const profileDiv = document.getElementById("profile");
-const token = localStorage.getItem("token");
+const chats = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+let activeChat = 1;
 
-if (!token) {
-  // если нет токена — просто показываем заглушку
-  profileDiv.innerHTML = `
-    <p>🦆 Вы не авторизованы.</p>
-    <p><a href="authorization_frame.html">Войти</a> или <a href="register_frame.html">Зарегистрироваться</a></p>
-  `;
-} else {
-  getProfile(token)
-    .then((user) => {
-      profileDiv.innerHTML = `
-        <p><b>ID:</b> ${user.id}</p>
-        <p><b>Логин:</b> ${user.username}</p>
-        <p><b>Email:</b> ${user.email}</p>
-        <button id="logoutBtn">Выйти</button>
-      `;
+const chatBody = document.getElementById("chat-body");
+const messageInput = document.getElementById("message-input");
+const sendBtn = document.getElementById("send-btn");
+const chatTitle = document.getElementById("chat-title");
+const chatItems = document.querySelectorAll(".chat-list-item");
 
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("token");
-        window.location = "authorization_frame.html";
-      });
-    })
-    .catch(() => {
-      localStorage.removeItem("token");
-      profileDiv.innerHTML = `
-        <p>⚠️ Ошибка авторизации.</p>
-        <p><a href="authorization_frame.html">Попробовать войти снова</a></p>
-      `;
-    });
+sendBtn.addEventListener("click", sendMessage);
+messageInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+
+function sendMessage() {
+  const text = messageInput.value.trim();
+  if (!text) return;
+
+  chats[activeChat].push({ text, type: "outgoing" });
+  renderMessages();
+  messageInput.value = "";
+
+  setTimeout(() => {
+    chats[activeChat].push({ text: "🦆 Кря!", type: "incoming" });
+    renderMessages();
+  }, 1000);
 }
+
+function renderMessages() {
+  chatBody.innerHTML = "";
+  chats[activeChat].forEach((msg) => {
+    const div = document.createElement("div");
+    div.classList.add("message", msg.type);
+    div.innerHTML = `<p>${msg.text}</p>
+      <span class="meta">${msg.type === "outgoing" ? "← " : "Собеседник"} | ${new Date().toLocaleTimeString()}</span>`;
+    chatBody.appendChild(div);
+  });
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+chatItems.forEach((item) => {
+  item.addEventListener("click", () => {
+    chatItems.forEach(i => i.classList.remove("active"));
+    item.classList.add("active");
+    activeChat = item.dataset.chat;
+    chatTitle.textContent = item.querySelector(".name")?.textContent || "Чат";
+    renderMessages();
+  });
+});
+
+renderMessages();
+
+// =====================
+// Летающие уточки
+// =====================
+const ducksContainer = document.getElementById("ducks-container");
+
+function createDuck() {
+  const duck = document.createElement("div");
+  duck.classList.add("duck");
+  duck.textContent = "🦆";
+
+  const size = Math.random() * 20 + 30;
+  duck.style.fontSize = size + "px";
+
+  const duration = Math.random() * 10 + 8;
+  const direction = Math.random() > 0.5 ? "right" : "left";
+
+  if (direction === "right") {
+    duck.style.left = "-50px";
+    duck.style.top = Math.random() * window.innerHeight + "px";
+    duck.style.transform = "scaleX(-1)"; // наоборот
+    duck.animate(
+      [
+        { transform: "translateX(0) scaleX(-1)" },
+        { transform: `translateX(${window.innerWidth + 100}px) scaleX(-1)` }
+      ],
+      { duration: duration * 1000, iterations: 1 }
+    ).onfinish = () => duck.remove();
+  } else {
+    duck.style.left = window.innerWidth + "px";
+    duck.style.top = Math.random() * window.innerHeight + "px";
+    duck.style.transform = "scaleX(1)"; // наоборот
+    duck.animate(
+      [
+        { transform: "translateX(0) scaleX(1)" },
+        { transform: `translateX(-${window.innerWidth + 100}px) scaleX(1)` }
+      ],
+      { duration: duration * 1000, iterations: 1 }
+    ).onfinish = () => duck.remove();
+  }
+
+  ducksContainer.appendChild(duck);
+}
+
+setInterval(createDuck, 2000);
+

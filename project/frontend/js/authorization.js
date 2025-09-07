@@ -1,7 +1,7 @@
 import { loginUser } from "./api.js";
 
 const form = document.getElementById("loginForm");
-const msg = document.getElementById("loginMsg");
+const msg = document.getElementById("errorMsg");
 const goRegisterBtn = document.getElementById("goRegister");
 
 form.addEventListener("submit", async (e) => {
@@ -13,9 +13,10 @@ form.addEventListener("submit", async (e) => {
 
   if (ok) {
     localStorage.setItem("token", result.access_token);
-    window.location = "main_chat.html";
+    msg.textContent = "✅ Authorization successful!"
+    setTimeout(() => (window.location = "authorization_frame.html"), 1500);
   } else {
-    msg.textContent = "❌ Ошибка: " + (result.detail || "Неизвестно");
+    msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
   }
 });
 

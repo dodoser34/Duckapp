@@ -1,19 +1,16 @@
 from fastapi import FastAPI, Depends
 from DataBases import db_manager as db
-from routers.auth import get_current_user
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from routers import auth
+from routers.auth import get_current_user
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # при старте приложения
     db.init_db()
     yield
-    # при завершении приложения (например, можно закрыть соединение с БД)
-    # db.close()
 
 
 app = FastAPI(title="DuckApp Messenger", lifespan=lifespan)

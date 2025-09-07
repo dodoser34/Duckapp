@@ -2,15 +2,75 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Профиль</title>
+  <title>Утяцап 🦆</title>
   <link rel="stylesheet" href="../styles/style_main_chat.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Профиль</h1>
-    <div id="profile"></div>
-    <button onclick="logout()">Выйти</button>
+  <!-- Контейнер уточек -->
+  <div id="ducks-container"></div>
+
+  <!-- Основной интерфейс -->
+  <div class="chat-wrapper">
+    <!-- Левая часть (сообщения) -->
+    <div class="chat-box">
+      <div class="chat-header">
+        <img src="avatar.jpg" alt="avatar" class="avatar">
+        <span class="username" id="chat-title">Алексей Стешов III</span>
+        <button class="menu-btn">⋮</button>
+      </div>
+
+      <div class="chat-messages" id="chat-body">
+        <!-- Сообщения будут рендериться из JS -->
+      </div>
+
+      <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Напишите текст ...">
+        <button class="emoji-btn">🦆</button>
+        <button class="gif-btn">GIF</button>
+        <button class="send-btn" id="send-btn">➤</button>
+      </div>
+    </div>
+
+    <!-- Правая часть (список чатов) -->
+    <div class="chat-list">
+      <div class="chat-list-item active" data-chat="1">
+        <img src="avatar.jpg" class="avatar">
+        <div>
+          <span class="name">meit-2b25-cer3</span>
+          <span class="status red">Не зарегистрирован</span>
+        </div>
+      </div>
+
+      <div class="chat-list-item" data-chat="2">
+        <img src="avatar.jpg" class="avatar">
+        <div class="name">Название группы</div>
+      </div>
+
+      <div class="chat-list-item" data-chat="3">
+        <img src="avatar.jpg" class="avatar">
+        <div class="name">meit-2b25-cer3</div>
+        <span class="dot green"></span>
+      </div>
+
+      <div class="chat-list-item" data-chat="4">
+        <img src="avatar.jpg" class="avatar">
+        <div class="name">meit-2b25-cer3</div>
+        <span class="dot red"></span>
+        <span class="badge">4</span>
+      </div>
+
+      <div class="chat-list-item" data-chat="5">
+        <img src="avatar.jpg" class="avatar">
+        <div class="name">meit-2b25-cer3</div>
+        <span class="dot gray"></span>
+      </div>
+
+      <footer class="footer">
+        ООО УТЯПУТЯ © 2025<br>Все права защищены
+      </footer>
+    </div>
   </div>
+
+  <script src="../js/main_chat.js"></script>
 </body>
-  <script type="module" src="../js/main_chat.js"></script>
 </html>

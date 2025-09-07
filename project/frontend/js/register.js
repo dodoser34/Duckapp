@@ -13,17 +13,17 @@ form.addEventListener("submit", async (e) => {
   const confirmPassword = document.getElementById("confirmPassword").value;
 
   if (password !== confirmPassword) {
-    msg.textContent = "❌ Пароли не совпадают!";
+    msg.textContent = "❌ paswords do not match!";
     return;
   }
 
   const { ok, result } = await registerUser(username, email, password);
 
   if (ok) {
-    msg.textContent = "✅ Регистрация успешна! Теперь войдите.";
-    setTimeout(() => (window.location = "authorization_frame.html"), 1500);
+    localStorage.setItem("token", result.access_token);
+    window.location = "main_chat.html";
   } else {
-    msg.textContent = "❌ Ошибка: " + (result.detail || "Неизвестно");
+    msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
   }
 });
 

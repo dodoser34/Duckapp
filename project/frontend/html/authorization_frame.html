@@ -1,27 +1,27 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>DuckApp — Авторизация</title>
+  <title>DuckApp — authorization</title>
   <link rel="stylesheet" href="../styles/style_authorization.css">
   <script type="module" src="../js/authorization.js" defer></script>
 </head>
 <body>
   <div class="authorization-container">
     <div class="logo">🦆</div>
-    <h2>Авторизация в DuckApp</h2>
+    <h2>Authorization in DuckApp</h2>
 
     <form id="loginForm">
-      <input type="text" name="username" placeholder="Логин" required>
-      <input type="password" name="password" placeholder="Пароль" required>
-      <button type="submit">Войти</button>
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
     </form>
 
     <div class="error" id="errorMsg"></div>
 
     <!-- кнопка перехода -->
-    <button type="button" id="goRegister">Регистрация</button>
-    <a href="main_chat.html" id="goNoRegister" class="link-continue">Продолжить без регистрации</a>
+    <button type="button" id="goRegister">Registration</button>
+    <a href="main_chat.html" id="goNoRegister" class="link-continue">Login without registration</a>
   </div>
 </body>
 </html>

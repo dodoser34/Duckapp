@@ -1,11 +1,9 @@
+import pymysql
 from dotenv import load_dotenv
+
 import os
 
-# загружаем переменные из .env
 load_dotenv()
-
-import pymysql
-from pymysql.cursors import DictCursor 
 
 def get_connection():
     return pymysql.connect(
@@ -15,7 +13,7 @@ def get_connection():
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
         ssl={"ssl": {}},
-        cursorclass=DictCursor
+        cursorclass=pymysql.cursors.DictCursor
     )
 
 def init_db():

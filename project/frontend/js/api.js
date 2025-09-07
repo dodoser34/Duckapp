@@ -1,12 +1,18 @@
 export const API_URL = "http://127.0.0.1:8000/api/auth";
 
 // регистрация
-export async function registerUser(data) {
-  const res = await fetch(`${API_URL}/register`, {
+export async function registerUser(username, email, password) {
+  const formData = new URLSearchParams();
+  formData.append("username", username);
+  formData.append("email", email);
+  formData.append("password", password);
+
+  const response = await fetch(`${API_URL}/register`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: formData
   });
+
   return res.json().then((result) => ({ ok: res.ok, result }));
 }
 
