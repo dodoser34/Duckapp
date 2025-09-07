@@ -13,7 +13,7 @@ form.addEventListener("submit", async (e) => {
 
   if (ok) {
     localStorage.setItem("token", result.access_token);
-    window.location = "profile.html";
+    window.location = "main_chat.html";
   } else {
     msg.textContent = "❌ Ошибка: " + (result.detail || "Неизвестно");
   }
