@@ -7,7 +7,7 @@ export async function registerUser(username, email, password) {
   formData.append("email", email);
   formData.append("password", password);
 
-  const response = await fetch(`${API_URL}/register`, {
+  const res = await fetch(`${API_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: formData

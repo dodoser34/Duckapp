@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from DataBases import db_manager as db
 import jwt, datetime
 
-import bcrypt
+import bcrypt, pymysql
 
 router = APIRouter()
 
@@ -18,27 +18,28 @@ async def register(username: str = Form(...), email: str = Form(...), password: 
     conn = db.get_connection()
     cursor = conn.cursor()
 
-    # Проверяем, есть ли уже такой пользователь
-    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-    existing_user = cursor.fetchone()
-    if existing_user:
-        cursor.close()
-        conn.close()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Пользователь с таким именем уже существует",
-        )
 
     # Создаем bcrypt-хеш пароля
     hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
     hashed_str = hashed.decode("utf-8")  # сохраняем в БД как строку
 
     # Вставляем пользователя в БД
-    cursor.execute(
-        "INSERT INTO users (username, email, hashed_password, created_at) VALUES (%s, %s, %s, %s)",
-        (username, email, hashed_str, datetime.datetime.utcnow())
-    )
-    conn.commit()
+    try:
+        cursor.execute(
+            "INSERT INTO users (username, email, hashed_password, created_at) VALUES (%s, %s, %s, %s)",
+            (username, email, hashed_str, datetime.datetime.utcnow())
+        )
+        conn.commit()
+    except pymysql.err.IntegrityError as e:
+        cursor.close()
+        conn.close()
+        if "username" in str(e):
+            raise HTTPException(status_code=400, detail="Пользователь с таким именем уже существует")
+        elif "email" in str(e):
+            raise HTTPException(status_code=400, detail="Пользователь с таким email уже существует")
+        else:
+            raise HTTPException(status_code=400, detail="Ошибка уникальности данных")
+    
     cursor.close()
     conn.close()
     
@@ -59,8 +60,6 @@ async def login(username: str = Form(...), password: str = Form(...)):
     user = cursor.fetchone()
     cursor.close()
     conn.close()
-    
-    print(user["hashed_password"])
 
     if not user or not bcrypt.checkpw(password.encode("utf-8"), user["hashed_password"].encode("utf-8")):
         raise HTTPException(

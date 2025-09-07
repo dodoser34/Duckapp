@@ -7,17 +7,23 @@ const goBackBtn = document.getElementById("goBack");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const username = document.getElementById("username").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
+  const username = form.username.value.trim();
+  const email = form.email.value.trim();
+  const password = form.password.value;
+  const confirmPassword = form.confirmPassword.value;
+
+
 
   if (password !== confirmPassword) {
-    msg.textContent = "❌ paswords do not match!";
+    msg.textContent = "❌ Paswords do not match!";
     return;
   }
 
-  const { ok, result } = await registerUser(username, email, password);
+  const { ok, result } = await registerUser(
+    username,
+    email,
+    password
+  );
 
   if (ok) {
     localStorage.setItem("token", result.access_token);

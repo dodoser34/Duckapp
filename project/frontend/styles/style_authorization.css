@@ -75,7 +75,7 @@ body {
 
 .authorization-container button:hover {
   background: linear-gradient(135deg, #fb8500, #ff6b00);
-  transform: translateY(-2px);
+  transform: translateY(2px);
   box-shadow: 0 6px 14px rgba(251,133,0,0.5);
 }
 

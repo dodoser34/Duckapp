@@ -6,6 +6,7 @@ const goRegisterBtn = document.getElementById("goRegister");
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  
   const { ok, result } = await loginUser(
     form.username.value,
     form.password.value
@@ -13,8 +14,7 @@ form.addEventListener("submit", async (e) => {
 
   if (ok) {
     localStorage.setItem("token", result.access_token);
-    msg.textContent = "✅ Authorization successful!"
-    setTimeout(() => (window.location = "authorization_frame.html"), 1500);
+    window.location = "main_chat.html";
   } else {
     msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
   }
