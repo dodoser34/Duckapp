@@ -53,3 +53,67 @@ body {
 
 /* Анимация */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+/* css/style_main_chat.css — основной стиль чата (адаптация вашего исходного) */
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,#89f7fe,#66a6ff);
+  font-family: "Segoe UI", Arial, sans-serif;
+  overflow: hidden;
+}
+
+.chat-wrapper {
+  width: 1200px;
+  height: 740px;
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgb(251, 255, 0);
+}
+
+/* Левая колонка */
+.chat-box { flex: 2; display: flex; flex-direction: column; border-right: 1px solid rgb(251, 255, 0); }
+.chat-header { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(0,0,0,0.2); color: white; }
+.chat-header .avatar { width: 35px; height: 35px; border-radius: 50%; margin-right: 10px; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; }
+.empty-chat { color: #bbb; text-align: center; margin-top: 50px; }
+.chat-input { display: flex; padding: 12px; background: rgba(0,0,0,0.3); }
+.chat-input input { flex: 1; border: none; border-radius: 12px; padding: 10px; background: rgba(255,255,255,0.9); }
+.chat-input button { margin-left: 8px; border: none; border-radius: 12px; padding: 10px 16px; cursor: pointer; background: linear-gradient(135deg,#ffb703,#fb8500); color: white; font-weight: bold; }
+
+/* Правая колонка */
+.chat-list { width: 360px; background: rgba(0,0,0,0.35); display: flex; flex-direction: column; padding: 16px; gap:8px; }
+.chat-list-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; margin-bottom: 6px; background: #fff; cursor: pointer; transition: 0.2s; }
+.chat-list-item:hover { background: rgba(255,255,255,0.85); transform: translateY(-2px); }
+.chat-list-item .avatar { width: 40px; height: 40px; border-radius: 50%; }
+.chat-list-item .name { font-size: 14px; font-weight: bold; color: #333; }
+.profile { background: rgba(255,255,255,0.6); }
+
+/* Профиль (панель) */
+.profile-panel { display: none; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.6); padding: 12px; border-radius: 12px; margin-bottom: 12px; color: white; }
+.profile-panel input { border-radius: 8px; padding: 8px; border: none; outline: none; }
+.save-btn { padding: 8px; border: none; border-radius: 8px; background: linear-gradient(135deg,#ffb703,#fb8500); color: white; font-weight: bold; cursor: pointer; }
+
+/* Заголовки секций */
+.chat-section { color: #eee; margin: 10px 0 5px 5px; font-size: 13px; }
+
+/* Модалка */
+.modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.45); }
+.modal .card { width: 420px; background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+
+/* Поиск и результаты */
+.search-block { display: flex; gap: 8px; }
+.search-results { display:flex; flex-direction: column; gap: 6px; max-height:200px; overflow:auto; }
+.search-result { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px; border-radius:8px; background:rgba(255,255,255,0.95); }
+
+/* Мелочи */
+.muted { color:#bbb }
+footer.footer { margin-top: auto; font-size: 12px; text-align: center; color: #eee; opacity: 0.8; }
+.message { max-width: 70%; padding: 10px 12px; border-radius: 12px; background: #fff; color: #111; margin-bottom:8px; }
+.message.outgoing { align-self: flex-end; background: linear-gradient(135deg,#ffb703,#fb8500); color: white; }

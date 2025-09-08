@@ -1,85 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Утяцап 🦆</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Утяцап — Чат</title>
   <link rel="stylesheet" href="../styles/style_main_chat.css">
 </head>
 <body>
   <div class="chat-wrapper">
-    <!-- Левая часть (чат) -->
     <div class="chat-box">
-      <!-- Шапка -->
       <div class="chat-header">
-        <img src="avatar.jpg" alt="avatar" class="avatar">
-        <span class="username" id="chat-title">Выберите чат</span>
-        <button class="menu-btn">⋮</button>
+        <img src="avatar.jpg" alt="avatar" class="avatar" id="header-avatar">
+        <div style="flex:1">
+          <div id="chat-title">Выберите чат</div>
+          <div id="chat-subtitle" class="muted">—</div>
+        </div>
+        <button id="menu-btn">⋮</button>
       </div>
 
-      <!-- Сообщения -->
       <div class="chat-messages" id="chat-body">
-        <div class="empty-chat">Выберите чат справа 👉</div>
+        <div class="empty-chat muted">Выберите чат справа 👉</div>
       </div>
 
-      <!-- Поле ввода -->
       <div class="chat-input">
         <input type="text" id="message-input" placeholder="Напишите текст ...">
-        <button class="emoji-btn">😄</button>
-        <button class="gif-btn">GIF</button>
-        <button class="send-btn" id="send-btn" style="transform: scaleX(-1);">🦆</button>
+        <button id="send-btn">🦆</button>
       </div>
     </div>
 
-    <!-- Правая часть (список чатов) -->
     <div class="chat-list">
-      <!-- 🔹 Мини-профиль -->
       <div class="chat-list-item profile" id="profile-toggle">
         <img src="avatar.jpg" class="avatar" id="profile-avatar">
         <div>
-          <span class="name" id="profile-name">User_main</span>
-          <div class="status" id="profile-status">Онлайн</div>
+          <div class="name" id="profile-name">User_main</div>
+          <div class="status muted" id="profile-status">Онлайн</div>
         </div>
       </div>
 
-      <!-- 🔹 Панель профиля (всплывашка) -->
       <div class="profile-panel" id="profile-panel">
         <h3>Мой профиль</h3>
         <label>Имя:</label>
         <input type="text" id="name-input" placeholder="Введите имя">
-
         <label>Статус:</label>
         <input type="text" id="status-input" placeholder="Введите статус">
-
-        <button class="save-btn" id="save-profile">Сохранить</button>
+        <div style="display:flex;gap:8px">
+          <button class="save-btn" id="save-profile">Сохранить</button>
+          <button id="open-create-group">Создать группу</button>
+        </div>
+        <hr>
+        <h4 style="margin:0">Добавить друга</h4>
+        <div class="search-block">
+          <input id="friend-query" placeholder="ID или имя друга" />
+          <button id="search-friend">Найти</button>
+        </div>
+        <div class="search-results" id="search-results" aria-live="polite"></div>
       </div>
 
-      <!-- 🔹 Система групп/чатов -->
       <h4 class="chat-section">Мои группы</h4>
-      <div class="chat-list-item" data-chat="group1">
-        <img src="avatar_group.jpg" class="avatar">
-        <div class="name">Группа 1</div>
-      </div>
-      <div class="chat-list-item" data-chat="group2">
-        <img src="avatar_group.jpg" class="avatar">
-        <div class="name">Группа 2</div>
-      </div>
+      <div id="groups-list"></div>
 
       <h4 class="chat-section">Мои знакомые утки</h4>
-      <div class="chat-list-item" data-chat="group1">
-        <img src="avatar_group.jpg" class="avatar">
-        <div class="name">duck1</div>
-      </div>
-      <div class="chat-list-item" data-chat="group2">
-        <img src="avatar_group.jpg" class="avatar">
-        <div class="name">duck2</div>
-      </div>
+      <div id="friends-list"></div>
 
-      <footer class="footer">
-        ООО УТЯПУТЯ © 2025<br>Все права защищены
-      </footer>
+      <footer class="footer">ООО УТЯПУТЯ © 2025<br>Все права защищены</footer>
     </div>
   </div>
 
-  <script src="../js/main_chat.js"></script>
+  <!-- модалка создания группы (в DOM, но управляется JS) -->
+  <div class="modal" id="modal-create-group">
+    <div class="card">
+      <h3>Создать новую группу</h3>
+      <label>Название группы</label>
+      <input id="new-group-name" placeholder="Например: Утки-чат" />
+      <label>Описание (необязательно)</label>
+      <input id="new-group-desc" placeholder="Кратко о группе" />
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button id="cancel-create">Отмена</button>
+        <button id="confirm-create">Создать</button>
+      </div>
+    </div>
+  </div>
+    <script type="module" src="../js/main_chat.js"></script>
 </body>
 </html>

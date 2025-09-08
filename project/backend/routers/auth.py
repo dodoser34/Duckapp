@@ -13,7 +13,7 @@ router = APIRouter()
 # для получения токена из заголовка Authorization: Bearer <token>
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
-SECRET_KEY = f"{os.getenv("JWT_KEY")}"
+SECRET_KEY = f'{os.getenv("JWT_KEY")}'
 ALGORITHM = "HS256"
 
 @router.post("/register")
