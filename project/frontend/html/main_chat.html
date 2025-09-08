@@ -6,51 +6,73 @@
   <link rel="stylesheet" href="../styles/style_main_chat.css">
 </head>
 <body>
-  <!-- Контейнер уточек -->
-  <div id="ducks-container"></div>
-
-  <!-- Основной интерфейс -->
   <div class="chat-wrapper">
-    <!-- Левая часть (сообщения) -->
+    <!-- Левая часть (чат) -->
     <div class="chat-box">
+      <!-- Шапка -->
       <div class="chat-header">
         <img src="avatar.jpg" alt="avatar" class="avatar">
-        <span class="username" id="chat-title">Алексей Стешов III</span>
+        <span class="username" id="chat-title">Выберите чат</span>
         <button class="menu-btn">⋮</button>
       </div>
 
+      <!-- Сообщения -->
       <div class="chat-messages" id="chat-body">
-        <!-- Сообщения будут рендериться из JS -->
+        <div class="empty-chat">Выберите чат справа 👉</div>
       </div>
 
+      <!-- Поле ввода -->
       <div class="chat-input">
         <input type="text" id="message-input" placeholder="Напишите текст ...">
-        <button class="emoji-btn">@</button>
+        <button class="emoji-btn">😄</button>
         <button class="gif-btn">GIF</button>
-        <button class="send-btn" id="send-btn">🦆</button>
+        <button class="send-btn" id="send-btn" style="transform: scaleX(-1);">🦆</button>
       </div>
     </div>
 
     <!-- Правая часть (список чатов) -->
     <div class="chat-list">
-      <div class="chat-list-item active" data-chat="1">
-        <img src="avatar.jpg" class="avatar">
+      <!-- 🔹 Мини-профиль -->
+      <div class="chat-list-item profile" id="profile-toggle">
+        <img src="avatar.jpg" class="avatar" id="profile-avatar">
         <div>
-          <span class="name">User_main</span>
+          <span class="name" id="profile-name">User_main</span>
+          <div class="status" id="profile-status">Онлайн</div>
         </div>
       </div>
 
-      <div class="chat-list-item" data-chat="2">
+      <!-- 🔹 Панель профиля (всплывашка) -->
+      <div class="profile-panel" id="profile-panel">
+        <h3>Мой профиль</h3>
+        <label>Имя:</label>
+        <input type="text" id="name-input" placeholder="Введите имя">
+
+        <label>Статус:</label>
+        <input type="text" id="status-input" placeholder="Введите статус">
+
+        <button class="save-btn" id="save-profile">Сохранить</button>
+      </div>
+
+      <!-- 🔹 Система групп/чатов -->
+      <h4 class="chat-section">Мои группы</h4>
+      <div class="chat-list-item" data-chat="group1">
         <img src="avatar_group.jpg" class="avatar">
-        <div class="name">Название группы</div>
+        <div class="name">Группа 1</div>
+      </div>
+      <div class="chat-list-item" data-chat="group2">
+        <img src="avatar_group.jpg" class="avatar">
+        <div class="name">Группа 2</div>
       </div>
 
-      <div class="chat-list-item" data-chat="3">
-        <img src="avatar.jpg" class="avatar">
-        <div class="name">meit-2b25-cer3</div>
-        
+      <h4 class="chat-section">Мои знакомые утки</h4>
+      <div class="chat-list-item" data-chat="group1">
+        <img src="avatar_group.jpg" class="avatar">
+        <div class="name">duck1</div>
       </div>
-
+      <div class="chat-list-item" data-chat="group2">
+        <img src="avatar_group.jpg" class="avatar">
+        <div class="name">duck2</div>
+      </div>
 
       <footer class="footer">
         ООО УТЯПУТЯ © 2025<br>Все права защищены

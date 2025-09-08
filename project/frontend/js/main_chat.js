@@ -1,61 +1,68 @@
-const chats = { 1: [], 2: [], 3: [], 4: [], 5: [] };
-let activeChat = 1;
+// --- Профиль ---
+const profileBtn = document.getElementById("profile-toggle");
+const profilePopup = document.getElementById("profile-panel");
+const saveProfileBtn = document.getElementById("save-profile");
 
-const chatHader = document.getElementById("chat-header");
+const profileName = document.getElementById("profile-name");
+const profileStatus = document.getElementById("profile-status");
+const profileAvatar = document.getElementById("profile-avatar");
 
-const chatBody = document.getElementById("chat-body");
-const messageInput = document.getElementById("message-input");
-const sendBtn = document.getElementById("send-btn");
-const chatTitle = document.getElementById("chat-title");
-const chatItems = document.querySelectorAll(".chat-list-item");
+const nameInput = document.getElementById("name-input");
+const statusInput = document.getElementById("status-input");
 
-sendBtn.addEventListener("click", sendMessage);
-messageInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") sendMessage();
+// Открыть/закрыть профиль
+profileBtn.addEventListener("click", () => {
+  profilePopup.style.display =
+    profilePopup.style.display === "flex" ? "none" : "flex";
 });
 
-
-// =====================
-// Летающие уточки
-// =====================
-const ducksContainer = document.getElementById("ducks-container");
-
-function createDuck() {
-  const duck = document.createElement("div");
-  duck.classList.add("duck");
-  duck.textContent = "🦆";
-
-  const size = Math.random() * 20 + 30;
-  duck.style.fontSize = size + "px";
-
-  const duration = Math.random() * 10 + 8;
-  const direction = Math.random() > 0.5 ? "right" : "left";
-
-  if (direction === "right") {
-    duck.style.left = "-50px";
-    duck.style.top = Math.random() * window.innerHeight + "px";
-    duck.style.transform = "scaleX(-1)"; // наоборот
-    duck.animate(
-      [
-        { transform: "translateX(0) scaleX(-1)" },
-        { transform: `translateX(${window.innerWidth + 100}px) scaleX(-1)` }
-      ],
-      { duration: duration * 1000, iterations: 1 }
-    ).onfinish = () => duck.remove();
-  } else {
-    duck.style.left = window.innerWidth + "px";
-    duck.style.top = Math.random() * window.innerHeight + "px";
-    duck.style.transform = "scaleX(1)"; // наоборот
-    duck.animate(
-      [
-        { transform: "translateX(0) scaleX(1)" },
-        { transform: `translateX(-${window.innerWidth + 100}px) scaleX(1)` }
-      ],
-      { duration: duration * 1000, iterations: 1 }
-    ).onfinish = () => duck.remove();
+// Сохранение профиля
+saveProfileBtn.addEventListener("click", () => {
+  if (nameInput.value.trim()) {
+    profileName.textContent = nameInput.value.trim();
+  }
+  if (statusInput.value.trim()) {
+    profileStatus.textContent = statusInput.value.trim();
   }
 
-  ducksContainer.appendChild(duck);
+  profilePopup.style.display = "none"; // закрываем после сохранения
+});
+
+// --- Создание группы ---
+const chatList = document.querySelector(".chat-list");
+function createGroup() {
+  const groupName = prompt("Введите название группы:");
+  if (groupName) {
+    const newGroup = document.createElement("div");
+    newGroup.classList.add("chat-list-item");
+    newGroup.innerHTML = `
+      <img src="avatar_group.jpg" class="avatar">
+      <div class="name">${groupName}</div>
+    `;
+    chatList.insertBefore(newGroup, chatList.querySelector(".footer"));
+  }
 }
 
-setInterval(createDuck, 2000);
+// Чтобы вызывать createGroup(), можешь добавить кнопку в HTML (внутри profile-panel):
+// <button id="create-group-btn">Создать группу</button>
+const createGroupBtn = document.getElementById("create-group-btn");
+if (createGroupBtn) {
+  createGroupBtn.addEventListener("click", createGroup);
+}
+
+// --- Сообщения ---
+const sendBtn = document.getElementById("send-btn");
+const messageInput = document.getElementById("message-input");
+const chatBody = document.getElementById("chat-body");
+
+sendBtn.addEventListener("click", () => {
+  const text = messageInput.value.trim();
+  if (text) {
+    const msg = document.createElement("div");
+    msg.classList.add("message", "outgoing");
+    msg.textContent = text;
+    chatBody.appendChild(msg);
+    messageInput.value = "";
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+});
