@@ -1,6 +1,7 @@
-
 const chats = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 let activeChat = 1;
+
+const chatHader = document.getElementById("chat-header");
 
 const chatBody = document.getElementById("chat-body");
 const messageInput = document.getElementById("message-input");
@@ -13,43 +14,6 @@ messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-function sendMessage() {
-  const text = messageInput.value.trim();
-  if (!text) return;
-
-  chats[activeChat].push({ text, type: "outgoing" });
-  renderMessages();
-  messageInput.value = "";
-
-  setTimeout(() => {
-    chats[activeChat].push({ text: "🦆 Кря!", type: "incoming" });
-    renderMessages();
-  }, 1000);
-}
-
-function renderMessages() {
-  chatBody.innerHTML = "";
-  chats[activeChat].forEach((msg) => {
-    const div = document.createElement("div");
-    div.classList.add("message", msg.type);
-    div.innerHTML = `<p>${msg.text}</p>
-      <span class="meta">${msg.type === "outgoing" ? "← " : "Собеседник"} | ${new Date().toLocaleTimeString()}</span>`;
-    chatBody.appendChild(div);
-  });
-  chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-chatItems.forEach((item) => {
-  item.addEventListener("click", () => {
-    chatItems.forEach(i => i.classList.remove("active"));
-    item.classList.add("active");
-    activeChat = item.dataset.chat;
-    chatTitle.textContent = item.querySelector(".name")?.textContent || "Чат";
-    renderMessages();
-  });
-});
-
-renderMessages();
 
 // =====================
 // Летающие уточки
@@ -95,4 +59,3 @@ function createDuck() {
 }
 
 setInterval(createDuck, 2000);
-

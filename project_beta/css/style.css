@@ -1,0 +1,188 @@
+/*
+  Файл: css/style.css
+  Назначение: оформление интерфейса «Утяцап».
+  Идея: "стеклянное" (glassmorphism) окно на градиентном фоне, две колонки.
+*/
+
+/* БАЗА СТРАНИЦЫ — фоновый градиент, центрирование приложения */
+body {
+  margin: 0;                                 /* убираем отступы браузера */
+  height: 100vh;                             /* высота = высоте окна */
+  display: flex;                             /* центрируем контейнер по центру */
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,#89f7fe,#66a6ff); /* приятный голубой градиент */
+  font-family: "Segoe UI", Arial, sans-serif;          /* дружелюбный шрифт */
+  overflow: hidden;                          /* чтобы не было прокрутки странице */
+}
+
+/* ОБЩИЙ КОНТЕЙНЕР ПРИЛОЖЕНИЯ */
+.chat-wrapper {
+  width: 950px;                              /* фиксированная ширина "мессенджера" */
+  height: 600px;                             /* фиксированная высота */
+  border-radius: 24px;                       /* скруглённые углы — мягкий стиль */
+  overflow: hidden;                          /* чтобы внутренности не вылезали наружу */
+  display: flex;                             /* две колонки внутри */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);   /* тень для объёма */
+  background: rgba(255,255,255,0.15);        /* полупрозрачный белый фон */
+  backdrop-filter: blur(14px);               /* размытие подложки (эффект стекла) */
+  border: 1px solid rgba(255,255,255,0.25);  /* лёгкая рамка для читаемости границ */
+  position: relative;
+  z-index: 10;                               /* поверх фона (и за утками следим!) */
+  animation: fadeIn 0.8s ease-in-out;        /* плавное появление */
+}
+
+/* ЛЕВАЯ КОЛОНКА: шапка, лента сообщений, поле ввода */
+.chat-box {
+  flex: 2;                                   /* левая колонка шире правой */
+  display: flex;
+  flex-direction: column;                    /* сверху вниз: header -> messages -> input */
+  border-right: 1px solid rgba(255,255,255,0.25); /* разделительная линия с правой колонкой */
+}
+
+/* ШАПКА АКТИВНОГО ЧАТА */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;            /* имя слева, "меню" справа */
+  padding: 12px;
+  background: rgba(0,0,0,0.3);               /* лёгкая полупрозрачная подложка */
+  color: white;
+}
+
+.chat-header .user {
+  display: flex;
+  align-items: center;
+  gap: 10px;                                 /* расстояние между аватаром и именем */
+}
+
+.chat-header img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;                         /* круглый аватар */
+}
+
+/* ЛЕНТА СООБЩЕНИЙ (СКРОЛЛИРУЕМАЯ ЗОНА) */
+.chat-messages {
+  flex: 1;                                   /* занимает всё доступное пространство */
+  overflow-y: auto;                           /* вертикальная прокрутка при необходимости */
+  padding: 16px;
+  display: flex;
+  flex-direction: column;                     /* сообщения сверху вниз */
+}
+
+/* ПУЗЫРИ СООБЩЕНИЙ */
+.message {
+  max-width: 70%;                             /* ширина пузыря ограничена, чтобы текст читался */
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;                      /* перенос длинных слов/URL */
+}
+
+/* Входящее сообщение (чужое) — беловатый стеклянный */
+.incoming {
+  align-self: flex-start;                     /* прижато к левой стороне */
+  background: rgba(255,255,255,0.25);
+  color: white;
+  border-bottom-left-radius: 0;               /* визуальный "хвостик" слева */
+}
+
+/* Исходящее (моё) — жёлтый пузырь */
+.outgoing {
+  align-self: flex-end;                       /* прижато к правой стороне */
+  background: rgba(255,213,0,0.85);
+  color: black;
+  border-bottom-right-radius: 0;              /* "хвостик" справа */
+}
+
+/* Метаданные сообщения (время/автор — сейчас используем время) */
+.meta {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 4px;
+  align-self: flex-end;                       /* мелкий текст внизу/справа пузыря */
+}
+
+/* ПАНЕЛЬ ВВОДА СООБЩЕНИЯ */
+.chat-input {
+  display: flex;
+  padding: 12px;
+  background: rgba(0,0,0,0.3);
+}
+.chat-input input {
+  flex: 1;                                    /* поле занимает всё доступное место */
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+  outline: none;                              /* убираем синий контур браузера */
+  background: rgba(255,255,255,0.9);          /* чуть плотнее фон для читаемости */
+}
+.chat-input button {
+  margin-left: 8px;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: linear-gradient(135deg,#ffb703,#fb8500); /* утя-кнопка в фирменных тонах */
+  color: white;
+  font-weight: bold;
+}
+
+/* ПРАВАЯ КОЛОНКА: список чатов */
+.chat-list {
+  width: 280px;                               /* фиксированная ширина списка чатов */
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+.chat-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.chat-list-item:hover { background: rgba(255,255,255,0.3); } /* hover-эффект */
+.chat-list-item.active { background: rgba(255,255,255,0.45); }/* выделение активного чата */
+.chat-list-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.chat-list .name { 
+  font-weight: bold; 
+  font-size: 14px; 
+}
+
+/* Футер списка чатов — копирайт */
+.footer {
+  margin-top: auto;                           /* уезжает вниз колонки */
+  font-size: 12px;
+  text-align: center;
+  color: #eee;
+  opacity: 0.8;
+}
+
+/* КОНТЕЙНЕР ДЛЯ ЛЕТАЮЩИХ УТОК — перекрывает всё, не мешает кликам */
+#ducks-container {
+  position: fixed;
+  inset: 0;                                   /* top/right/bottom/left: 0 */
+  pointer-events: none;                       /* клики проходят "сквозь" уток */
+}
+
+/* Анимация плавного появления окна */
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(20px); } 
+  to   { opacity: 1; transform: translateY(0); } 
+}

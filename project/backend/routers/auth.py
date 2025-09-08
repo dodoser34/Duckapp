@@ -3,14 +3,17 @@ from fastapi.security import OAuth2PasswordBearer
 from DataBases import db_manager as db
 import jwt, datetime
 
-import bcrypt, pymysql
+from dotenv import load_dotenv
+load_dotenv()
+
+import bcrypt, pymysql, os
 
 router = APIRouter()
 
 # для получения токена из заголовка Authorization: Bearer <token>
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
-SECRET_KEY = "supersecret"  # ⚠️ на проде хранить в .env
+SECRET_KEY = f"{os.getenv("JWT_KEY")}"
 ALGORITHM = "HS256"
 
 @router.post("/register")
@@ -26,7 +29,7 @@ async def register(username: str = Form(...), email: str = Form(...), password: 
     # Вставляем пользователя в БД
     try:
         cursor.execute(
-            "INSERT INTO users (username, email, hashed_password, created_at) VALUES (%s, %s, %s, %s)",
+            "INSERT INTO registered_users (username, email, hashed_password, created_at) VALUES (%s, %s, %s, %s)",
             (username, email, hashed_str, datetime.datetime.utcnow())
         )
         conn.commit()
@@ -34,11 +37,11 @@ async def register(username: str = Form(...), email: str = Form(...), password: 
         cursor.close()
         conn.close()
         if "username" in str(e):
-            raise HTTPException(status_code=400, detail="Пользователь с таким именем уже существует")
+            raise HTTPException(status_code=400, detail="A user with this username already exists")
         elif "email" in str(e):
-            raise HTTPException(status_code=400, detail="Пользователь с таким email уже существует")
+            raise HTTPException(status_code=400, detail="A user with this email already exists")
         else:
-            raise HTTPException(status_code=400, detail="Ошибка уникальности данных")
+            raise HTTPException(status_code=400, detail="Data uniqueness error")
     
     cursor.close()
     conn.close()
@@ -56,7 +59,7 @@ async def register(username: str = Form(...), email: str = Form(...), password: 
 async def login(username: str = Form(...), password: str = Form(...)):
     conn = db.get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    cursor.execute("SELECT * FROM registered_users WHERE username = %s", (username,))
     user = cursor.fetchone()
     cursor.close()
     conn.close()
@@ -82,21 +85,21 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise HTTPException(status_code=401, detail="Неверный токен")
+            raise HTTPException(status_code=401, detail="invalid token")
 
         # получаем пользователя из БД
         conn = db.get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM registered_users WHERE username = %s", (username,))
         user = cursor.fetchone()
         cursor.close()
         conn.close()
 
         if user is None:
-            raise HTTPException(status_code=401, detail="Пользователь не найден")
+            raise HTTPException(status_code=401, detail="user not found")
 
         return user
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Токен истёк")
+        raise HTTPException(status_code=401, detail="token has expired")
     except jwt.PyJWTError:
-        raise HTTPException(status_code=401, detail="Неверный токен")
+        raise HTTPException(status_code=401, detail="invalid token")

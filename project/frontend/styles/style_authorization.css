@@ -3,6 +3,7 @@ body {
   background: linear-gradient(135deg, #89f7fe, #66a6ff);
   display: flex;
   justify-content: center;
+    /* центрируем контент */
   align-items: center;
   height: 100vh;
   margin: 0;
@@ -120,4 +121,15 @@ body {
   70% {
     transform: translateY(-10px) scale(1.05, 0.95); /* маленький отскок */
   }
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  font-size: 10px;
+  text-align: center;
+  color: #555;
+  padding: 10px;
 }

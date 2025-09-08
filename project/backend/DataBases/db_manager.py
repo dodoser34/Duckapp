@@ -19,8 +19,9 @@ def get_connection():
 def init_db():
     conn = get_connection()
     cursor = conn.cursor()
+    
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS registered_users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
@@ -28,6 +29,18 @@ def init_db():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS user_profiles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        names VARCHAR(50) UNIQUE NOT NULL,
+        avatar VARCHAR(255) NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES registered_users(id)
+            ON DELETE CASCADE
+    );
+    """)
+    
     conn.commit()
     cursor.close()
     conn.close()

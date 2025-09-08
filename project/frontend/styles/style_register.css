@@ -120,3 +120,14 @@ body {
     transform: translateY(-10px) scale(1.05, 0.95); /* маленький отскок */
   }
 }
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  font-size: 10px;
+  text-align: center;
+  color: #555;
+  padding: 10px;
+}
