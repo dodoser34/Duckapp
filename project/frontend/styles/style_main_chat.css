@@ -25,7 +25,7 @@ body {
 
 /* === Левая колонка (чат) === */
 .chat-box {
-  flex: 2; /* Занимает больше места, чем список чатов */
+  flex: 3; /* Занимает больше места, чем список чатов */
   display: flex; /* Включаем flex для расположения элементов */
   flex-direction: column; /* Элементы идут сверху вниз */
   border-right: 1px solid rgb(251, 255, 0); /* Разделительная линия */
@@ -36,17 +36,18 @@ body {
   display: flex; /* Выстраиваем элементы в строку */
   align-items: center; /* Центрируем по вертикали */
   justify-content: space-between; /* Распределяем элементы по краям */
-  padding: 12px; /* Отступы внутри */
+  padding: 20px; /* Отступы внутри */
   background: rgba(0,0,0,0.2); /* Полупрозрачный фон */
   color: white; /* Белый текст */
 }
 
 /* Аватар в шапке */
 .chat-header .avatar {
-  width: 35px; /* Ширина */
-  height: 35px; /* Высота */
-  border-radius: 50%; /* Делаем круглым */
-  margin-right: 10px; /* Отступ справа */
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* Круглый */
+  position: relative; /* для индикатора статуса */
+  object-fit: cover; /* обрезка изображения */
 }
 
 /* Блок сообщений */
@@ -94,139 +95,6 @@ body {
   font-weight: bold; /* Жирный текст */
 }
 
-/* === Правая колонка (список чатов) === */
-.chat-list {
-  width: 360px; /* Фиксированная ширина */
-  background: rgba(0,0,0,0.35); /* Полупрозрачный фон */
-  display: flex; /* Flex-контейнер */
-  flex-direction: column; /* Чаты в колонку */
-  padding: 16px; /* Внутренние отступы */
-  gap: 8px; /* Расстояние между элементами */
-}
-
-/* Элемент списка чатов */
-.chat-list-item {
-  display: flex; /* Элементы в строку */
-  align-items: center; /* Центрируем по вертикали */
-  gap: 10px; /* Расстояние между аватаром и текстом */
-  padding: 10px; /* Внутренние отступы */
-  border-radius: 12px; /* Скругленные углы */
-  background: #fff; /* Белый фон */
-  cursor: pointer; /* Наведение — курсор-рука */
-  transition: 0.2s; /* Плавные эффекты */
-  margin-bottom: 6px; /* Отступ снизу */
-}
-
-/* Эффект при наведении */
-.chat-list-item:hover {
-  background: rgba(255,255,255,0.85); /* Светлее */
-  transform: translateY(-2px); /* Немного поднимается */
-}
-
-/* Аватар в списке чатов */
-.chat-list-item .avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%; /* Круглый */
-}
-
-/* Имя в списке чатов */
-.chat-list-item .name {
-  font-size: 14px; /* Размер текста */
-  font-weight: bold; /* Жирный текст */
-  color: #333; /* Тёмно-серый цвет */
-}
-
-/* Активный чат */
-.profile {
-  background: rgba(255,255,255,0.6); /* Подсветка */
-}
-
-/* === Панель профиля === */
-.profile-panel {
-  display: none; /* Скрыта по умолчанию */
-  flex-direction: column; /* В колонку */
-  gap: 10px; /* Расстояние между полями */
-  background: rgba(0,0,0,0.6); /* Тёмный фон */
-  padding: 12px; /* Внутренние отступы */
-  border-radius: 12px; /* Скругленные углы */
-  margin-bottom: 12px; /* Отступ снизу */
-  color: white; /* Белый текст */
-}
-
-.profile-panel input {
-  border-radius: 8px; /* Скругленные углы */
-  padding: 8px; /* Отступы */
-  border: none; /* Без рамки */
-  outline: none; /* Убираем подсветку при фокусе */
-}
-
-/* Кнопка сохранения профиля */
-.save-btn {
-  padding: 8px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg,#ffb703,#fb8500); /* Градиент */
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* === Заголовки секций (например, "Контакты") === */
-.chat-section {
-  color: #eee; /* Светлый текст */
-  margin: 10px 0 5px 5px; /* Отступы */
-  font-size: 13px; /* Размер текста */
-}
-
-/* === Модальное окно === */
-.modal {
-  position: fixed; /* Фиксируем относительно экрана */
-  inset: 0; /* Ставим во весь экран */
-  display: none; /* Скрыто по умолчанию */
-  align-items: center; /* Центрируем содержимое */
-  justify-content: center;
-  background: rgba(0,0,0,0.45); /* Полупрозрачный фон */
-}
-
-/* Карточка внутри модалки */
-.modal .card {
-  width: 420px; /* Ширина */
-  background: #fff; /* Белый фон */
-  border-radius: 12px; /* Скругленные углы */
-  padding: 16px; /* Внутренние отступы */
-  box-shadow: 0 12px 40px rgba(0,0,0,0.35); /* Тень */
-}
-
-/* === Поиск и результаты === */
-.search-block {
-  display: flex;
-  gap: 8px; /* Расстояние между полями */
-}
-
-.search-results {
-  display: flex;
-  flex-direction: column;
-  gap: 6px; /* Расстояние между результатами */
-  max-height: 200px; /* Ограничиваем высоту */
-  overflow: auto; /* Прокрутка */
-}
-
-.search-result {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Текст слева, кнопки справа */
-  gap: 10px;
-  padding: 8px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.95);
-}
-
-/* === Разное === */
-.muted {
-  color: #bbb; /* Бледный текст */
-}
-
 /* Футер */
 footer.footer {
   margin-top: auto;
@@ -234,21 +102,4 @@ footer.footer {
   text-align: center;
   color: #eee;
   opacity: 0.8;
-}
-
-/* Сообщения */
-.message {
-  max-width: 70%; /* Ограничиваем ширину */
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: #fff;
-  color: #111;
-  margin-bottom: 8px;
-}
-
-/* Исходящие сообщения */
-.message.outgoing {
-  align-self: flex-end; /* Ставим справа */
-  background: linear-gradient(135deg,#ffb703,#fb8500);
-  color: white;
 }

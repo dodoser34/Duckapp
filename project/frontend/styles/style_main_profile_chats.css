@@ -1,0 +1,218 @@
+/* === Правая колонка (список чатов) === */
+.chat-list {
+  flex: 1; /* Занимает всё оставшееся место */
+  background: rgba(0,0,0,0.35); /* Полупрозрачный фон */
+  display: flex; /* Flex-контейнер */
+  flex-direction: column; /* Чаты в колонку */
+  padding: 16px; /* Внутренние отступы */
+  gap: 8px; /* Расстояние между элементами */
+}
+
+/* Блок профиля */
+.chat-list-item.profile {
+  display: flex; /* элементы в строку */
+  align-items: center; /* выравнивание по центру */
+  gap: 12px; /* отступы между элементами */
+  padding: 12px; /* внутренние отступы */
+  border-radius: 12px; /* скруглённые углы */
+  background: rgba(255,255,255,0.6); /* светлый фон */
+  cursor: pointer; /* курсор = палец */
+  transition: background 0.2s, transform 0.2s; /* анимация при наведении */
+}
+
+.chat-list-item.profile:hover { 
+  background: rgba(255,255,255,0.8); /* фон становится светлее */
+  transform: translateY(-6px); /* лёгкое поднятие */
+}
+
+/* Аватар в списке чатов */
+.avatar-wrapper { 
+  position: relative; /* для индикатора статуса */
+  width: 60px;
+  height: 60px;
+}
+.avatar { 
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* круглая форма */
+  object-fit: cover; /* обрезка изображения */
+}
+
+/* Индикатор статуса */
+.status-indicator {
+  position: absolute; /* позиционируется относительно avatar-wrapper */
+  bottom: 0; /* снизу */
+  right: 0; /* справа */
+  width: 16px; 
+  height: 16px;
+  border: 2px solid #fff; /* белая обводка */
+  border-radius: 50%; /* круг */
+  background: #2ecc71; /* зелёный цвет (онлайн) */
+}
+
+/* Имя и статус */
+.name { font-size: 16px; font-weight: bold; color: #333; }
+.status { font-size: 13px; color: #555; }
+
+/* ==== Панель профиля ==== */
+.profile-panel {
+	max-height: 0;               /* изначально скрыта */
+	opacity: 0;
+	overflow: hidden;            /* чтобы содержимое не вылезало */
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	background: rgba(255, 255, 255, 0.55);
+	padding: 0 12px;             /* по бокам оставим отступы */
+	border-radius: 12px;
+	color: white;
+
+	transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+}
+
+.profile-panel.open {
+	max-height: 500px;           /* достаточно большое значение */
+	opacity: 1;
+	padding: 10px;               /* возвращаем отступы */
+}
+
+/* Кнопки в панели */
+.sub-btn {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#ffb703,#fb8500);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-align: left; /* текст прижат к левому краю */
+}
+
+.sub-btn:hover { background: linear-gradient(135deg,#e0a308,#d47406); }
+
+/* ==== Подпанель со статусами ==== */
+.sub-panel {
+  max-height: 0;            /* изначально свернута */
+  opacity: 0;
+  overflow: hidden;         /* скрываем содержимое */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+  padding: 0;               /* убираем отступы */
+}
+
+.sub-panel.open {
+  max-height: 200px;        /* достаточно для кнопок */
+  opacity: 1;
+  padding: 0px 0;           /* добавляем отступы при открытии */
+}
+
+/* Кнопки выбора статуса */
+.status-btn {
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.2);
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  text-align: left;
+}
+
+.status-btn:hover { background: rgba(255,255,255,0.25); }
+
+/* ===== Модальное окно ===== */
+.modal {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.55);
+	backdrop-filter: blur(4px);
+
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.modal.open {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* ===== Контент модалки ===== */
+.modal-content {
+	width: 400px;
+	background: #fff;
+	border-radius: 16px;
+	padding: 20px;
+	text-align: center;
+
+	transform: translateY(40px);
+	opacity: 0;
+	transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.modal.open .modal-content {
+	transform: translateY(0);
+	opacity: 1;
+}
+
+.modal-content h2 { margin-bottom: 16px; }
+
+/* Выбор аватаров */
+.avatar-options {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* сетка из 5 колонок */
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.avatar-choice {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* круглые аватарки */
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.avatar-choice:hover {
+  transform: scale(1.1); /* увеличение */
+  box-shadow: 0 0 10px rgba(0,0,0,0.3); /* тень */
+}
+
+/* Кнопка загрузки своего аватара */
+.upload-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#ffb703,#fb8500); /* жёлто-оранжевый */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.upload-btn input { display: none; } /* скрываем input */
+
+.upload-btn:hover { 
+  transform: scale(1.05); /* увеличивается на 5% */
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+
+/* Кнопка закрытия модалки */
+.close-btn {
+  margin-top: 14px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #ccc;
+  cursor: pointer;
+}
+
+.close-btn:hover { background: #bbb;
+  transform: scale(1.05); /* увеличивается на 5% */
+  transition: transform 0.4s, box-shadow 0.4s;
+}
