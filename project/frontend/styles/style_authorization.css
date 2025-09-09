@@ -1,9 +1,8 @@
 body {
   font-family: "Segoe UI", Arial, sans-serif;
-  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  background: linear-gradient(135deg, #89f7fe, #4e98ff);
   display: flex;
   justify-content: center;
-    /* центрируем контент */
   align-items: center;
   height: 100vh;
   margin: 0;
@@ -13,7 +12,7 @@ body {
   background: #ffffff;
   padding: 40px;
   border-radius: 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   width: 360px;
   text-align: center;
   animation: fadeIn 0.8s ease-in-out;
@@ -25,11 +24,10 @@ body {
   font-size: 22px;
 }
 
-.authorization-container .link-continue {
-  color: #0084ff;
+.authorization-container .noAccountToRegister {
+  color: #555;
   display: block;
-  margin-top: 20px;
-  font-size: 15px;
+  margin-top: 34px;
   text-align: center;
 }
 
@@ -39,26 +37,61 @@ body {
   animation: bounceRubber 1.5s infinite;
 }
 
+/*! ========== ГРУППА ДЛЯ ПЛАВАЮЩЕГО PLACEHOLDER ========== */
+.input-group {
+  position: relative;
+  margin: 18px 0px;
+  width: 92%;
+}
 
-.authorization-container input {
-  width: 90%;
+.input-group input {
+  width: 100%;
   padding: 14px;
-  margin: 10px 0;
   border: none;
   border-radius: 14px;
   background: #f5f7fa;
   font-size: 15px;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   box-shadow: inset 2px 2px 6px rgba(0,0,0,0.1),
               inset -2px -2px 6px rgba(255,255,255,0.7);
 }
 
-.authorization-container input:focus {
-  background: #fff;
-  outline: none;
-  box-shadow: 0 0 8px #66a6ff;
+.input-group input::placeholder {
+  color: transparent;
 }
 
+.input-group label {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 15px;
+  pointer-events: none;
+  transition: 0.25s ease;
+  background: transparent;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: -1px;
+  left: 10px;
+  font-size: 12px;
+  color: #0077cc;
+  background: #fff;
+  padding: 0 4px;
+  border-radius: 6px;
+}
+
+.input-group input:focus,
+.input-group input:focus-visible {
+  background: #fff;
+  outline: none;
+  box-shadow: 0 0 8px rgba(102, 166, 255, 0.95);
+}
+
+
+/*! ========== КНОПКА ========== */
 .authorization-container button {
   background: linear-gradient(135deg, #ffb703, #fb8500);
   border: none;
@@ -71,23 +104,21 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 10px;
-  box-shadow: 0 4px 12px rgba(251,133,0,0.4);
+  box-shadow: 0 4px 12px rgba(251, 133, 0, 0.4);
 }
 
 .authorization-container button:hover {
   background: linear-gradient(135deg, #fb8500, #ff6b00);
   transform: translateY(2px);
-  box-shadow: 0 6px 14px rgba(251,133,0,0.5);
+  box-shadow: 0 6px 14px rgba(251, 133, 0, 0.5);
 }
 
-/* Ошибки */
 .error {
   color: #e63946;
   font-size: 14px;
   margin-top: 12px;
 }
 
-/* Ссылка */
 .authorization-container p {
   margin-top: 18px;
   font-size: 14px;
@@ -104,22 +135,30 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0;transform: translateY(20px);}
+  to {opacity: 1;transform: translateY(0);}
 }
 
 @keyframes bounceRubber {
-  0%, 100% {
-    transform: translateY(0) scale(1,1);
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
   }
+
   30% {
-    transform: translateY(-20px) scale(1.1, 0.9); /* растягивание */
+    transform: translateY(-20px) scale(1.1, 0.9);
+    /* растягивание */
   }
+
   50% {
-    transform: translateY(0) scale(1.0, 1.1); /* сжатие */
+    transform: translateY(0) scale(1.0, 1.1);
+    /* сжатие */
   }
+
   70% {
-    transform: translateY(-10px) scale(1.05, 0.95); /* маленький отскок */
+    transform: translateY(-10px) scale(1.05, 0.95);
+    /* маленький отскок */
   }
 }
 

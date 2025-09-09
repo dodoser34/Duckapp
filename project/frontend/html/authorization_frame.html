@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>DuckApp — authorization</title>
-  <link rel="stylesheet" href="../styles/style_authorization.css">
-  <script type="module" src="../js/authorization.js" defer></script>
+	<meta charset="UTF-8">
+	<title>DuckApp — authorization</title>
+	<link rel="stylesheet" href="../styles/style_authorization.css">
+	<script type="module" src="../js/authorization.js" defer></script>
 </head>
 <body>
-  <div class="authorization-container">
-    <div class="logo">🦆</div>
-    <h2>Authorization in DuckApp</h2>
+	<div class="authorization-container">
+		<div class="logo">🦆</div>
+		<h2>Authorization in DuckApp</h2>
 
-    <form id="loginForm">
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
+		<form id="loginForm" autocomplete="on">
+			<div class="input-group">
+				<input type="text" id="username" placeholder="" required>
+				<label>Username</label>
+			</div>
+    
+			<div class="input-group" autocomplete="on">
+				<input type="password" id="password" placeholder="" required>
+				<label>Password</label>
+			</div>
+    
+			<button type="submit">Login</button>
+		</form>
 
-    <div class="error" id="errorMsg"></div>
 
-    <!-- кнопка перехода -->
-    <button type="button" id="goRegister">Registration</button>
-    <a href="main_chat.html" id="goNoRegister" class="link-continue">Login without registration</a>
+		<div class="error" id="errorMsg"></div>
+		<span class="noAccountToRegister">Don't have an account? <a href="register_frame.html">Sign up</a></span>
+	</div>
 
-  </div>
-
-  <footer>
-    LLC UTYAPUTYA © 2025 All rights reserved
-  </footer>
+	<footer>LLC UTYAPUTYA © 2025 All rights reserved</footer>
 
 </body>
 </html>

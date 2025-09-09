@@ -1,32 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>DuckApp — Registration</title>
-  <link rel="stylesheet" href="../styles/style_register.css">
+    <meta charset="UTF-8">
+    <title>DuckApp — Registration</title>
+    <link rel="stylesheet" href="../styles/style_register.css">
+    <script type="module" src="../js/register.js"></script>
 </head>
+
 <body>
-  <div class="register-container">
-    <div class="logo">🦆</div>
-    <h2>Registration in DuckApp</h2>
-    <form id="registerForm">
-      <input type="text" id="username" placeholder="Username" required>
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+    <div class="register-container">
+        <div class="logo">🦆</div>
+        <h2>Registration in DuckApp</h2>
+        <form id="registerForm">
+            <div class="input-group" autocomplete="on">
+                <input type="text" id="username" placeholder="" required>
+                <label>Username</label>
+            </div>
 
-      <div class="form-buttons">
-        <button type="submit">Register</button>
-        <button type="button" id="goBack">Back</button>
-      </div>
+            <div class="input-group" autocomplete="on">
+                <input type="email" id="email" placeholder="" required>
+                <label>Email</label>
+            </div>
 
-      <div class="error" id="errorMsg"></div>
-    </form>
-  </div>
-  <script type="module" src="../js/register.js"></script>
-  <footer>
-    ООО УТЯПУТЯ © 2025 Все права защищены
-  </footer>
+            <div class="input-group" autocomplete="on">
+                <input type="password" id="password" placeholder="" required>
+                <label>Password</label>
+            </div>
+
+            <div class="input-group" autocomplete="on">
+                <input type="password" id="confirmPassword" placeholder="" required>
+                <label>Confirm Password</label>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" id="submit">Register</button>
+                <span class="haveAnAccountLogin">Have an account?<a href="authorization_frame.html">Log in</a></span>
+            </div>
+
+            <div class="error" id="errorMsg"></div>
+        </form>
+    </div>
+
+    <footer>LLC UTYAPUTYA © 2025 All rights reserved</footer>
 
 </body>
 </html>

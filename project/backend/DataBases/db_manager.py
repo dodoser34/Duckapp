@@ -1,7 +1,6 @@
 import pymysql
-from dotenv import load_dotenv
-
 import os
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -12,14 +11,14 @@ def get_connection():
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
-        ssl={"ssl": {}},
         cursorclass=pymysql.cursors.DictCursor
     )
 
 def init_db():
     conn = get_connection()
     cursor = conn.cursor()
-    
+
+    # Users
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS registered_users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,18 +28,67 @@ def init_db():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
-    
+
+    # Profiles
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS user_profiles (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
-        names VARCHAR(50) UNIQUE NOT NULL,
-        avatar VARCHAR(255) NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES registered_users(id)
-            ON DELETE CASCADE
+        name VARCHAR(50),
+        status VARCHAR(255),
+        avatar VARCHAR(255),
+        FOREIGN KEY (user_id) REFERENCES registered_users(id) ON DELETE CASCADE
     );
     """)
-    
+
+    # Friends
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS friends (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        friend_id INT NOT NULL,
+        status ENUM('pending','accepted') DEFAULT 'pending',
+        FOREIGN KEY (user_id) REFERENCES registered_users(id) ON DELETE CASCADE,
+        FOREIGN KEY (friend_id) REFERENCES registered_users(id) ON DELETE CASCADE
+    )
+    """)
+
+    # Groups
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS groups (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        description TEXT,
+        avatar VARCHAR(255),
+        created_by INT NOT NULL,
+        FOREIGN KEY (created_by) REFERENCES registered_users(id)
+    )
+    """)
+
+    # Group members
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS group_members (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        group_id INT NOT NULL,
+        user_id INT NOT NULL,
+        FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES registered_users(id) ON DELETE CASCADE
+    )
+    """)
+
+    # Messages
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS messages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        chat_type ENUM('dm','group') NOT NULL,
+        chat_id INT NOT NULL,
+        sender_id INT NOT NULL,
+        text TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (sender_id) REFERENCES registered_users(id) ON DELETE CASCADE
+    )
+    """)
+
     conn.commit()
     cursor.close()
     conn.close()
