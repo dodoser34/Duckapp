@@ -1,6 +1,5 @@
 export const API_URL = "http://127.0.0.1:8000/api/auth";
 
-
 export async function registerUser(username, email, password) {
   const formData = new URLSearchParams();
   formData.append("username", username);
@@ -15,7 +14,6 @@ export async function registerUser(username, email, password) {
 
   return res.json().then((result) => ({ ok: res.ok, result }));
 }
-
 
 export async function loginUser(username, password) {
   const formData = new URLSearchParams();

@@ -1,174 +1,166 @@
+/* ====== ОБЩИЙ СТИЛЬ BODY ====== */
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: linear-gradient(135deg, #89f7fe, #4e98ff);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif; /* Основной шрифт страницы */
+    background: linear-gradient(135deg, #89f7fe, #4e98ff); /* Фон с диагональным градиентом */
+    display: flex; /* Включаем флексбокс для центрирования */
+    justify-content: center; /* Горизонтальное центрирование */
+    align-items: center; /* Вертикальное центрирование */
+    height: 100vh; /* Высота = 100% окна браузера */
+    margin: 0; /* Убираем отступы вокруг страницы */
 }
 
+/* ====== КОНТЕЙНЕР ФОРМЫ АВТОРИЗАЦИИ ====== */
 .authorization-container {
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 24px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  width: 360px;
-  text-align: center;
-  animation: fadeIn 0.8s ease-in-out;
+    background: #ffffff; /* Белый фон контейнера */
+    padding: 40px; /* Внутренние отступы */
+    border-radius: 24px; /* Закругленные углы */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Объемная тень */
+    width: 360px; /* Ширина контейнера */
+    text-align: center; /* Центрирование текста */
+    animation: fadeIn 0.8s ease-in-out; /* Анимация появления */
 }
 
 .authorization-container h2 {
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 22px;
+    margin-bottom: 20px; /* Отступ снизу */
+    color: #333; /* Цвет текста */
+    font-size: 22px; /* Размер шрифта */
 }
 
+/* ====== ССЫЛКА НА РЕГИСТРАЦИЮ ====== */
 .authorization-container .noAccountToRegister {
-  color: #555;
-  display: block;
-  margin-top: 34px;
-  text-align: center;
+    color: #555; /* Цвет текста */
+    display: block; /* Переводим элемент в блочный */
+    margin-top: 34px; /* Отступ сверху */
+    text-align: center; /* Центрируем текст */
 }
 
+/* ====== ЛОГОТИП (УТОЧКА) ====== */
 .logo {
-  font-size: 50px;
-  margin-bottom: 15px;
-  animation: bounceRubber 1.5s infinite;
+    font-size: 50px; /* Размер иконки */
+    margin-bottom: 15px; /* Отступ снизу */
+    animation: bounceRubber 1.5s infinite; /* Бесконечная анимация прыжка */
 }
 
-/*! ========== ГРУППА ДЛЯ ПЛАВАЮЩЕГО PLACEHOLDER ========== */
+/* ====== ГРУППА ДЛЯ ПЛАВАЮЩЕГО PLACEHOLDER ====== */
 .input-group {
-  position: relative;
-  margin: 18px 0px;
-  width: 92%;
+    position: relative; /* Нужно для позиционирования label */
+    margin: 18px 0px; /* Вертикальные отступы */
+    width: 92%; /* Ширина блока */
 }
 
 .input-group input {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 14px;
-  background: #f5f7fa;
-  font-size: 15px;
-  transition: all 0.25s ease;
-  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.1),
-              inset -2px -2px 6px rgba(255,255,255,0.7);
+    width: 100%; /* Ширина поля = 100% */
+    padding: 14px; /* Внутренние отступы */
+    border: none; /* Без рамки */
+    border-radius: 14px; /* Скругленные углы */
+    background: #f5f7fa; /* Светлый фон */
+    font-size: 15px; /* Размер текста */
+    transition: all 0.25s ease; /* Плавные переходы при изменениях */
+    box-shadow: inset 2px 2px 6px rgba(0,0,0,0.1), /* Внутренняя тень снизу */
+                inset -2px -2px 6px rgba(255,255,255,0.7); /* Внутренняя тень сверху */
 }
 
 .input-group input::placeholder {
-  color: transparent;
+    color: transparent; /* Делаем placeholder невидимым */
 }
 
 .input-group label {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #888;
-  font-size: 15px;
-  pointer-events: none;
-  transition: 0.25s ease;
-  background: transparent;
+    position: absolute; /* Абсолютное позиционирование */
+    left: 14px; /* Отступ слева */
+    top: 50%; /* Центрируем по вертикали */
+    transform: translateY(-50%); /* Смещаем в точный центр */
+    color: #888; /* Серый цвет */
+    font-size: 15px; /* Размер текста */
+    pointer-events: none; /* Не кликается */
+    transition: 0.25s ease; /* Плавные переходы */
+    background: transparent; /* Фон прозрачный */
 }
 
+/* ====== ЭФФЕКТ ВСПЛЫТИЯ LABEL ====== */
 .input-group input:focus + label,
 .input-group input:not(:placeholder-shown) + label {
-  top: -1px;
-  left: 10px;
-  font-size: 12px;
-  color: #0077cc;
-  background: #fff;
-  padding: 0 4px;
-  border-radius: 6px;
+    top: -1px; /* Поднимаем над полем */
+    left: 10px; /* Чуть левее */
+    font-size: 12px; /* Уменьшаем размер */
+    color: #0077cc; /* Синий цвет */
+    background: #fff; /* Белый фон под текстом */
+    padding: 0 4px; /* Отступы по бокам */
+    border-radius: 6px; /* Небольшое скругление */
 }
 
 .input-group input:focus,
 .input-group input:focus-visible {
-  background: #fff;
-  outline: none;
-  box-shadow: 0 0 8px rgba(102, 166, 255, 0.95);
+    background: #fff; /* Фон становится белым */
+    outline: none; /* Убираем стандартное выделение */
+    box-shadow: 0 0 8px rgba(102, 166, 255, 0.95); /* Синее свечение */
 }
 
-
-/*! ========== КНОПКА ========== */
+/* ====== КНОПКА ====== */
 .authorization-container button {
-  background: linear-gradient(135deg, #ffb703, #fb8500);
-  border: none;
-  padding: 14px;
-  width: 100%;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 10px;
-  box-shadow: 0 4px 12px rgba(251, 133, 0, 0.4);
+    background: linear-gradient(135deg, #ffb703, #fb8500); /* Градиент кнопки */
+    border: none; /* Без рамки */
+    padding: 14px; /* Внутренний отступ */
+    width: 100%; /* Во всю ширину */
+    border-radius: 14px; /* Закругленные углы */
+    font-size: 16px; /* Размер текста */
+    font-weight: bold; /* Жирный шрифт */
+    color: white; /* Белый текст */
+    cursor: pointer; /* Курсор-рука */
+    transition: all 0.3s ease; /* Плавный переход */
+    margin-top: 10px; /* Отступ сверху */
+    box-shadow: 0 4px 12px rgba(251, 133, 0, 0.4); /* Тень кнопки */
 }
 
 .authorization-container button:hover {
-  background: linear-gradient(135deg, #fb8500, #ff6b00);
-  transform: translateY(2px);
-  box-shadow: 0 6px 14px rgba(251, 133, 0, 0.5);
+    background: linear-gradient(135deg, #fb8500, #ff6b00); /* Более тёмный градиент */
+    transform: translateY(2px); /* Лёгкое смещение вниз */
+    box-shadow: 0 6px 14px rgba(251, 133, 0, 0.5); /* Более глубокая тень */
 }
 
+/* ====== БЛОК ОШИБОК ====== */
 .error {
-  color: #e63946;
-  font-size: 14px;
-  margin-top: 12px;
+    color: #e63946; /* Красный цвет текста */
+    font-size: 14px; /* Размер текста */
+    margin-top: 12px; /* Отступ сверху */
 }
 
+/* ====== ДОП. ТЕКСТ ====== */
 .authorization-container p {
-  margin-top: 18px;
-  font-size: 14px;
+    margin-top: 18px; /* Отступ сверху */
+    font-size: 14px; /* Размер текста */
 }
 
 .authorization-container a {
-  color: #0077cc;
-  text-decoration: none;
-  transition: 0.3s;
+    color: #0077cc; /* Синий цвет */
+    text-decoration: none; /* Без подчеркивания */
+    transition: 0.3s; /* Плавное появление подчеркивания */
 }
 
 .authorization-container a:hover {
-  text-decoration: underline;
+    text-decoration: underline; /* Подчеркивание при наведении */
 }
 
+/* ====== АНИМАЦИИ ====== */
 @keyframes fadeIn {
-  from { opacity: 0;transform: translateY(20px);}
-  to {opacity: 1;transform: translateY(0);}
+    from { opacity: 0; transform: translateY(20px); } /* Снизу и прозрачный */
+    to { opacity: 1; transform: translateY(0); } /* На месте и видимый */
 }
 
 @keyframes bounceRubber {
-
-  0%,
-  100% {
-    transform: translateY(0) scale(1, 1);
-  }
-
-  30% {
-    transform: translateY(-20px) scale(1.1, 0.9);
-    /* растягивание */
-  }
-
-  50% {
-    transform: translateY(0) scale(1.0, 1.1);
-    /* сжатие */
-  }
-
-  70% {
-    transform: translateY(-10px) scale(1.05, 0.95);
-    /* маленький отскок */
-  }
+    0%, 100% { transform: translateY(0) scale(1, 1); } /* Нормальное состояние */
+    30% { transform: translateY(-20px) scale(1.1, 0.9); } /* Растягивание вверх */
+    50% { transform: translateY(0) scale(1.0, 1.1); } /* Сжатие вниз */
+    70% { transform: translateY(-10px) scale(1.05, 0.95); } /* Маленький отскок */
 }
 
+/* ====== ФУТЕР ====== */
 footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  font-size: 10px;
-  text-align: center;
-  color: #555;
-  padding: 10px;
+    position: fixed; /* Фиксируем снизу */
+    bottom: 0; /* Привязываем к нижнему краю */
+    left: 0; /* Привязываем к левому краю */
+    width: 100%; /* На всю ширину */
+    font-size: 10px; /* Маленький текст */
+    text-align: center; /* Центрируем */
+    color: #555; /* Серый цвет */
+    padding: 10px; /* Отступы */
 }

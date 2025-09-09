@@ -11,9 +11,6 @@ form.addEventListener("submit", async (e) => {
 	const password = form.password.value;
 	const confirmPassword = form.confirmPassword.value;
 
-
-
-
 	if (password !== confirmPassword) {
 		msg.textContent = "❌ Paswords do not match!";
 		return;
@@ -74,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const t = translations[userLang] || translations["en"];
 
-
 	document.documentElement.lang = userLang;
 
 	document.querySelector("h2").textContent = t.title;
@@ -87,5 +83,3 @@ document.addEventListener("DOMContentLoaded", () => {
 		t.haveAccount + `<a href="authorization_frame.html">${t.signup}</a>`;
 	document.querySelector("footer").textContent = t.footer;
 });
-
-

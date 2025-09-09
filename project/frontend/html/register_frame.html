@@ -1,47 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <!-- Кодировка страницы -->
+    <meta charset="utf-8" />
+
+    <!-- Заголовок вкладки браузера -->
     <title>DuckApp — Registration</title>
+
+    <!-- Адаптивность для мобильных устройств -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Подключение CSS стилей -->
     <link rel="stylesheet" href="../styles/style_register.css">
+
+    <!-- Подключение JS для логики регистрации -->
     <script type="module" src="../js/register.js"></script>
 </head>
 
 <body>
+    <!-- Основной контейнер формы регистрации -->
     <div class="register-container">
-        <div class="logo">🦆</div>
+
+        <!-- Логотип (эмодзи-уточка) -->
+        <div class="logo" aria-hidden="true">🦆</div>
+
+        <!-- Заголовок формы -->
         <h2>Registration in DuckApp</h2>
-        <form id="registerForm">
-            <div class="input-group" autocomplete="on">
-                <input type="text" id="username" placeholder="" required>
-                <label>Username</label>
+
+        <!-- Форма регистрации -->
+        <form id="registerForm" autocomplete="on">
+            
+            <!-- Поле ввода имени пользователя -->
+            <div class="input-group">
+                <input type="text" id="username" name="username" placeholder=" " required>
+                <label for="username">Username</label>
             </div>
 
-            <div class="input-group" autocomplete="on">
-                <input type="email" id="email" placeholder="" required>
-                <label>Email</label>
+            <!-- Поле ввода email -->
+            <div class="input-group">
+                <input type="email" id="email" name="email" placeholder=" " required>
+                <label for="email">Email</label>
             </div>
 
-            <div class="input-group" autocomplete="on">
-                <input type="password" id="password" placeholder="" required>
-                <label>Password</label>
+            <!-- Поле ввода пароля -->
+            <div class="input-group">
+                <input type="password" id="password" name="password" placeholder=" " required>
+                <label for="password">Password</label>
             </div>
 
-            <div class="input-group" autocomplete="on">
-                <input type="password" id="confirmPassword" placeholder="" required>
-                <label>Confirm Password</label>
+            <!-- Поле подтверждения пароля -->
+            <div class="input-group">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " required>
+                <label for="confirmPassword">Confirm Password</label>
             </div>
 
+            <!-- Кнопка регистрации и ссылка на вход -->
             <div class="form-buttons">
+                <!-- Основная кнопка -->
                 <button type="submit" id="submit">Register</button>
-                <span class="haveAnAccountLogin">Have an account?<a href="authorization_frame.html">Log in</a></span>
+                <!-- Ссылка для тех, у кого уже есть аккаунт -->
+                <span class="haveAnAccountLogin">
+                    Have an account? <a href="authorization_frame.html">Log in</a>
+                </span>
             </div>
 
-            <div class="error" id="errorMsg"></div>
+            <!-- Блок для вывода ошибок (например: пароли не совпадают) -->
+            <div class="error" id="errorMsg" aria-live="polite"></div>
         </form>
     </div>
 
-    <footer>LLC UTYAPUTYA © 2025 All rights reserved</footer>
-
+    <!-- Футер сайта -->
+    <footer>
+        LLC UTYAPUTYA © 2025 All rights reserved
+    </footer>
 </body>
 </html>
