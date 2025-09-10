@@ -1,4 +1,4 @@
-import { loginUser } from "./api.js";
+import { loginUser, checkToken } from "./api.js";
 
 const form = document.getElementById("loginForm");
 const msg = document.getElementById("errorMsg");
@@ -12,14 +12,19 @@ form.addEventListener("submit", async (e) => {
     );
 
     if (ok) {
-        localStorage.setItem("token", result.access_token);
-        window.location = "main_chat.html";
+        const check = await checkToken();
+        if (check.ok) {
+            window.location = "main_chat.html";
+        } else {
+            msg.textContent = "❌ Ошибка при проверке сессии: " + (check.result.detail || "");
+        }
     } else {
         msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
     }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+
     const userLang = (navigator.language || "en").substring(0, 2);
 
     const translations = {
