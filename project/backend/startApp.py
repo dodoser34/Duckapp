@@ -18,7 +18,7 @@ app = FastAPI(title="DuckApp Messenger", lifespan=lifespan)
 # Разрешаем фронту коннектиться
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # на проде лучше ограничить
+    allow_origin_regex=r"http://(127\.0\.0\.1|localhost)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
