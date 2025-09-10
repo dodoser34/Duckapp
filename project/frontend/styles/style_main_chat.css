@@ -31,25 +31,6 @@ body {
   border-right: 1px solid rgb(251, 255, 0); /* Разделительная линия */
 }
 
-/* Шапка чата */
-.chat-header {
-  display: flex; /* Выстраиваем элементы в строку */
-  align-items: center; /* Центрируем по вертикали */
-  justify-content: space-between; /* Распределяем элементы по краям */
-  padding: 20px; /* Отступы внутри */
-  background: rgba(0,0,0,0.2); /* Полупрозрачный фон */
-  color: white; /* Белый текст */
-}
-
-/* Аватар в шапке */
-.chat-header .avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%; /* Круглый */
-  position: relative; /* для индикатора статуса */
-  object-fit: cover; /* обрезка изображения */
-}
-
 /* Блок сообщений */
 .chat-messages {
   flex: 1; /* Занимает всё оставшееся место */
@@ -60,6 +41,17 @@ body {
   flex-direction: column; /* Сообщения идут вертикально */
 }
 
+/* === Правая колонка (список чатов) === */
+.chat-list {
+  flex: 1; /* Занимает всё оставшееся место */
+  background: rgba(0,0,0,0.35); /* Полупрозрачный фон */
+  display: flex; /* Flex-контейнер */
+  flex-direction: column; /* Чаты в колонку */
+  padding: 16px; /* Внутренние отступы */
+  gap: 8px; /* Расстояние между элементами */
+  overflow-y: auto;
+}
+
 /* Пустой чат (надпись при отсутствии сообщений) */
 .empty-chat {
   color: #bbb; /* Серый текст */
@@ -67,45 +59,26 @@ body {
   margin-top: 50px; /* Отступ сверху */
 }
 
-/* Поле ввода сообщения */
-.chat-input {
-  display: flex; /* Элементы в строку */
-  padding: 12px; /* Внутренние отступы */
-  background: rgba(0,0,0,0.3); /* Прозрачный фон */
+/* Аватар в списке чатов */
+.avatar-wrapper { 
+  position: relative; /*  для индикатора статуса */
+  width: 60px;
+  height: 60px;
 }
 
-/* Сам input */
-.chat-input input {
-  flex: 1; /* Растягивается на всю ширину */
-  border: none; /* Без рамки */
-  border-radius: 12px; /* Скругленные углы */
-  padding: 10px; /* Внутренние отступы */
-  background: rgba(255, 255, 255, 0.9); /* Светлый фон */
-}
-
-
-.chat-input input:focus {
-  outline: none; /* Убираем стандартную синюю обводку */
-  border: 2px solid #ffee00; /* Добавляем жёлтую рамку */
-}
-
-/* Кнопка отправки */
-.chat-input button {
-  margin-left: 8px; /* Отступ слева */
-  border: 2px; /* Без рамки */
-  border-radius: 12px; /* Скругленные углы */
-  padding: 10px 16px; /* Отступы */
-  cursor: pointer; /* Курсор-рука */
-  background: linear-gradient(135deg,#ffb703,#fb8500); /* Градиентная кнопка */
-  color: white; /* Белый текст */
-  font-weight: bold; /* Жирный текст */
+.avatar { 
+  width: 60px;
+  height: 60px;
+  border-radius: 50%; /* круглая форма */
+  object-fit: cover; /* обрезка изображения */
 }
 
 /* Футер */
-footer.footer {
+.footer {
   margin-top: auto;
+  padding: 12px;
   font-size: 12px;
+  color: #bbb;
   text-align: center;
-  color: #eee;
-  opacity: 0.8;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }

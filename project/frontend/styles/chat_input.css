@@ -1,0 +1,40 @@
+/* chat_input.css */
+
+/* Поле ввода сообщения */
+.chat-input {
+  display: flex; /* Элементы в строку */
+  padding: 12px; /* Внутренние отступы */
+  background: rgba(0,0,0,0.3); /* Прозрачный фон */
+}
+
+.chat-input input {
+  flex: 1;
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  transition: border 0.3s ease;
+}
+
+.chat-input input:focus {
+  outline: none;
+  border: 1px solid #ffee00;
+}
+
+.chat-input button {
+  margin-left: 8px;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: linear-gradient(135deg,#ffb703,#fb8500);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.chat-input button:hover {
+  background: linear-gradient(135deg,#fb8500,#ffb703);
+}

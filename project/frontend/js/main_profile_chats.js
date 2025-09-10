@@ -5,7 +5,6 @@ const statusPanel = document.getElementById("status-panel");
 const statusBtns = document.querySelectorAll(".status-btn");
 const profileStatus = document.getElementById("profile-status");
 const statusIndicator = document.getElementById("status-indicator");
-
 const avatarModal = document.getElementById("avatar-modal");
 const openAvatarModal = document.getElementById("open-avatar-modal");
 const closeAvatarModal = document.getElementById("close-avatar-modal");
@@ -13,12 +12,10 @@ const avatarChoices = document.querySelectorAll(".avatar-choice");
 const profileAvatar = document.getElementById("profile-avatar");
 const avatarInput = document.getElementById("avatar-input");
 
-// открыть/закрыть панель профиля
 profileToggle.addEventListener("click", () => {
   profilePanel.classList.toggle("open");
 });
 
-// статус
 statusBtn.addEventListener("click", () => {
   statusPanel.classList.toggle("open");
 });
@@ -44,7 +41,6 @@ statusBtns.forEach(btn => {
   });
 });
 
-// аватар
 openAvatarModal.addEventListener("click", () => avatarModal.classList.add("open"));
 closeAvatarModal.addEventListener("click", () => avatarModal.classList.remove("open"));
 

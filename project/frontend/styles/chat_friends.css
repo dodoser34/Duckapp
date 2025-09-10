@@ -1,0 +1,39 @@
+/* Один элемент списка */
+.chat-list-item {
+  display: flex; /* элементы в строку */
+  align-items: center; /* выравнивание по центру */
+  gap: 12px; /* отступы между элементами */
+  padding: 12px; /* внутренние отступы */
+  border-radius: 12px; /* скруглённые углы */
+  background: rgba(255, 255, 255, 0.6); /* светлый фон */
+  cursor: pointer; /* курсор = палец */
+  transition: background 0.2s, transform 0.2s; /* анимация при наведении */
+}
+
+/* Ховер на чате */
+.chat-list-item:hover { 
+  background: rgba(255, 255, 255, 0.8); /* фон становится светлее */
+  transform: translateY(-4px); /* лёгкое поднятие */
+}
+
+.sub-panel.open {
+  max-height: 200px;        /* достаточно для кнопок */
+  opacity: 1;
+  padding: 0px 0;           /* добавляем отступы при открытии */
+}
+
+/* Индикатор статуса Duck*/
+.status-indicator-2 {
+  position: absolute; /* позиционируется относительно avatar-wrapper */
+  bottom: 0; /* снизу */
+  right: 0; /* справа */
+  width: 16px; 
+  height: 16px;
+  border: 2px solid #fff; /* белая обводка */
+  border-radius: 50%; /* круг */
+  background: #2ecc71; /* зелёный цвет (онлайн) */
+}
+
+/* Имя и статус */
+.name { font-size: 16px; font-weight: bold; color: #333; }
+.status { font-size: 13px; color: #555; }

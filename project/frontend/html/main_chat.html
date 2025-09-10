@@ -1,123 +1,130 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <!-- Кодировка страницы -->
-    <meta charset="utf-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DuckApp/chat</title>
 
-    <!-- Адаптивность для мобильных устройств -->
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../styles/style_main_chat.css">
+  <link rel="stylesheet" href="../styles/style_main_profile_chats.css">
+  <link rel="stylesheet" href="../styles/chat_header.css">
+  <link rel="stylesheet" href="../styles/chat_input.css">
+  <link rel="stylesheet" href="../styles/chat_menu_header.css">
+  <link rel="stylesheet" href="../styles/chat_friends.css">
 
-    <!-- Заголовок вкладки -->
-    <title>DuckApp/chat</title>
-
-    <!-- Подключение CSS стилей -->
-    <link rel="stylesheet" href="../styles/style_main_chat.css">
-    <link rel="stylesheet" href="../styles/style_main_profile_chats.css">
-
-	<!-- Подключение JS логики чата -->
-    <script type="module" src="../js/main_profile_chats.js"></script>
-    <script type="module" src="../js/checkSession.js"></script>
+  <script type="module" src="../js/chat_header.js" defer></script>
+  <script type="module" src="../js/chat_input.js" defer></script>
+  <script type="module" src="../js/main_profile_chats.js" defer></script>
+  <script type="module" src="../js/checkSession.js" defer></script>
 </head>
 
 <body>
-    <!-- Главный контейнер приложения -->
-    <div class="chat-wrapper">
-
-        <!-- Левая колонка: сам чат -->
-        <div class="chat-box">
-
-            <!-- Шапка чата -->
-            <div class="chat-header">
-                <!-- Аватар выбранного чата -->
-                <img src="none" alt="Аватар пользователя" class="avatar" id="header-avatar">
-                
-                <!-- Название и подзаголовок чата -->
-                <div class="chat-header-text">
-                    <div id="chat-title">Чат</div>
-                </div>
-
-                <!-- Кнопка меню (⋮) -->
-                <button id="menu-btn" aria-label="Меню">⋮</button>
-            </div>
-
-            <!-- Область сообщений -->
-            <div class="chat-messages" id="chat-body">
-
-                <!-- Сообщение-заглушка, если чат не выбран -->
-                <div class="empty-chat muted">Выберите чат справа 👉</div>
-            </div>
-
-            <!-- Поле для ввода нового сообщения -->
-            <div class="chat-input">
-                <input type="text" id="message-input" placeholder="Напишите текст ..." aria-label="Поле для ввода сообщения">
-                <button id="sendgif-btn" aria-label="Отправить сообщение">GIF</button>
-
-                <button id="sendsmale-btn" aria-label="Отправить сообщение">😄</button>
-
-                <button id="send-btn" aria-label="Отправить сообщение">🦆</button>
-            </div>
+  <div class="chat-wrapper">
+    <div class="chat-box">
+      <!-- Шапка -->
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <img src="none" alt="Аватар" class="avatar" id="header-avatar">
+          <div class="chat-header-text">
+            <div id="chat-title" class="chat-title">Чат</div>
+            <div class="chat-subtitle">Нет подключения</div>
+          </div>
         </div>
-
-        <!-- Правая колонка: список чатов, профиль -->
-        <aside class="chat-list">
-
-        <!-- Блок профиля (отображается сверху в чате) -->
-        <div class="chat-list-item profile" id="profile-toggle">
-        <div class="avatar-wrapper"> <!-- Контейнер для аватарки и индикатора статуса -->
-            <img src="../assets/avatar_3.png" class="avatar" id="profile-avatar"> <!-- Аватар пользователя -->
-            <span class="status-indicator" id="status-indicator"></span> <!-- Индикатор статуса -->
+        <div class="chat-header-actions">
+          <button class="header-icon-btn" id="menu-toggle">⋮</button>
+          <div class="chat-menu" id="chat-menu">
+            <button class="menu-item" id="delete-chat">🗑️ Удалить чат</button>
+            <button class="menu-item" id="rename-chat">📝 Переименовать</button>
+          </div>
         </div>
-        <div> <!-- Блок с именем и статусом -->
-            <div class="name" id="profile-name">User_name</div> <!-- Имя пользователя -->
-            <div class="status muted" id="profile-status">В сети</div> <!-- Текущий статус -->
-        </div>
-        </div>
+      </div>
 
-        <!-- Панель профиля (раскрывается при клике на профиль) -->
-        <div id="profile-panel" class="profile-panel">
-        <button class="sub-btn toggle-status">Изменить статус</button> <!-- Кнопка: открыть выбор статуса -->
+      <!-- Сообщения -->
+      <div class="chat-messages" id="chat-body">
+        <div class="empty-chat muted">Выберите чат справа 👉</div>
+      </div>
 
-        <!-- Подпанель с вариантами статусов -->
+      <!-- Ввод -->
+      <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Напишите текст ...">
+        <button id="sendgif-btn">GIF</button>
+        <button id="sendsmale-btn">😄</button>
+        <button id="send-btn">🦆</button>
+      </div>
+    </div>
+
+    <!-- Правая колонка -->
+    <aside class="chat-list">
+      <div class="chat-list-item profile" id="profile-toggle">
+        <div class="avatar-wrapper">
+          <img src="../assets/avatar_3.png" class="avatar" id="profile-avatar">
+          <span class="status-indicator" id="status-indicator"></span>
+        </div>
+        <div>
+          <div class="name" id="profile-name">User_name</div>
+          <div class="status muted" id="profile-status">В сети</div>
+        </div>
+      </div>
+
+      <div id="profile-panel" class="profile-panel">
+        <button class="sub-btn toggle-status">Изменить статус</button>
         <div class="sub-panel" id="status-panel">
-            <button class="status-btn" data-status="online">🟢 В сети</button>
-            <button class="status-btn" data-status="invisible">👻 Невидимка</button>
-            <button class="status-btn" data-status="dnd">⛔ Не беспокоить</button>
+          <button class="status-btn" data-status="online">🟢 В сети</button>
+          <button class="status-btn" data-status="invisible">👻 Невидимка</button>
+          <button class="status-btn" data-status="dnd">⛔ Не беспокоить</button>
         </div>
+        <button class="sub-btn" id="open-avatar-modal">Изменить аватарку</button>
+      </div>
 
-        <button class="sub-btn" id="open-avatar-modal">Изменить аватарку</button> <!-- Кнопка: открыть модалку выбора аватара -->
+      <!-- Чат ntcn -->
+      <div class="chat-list-item" data-id="duck123" data-name="Уточка Иван" data-avatar="assets/2.webp" data-status="Онлайн">
+        <div class="avatar-wrapper">
+          <img src="assets/2.webp" class="avatar">
+          <span class="status-indicator-2" id="status-indicator_2"></span>
         </div>
-
-
-    <!-- Модальное окно выбора аватара -->
-    <div class="modal" id="avatar-modal">
-        <div class="modal-content"> <!-- Содержимое модалки -->
-        <h2>Выбери аватар</h2>
-
-        <!-- Сетка аватарок для выбора -->
-        <div class="avatar-options">
-            <img src="../assets/avatar_1.png" class="avatar-choice">
-            <img src="../assets/avatar_2.png" class="avatar-choice">
-            <img src="../assets/avatar_3.png" class="avatar-choice">
-            <img src="../assets/avatar_4.png" class="avatar-choice">
-            <img src="../assets/avatar_3.png" class="avatar-choice">
+        <div>
+          <div class="name">Уточка Иван</div>
+          <div class="status muted">Онлайн</div>
         </div>
+      </div>
 
-        <!-- Загрузка своего аватара -->
-        <label class="upload-btn">
-            Загрузить свой аватар
-            <input type="file" id="avatar-input" accept="image/*"> <!-- Поле загрузки изображений -->
-        </label>
+      <footer class="footer">LLC UTYAPUTYA © <br> All rights reserved</footer>
+    </aside>
+  </div>
 
-        <button class="close-btn" id="close-avatar-modal">Закрыть</button> <!-- Кнопка закрытия модалки -->
-        </div>
+  <!-- ========== МОДАЛКИ ВЫНЕСЕНЫ В КОНЕЦ BODY ========== -->
+
+  <!-- Модалка переименования -->
+  <div id="rename-modal" class="modal rename-modal">
+    <div class="modal-content rename-content">
+      <h3>Введите новое имя</h3>
+      <input type="text" id="rename-input" placeholder="Новое имя" maxlength="41"/>
+      <div class="modal-buttons">
+        <button id="rename-confirm">Сохранить</button>
+        <button id="rename-cancel">Отмена</button>
+      </div>
     </div>
+  </div>
 
-            <!-- Нижний футер -->
-            <footer class="footer">
-                LLC UTYAPUTYA © 2025 <br> All rights reserved
-            </footer>
-        </aside>
+  <!-- Модалка выбора аватара -->
+  <div class="modal" id="avatar-modal">
+    <div class="modal-content">
+      <h2>Выбери аватар</h2>
+      <div class="avatar-options">
+        <img src="assets/1.png" class="avatar-choice">
+        <img src="assets/2.webp" class="avatar-choice">
+        <img src="assets/3.jpg" class="avatar-choice">
+        <img src="assets/4.webp" class="avatar-choice">
+        <img src="assets/5.jpg" class="avatar-choice">
+        <img src="assets/6.jpg" class="avatar-choice">
+        <img src="assets/7.jpg" class="avatar-choice">
+      </div>
+      <label class="upload-btn">
+        Upload your avatar
+        <input type="file" id="avatar-input" accept="image/*">
+      </label>
+      <button class="close-btn" id="close-avatar-modal">close</button>
     </div>
-
+  </div>
 </body>
 </html>

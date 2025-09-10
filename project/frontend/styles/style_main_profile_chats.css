@@ -1,13 +1,3 @@
-/* === Правая колонка (список чатов) === */
-.chat-list {
-  flex: 1; /* Занимает всё оставшееся место */
-  background: rgba(0,0,0,0.35); /* Полупрозрачный фон */
-  display: flex; /* Flex-контейнер */
-  flex-direction: column; /* Чаты в колонку */
-  padding: 16px; /* Внутренние отступы */
-  gap: 8px; /* Расстояние между элементами */
-}
-
 /* Блок профиля */
 .chat-list-item.profile {
   display: flex; /* элементы в строку */
@@ -23,19 +13,6 @@
 .chat-list-item.profile:hover { 
   background: rgba(255,255,255,0.8); /* фон становится светлее */
   transform: translateY(-6px); /* лёгкое поднятие */
-}
-
-/* Аватар в списке чатов */
-.avatar-wrapper { 
-  position: relative; /* для индикатора статуса */
-  width: 60px;
-  height: 60px;
-}
-.avatar { 
-  width: 60px;
-  height: 60px;
-  border-radius: 50%; /* круглая форма */
-  object-fit: cover; /* обрезка изображения */
 }
 
 /* Индикатор статуса */
@@ -89,7 +66,10 @@
   text-align: left; /* текст прижат к левому краю */
 }
 
-.sub-btn:hover { background: linear-gradient(135deg,#e0a308,#d47406); }
+.sub-btn:hover { 
+  background: linear-gradient(135deg, #fb8500, #ffb703);
+  transform: translateY(2px);
+}
 
 /* ==== Подпанель со статусами ==== */
 .sub-panel {
@@ -119,8 +99,10 @@
   cursor: pointer;
   text-align: left;
 }
-
-.status-btn:hover { background: rgba(255,255,255,0.25); }
+.status-btn:hover { 
+  background: rgba(255,255,255,0.25);
+  transform: translateX(2px); 
+}
 
 /* ===== Модальное окно ===== */
 .modal {
@@ -135,6 +117,8 @@
 	opacity: 0;
 	visibility: hidden;
 	transition: opacity 0.4s ease, visibility 0.4s ease;
+
+  /* z-index: 999; */
 }
 
 .modal.open {
@@ -144,8 +128,8 @@
 
 /* ===== Контент модалки ===== */
 .modal-content {
-	width: 400px;
-	background: #fff;
+	width: 350px;
+	background: rgb(255, 255, 255, 0.70);
 	border-radius: 16px;
 	padding: 20px;
 	text-align: center;
@@ -153,6 +137,8 @@
 	transform: translateY(40px);
 	opacity: 0;
 	transition: transform 0.4s ease, opacity 0.4s ease;
+
+  /* z-index: 1000; */
 }
 
 .modal.open .modal-content {
