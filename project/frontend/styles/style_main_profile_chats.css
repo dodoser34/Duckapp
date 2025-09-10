@@ -38,7 +38,7 @@
 	overflow: hidden;            /* чтобы содержимое не вылезало */
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 5px;
 	background: rgba(255, 255, 255, 0.55);
 	padding: 0 12px;             /* по бокам оставим отступы */
 	border-radius: 12px;
