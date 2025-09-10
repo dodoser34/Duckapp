@@ -1,36 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Form
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, Request
 from DataBases import db_manager as db
-import jwt, datetime
-
+import jwt, datetime, bcrypt, pymysql, os
 from dotenv import load_dotenv
-load_dotenv()
 
-import bcrypt, pymysql, os
+load_dotenv()
 
 router = APIRouter()
 
-# для получения токена из заголовка Authorization: Bearer <token>
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
-
-SECRET_KEY = f'{os.getenv("JWT_KEY")}'
+SECRET_KEY = os.getenv("JWT_KEY")
 ALGORITHM = "HS256"
 
+
+#! ---------- REGISTER ----------
 @router.post("/register")
-async def register(username: str = Form(...), email: str = Form(...), password: str = Form(...)):
+async def register(response: Response, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
     conn = db.get_connection()
     cursor = conn.cursor()
 
+    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-    # Создаем bcrypt-хеш пароля
-    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-    hashed_str = hashed.decode("utf-8")  # сохраняем в БД как строку
-
-    # Вставляем пользователя в БД
     try:
         cursor.execute(
             "INSERT INTO registered_users (username, email, hashed_password, created_at) VALUES (%s, %s, %s, %s)",
-            (username, email, hashed_str, datetime.datetime.utcnow())
+            (username, email, hashed, datetime.datetime.utcnow())
         )
         conn.commit()
     except pymysql.err.IntegrityError as e:
@@ -42,7 +34,7 @@ async def register(username: str = Form(...), email: str = Form(...), password: 
             raise HTTPException(status_code=400, detail="A user with this email already exists")
         else:
             raise HTTPException(status_code=400, detail="Data uniqueness error")
-    
+
     cursor.close()
     conn.close()
     
@@ -51,12 +43,22 @@ async def register(username: str = Form(...), email: str = Form(...), password: 
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2),
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        max_age=3600,
+        samesite="lax",
+        secure=False
+    )
 
-    return {"access_token": token, "token_type": "bearer"}
+    return {"message": "User registered successfully"}
 
 
+#! ---------- LOGIN ----------
 @router.post("/login")
-async def login(username: str = Form(...), password: str = Form(...)):
+async def login(response: Response, username: str = Form(...), password: str = Form(...)):
     conn = db.get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM registered_users WHERE username = %s", (username,))
@@ -65,41 +67,85 @@ async def login(username: str = Form(...), password: str = Form(...)):
     conn.close()
 
     if not user or not bcrypt.checkpw(password.encode("utf-8"), user["hashed_password"].encode("utf-8")):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect login or password",
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect login or password")
 
-    # создаём JWT токен
     payload = {
         "sub": user["username"],
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2),
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-    return {"access_token": token, "token_type": "bearer"}
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        max_age=3600,
+        samesite="lax",
+        secure=False
+    )
 
-# ---------- Проверка токена ----------
-def get_current_user(token: str = Depends(oauth2_scheme)):
+    return {"message": "Logged in successfully"}
+
+
+#! ---------- LOGOUT ----------
+@router.post("/logout")
+async def logout(response: Response):
+    response.delete_cookie("access_token")
+    return {"message": "Logged out"}
+
+
+#! ---------- Проверка токена ----------
+def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise HTTPException(status_code=401, detail="invalid token")
-
-        # получаем пользователя из БД
-        conn = db.get_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM registered_users WHERE username = %s", (username,))
-        user = cursor.fetchone()
-        cursor.close()
-        conn.close()
-
-        if user is None:
-            raise HTTPException(status_code=401, detail="user not found")
-
-        return user
+        return payload
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="token has expired")
+        raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.PyJWTError:
-        raise HTTPException(status_code=401, detail="invalid token")
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def get_token_from_cookie(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return token
+
+
+#! ---------- /me ----------
+@router.get("/me")
+def get_me(token: str = Depends(get_token_from_cookie)):
+    payload = verify_token(token)
+    username: str = payload.get("sub")
+
+    conn = db.get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, email, created_at FROM registered_users WHERE username = %s", (username,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
+
+
+
+def get_current_user(request: Request):
+    token = get_token_from_cookie(request)
+    payload = verify_token(token)
+    username = payload.get("sub")
+
+    conn = db.get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, email, created_at FROM registered_users WHERE username = %s", (username,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
+

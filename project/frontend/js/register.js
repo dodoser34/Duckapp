@@ -1,4 +1,4 @@
-import { registerUser } from "./api.js";
+import { registerUser, checkToken } from "./api.js";
 
 const form = document.getElementById("registerForm");
 const msg = document.getElementById("errorMsg");
@@ -16,15 +16,15 @@ form.addEventListener("submit", async (e) => {
 		return;
 	}
 	
-	const { ok, result } = await registerUser(
-		username,
-		email,
-		password
-	);
+	const { ok, result } = await registerUser(username,email,password);
 
 	if (ok) {
-		localStorage.setItem("token", result.access_token);
-		window.location = "main_chat.html";
+		const check = await checkToken();
+		if (check.ok) {
+			window.location = "main_chat.html";
+		} else {
+			msg.textContent = "❌ Ошибка при проверке сессии: " + (check.result.detail || "");
+		}
 	} else {
 		msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
 	}

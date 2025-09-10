@@ -80,13 +80,19 @@ body {
   border: none; /* Без рамки */
   border-radius: 12px; /* Скругленные углы */
   padding: 10px; /* Внутренние отступы */
-  background: rgba(255,255,255,0.9); /* Светлый фон */
+  background: rgba(255, 255, 255, 0.9); /* Светлый фон */
+}
+
+
+.chat-input input:focus {
+  outline: none; /* Убираем стандартную синюю обводку */
+  border: 2px solid #ffee00; /* Добавляем жёлтую рамку */
 }
 
 /* Кнопка отправки */
 .chat-input button {
   margin-left: 8px; /* Отступ слева */
-  border: none; /* Без рамки */
+  border: 2px; /* Без рамки */
   border-radius: 12px; /* Скругленные углы */
   padding: 10px 16px; /* Отступы */
   cursor: pointer; /* Курсор-рука */
