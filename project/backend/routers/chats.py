@@ -51,23 +51,6 @@ async def get_chats(user=Depends(get_current_user)):
     conn.close()
     return {"ok": True, "result": {"groups": groups, "friends": friends}}
 
-# ---------------- CREATE GROUP ----------------
-@router.post("/chats/create_group")
-async def create_group(name: str = Form(...), description: str = Form(None), user=Depends(get_current_user)):
-    conn = db.get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("INSERT INTO groups (name, description, created_by) VALUES (%s,%s,%s)",
-                (name, description, user["id"]))
-    group_id = cursor.lastrowid
-
-    cursor.execute("INSERT INTO group_members (group_id, user_id) VALUES (%s,%s)", (group_id, user["id"]))
-
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return {"ok": True, "result": {"id": group_id, "name": name}}
-
 # ---------------- SEARCH USERS ----------------
 @router.get("/users/search")
 async def search_users(q: str, user=Depends(get_current_user)):
