@@ -119,8 +119,23 @@ def get_me(token: str = Depends(get_token_from_cookie)):
     username: str = payload.get("sub")
 
     conn = db.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT username, email, created_at FROM registered_users WHERE username = %s", (username,))
+    cursor = conn.cursor(pymysql.cursors.DictCursor)  # чтобы сразу dict приходил
+
+    # JOIN для профиля
+    cursor.execute("""
+        SELECT 
+            ru.id, 
+            ru.username, 
+            ru.email, 
+            ru.created_at,
+            up.names,
+            up.avatar,
+            up.status
+        FROM registered_users ru
+        LEFT JOIN user_profiles up ON ru.id = up.user_id
+        WHERE ru.username = %s
+    """, (username,))
+    
     user = cursor.fetchone()
     cursor.close()
     conn.close()
@@ -128,7 +143,16 @@ def get_me(token: str = Depends(get_token_from_cookie)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return user
+    return {
+        "id": user["id"],
+        "username": user["username"],
+        "email": user["email"],
+        "created_at": user["created_at"],
+        "names": user.get("names") or user["username"],  # если профиля нет → username
+        "avatar": user.get("avatar") or "../assets/avatar_1.png",  # дефолтная аватарка
+        "status": user.get("status") or "online"
+    }
+
 
 
 

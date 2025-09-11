@@ -1,40 +1,73 @@
-/* chat_input.css */
-
-/* Поле ввода сообщения */
+/* Контейнер ввода */
 .chat-input {
-  display: flex; /* Элементы в строку */
-  padding: 12px; /* Внутренние отступы */
-  background: rgba(0,0,0,0.3); /* Прозрачный фон */
+  display: flex;
+  align-items: center;       /* выравниваем ВСЕ элементы по центру */
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.chat-input input {
+/* Поле ввода */
+.chat-input textarea {
+  height: 25px;
   flex: 1;
+  resize: none;
+  padding: 8px 12px;
   border: none;
   border-radius: 12px;
-  padding: 10px;
+  font-size: 15px;
+  line-height: 1.4;
   background: rgba(255, 255, 255, 0.9);
-  font-size: 16px;
-  transition: border 0.3s ease;
+  transition: border 0.3s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;          /* выравнивание текста по центру */
 }
 
-.chat-input input:focus {
+.chat-input textarea:focus {
   outline: none;
-  border: 1px solid #ffee00;
 }
 
+/* Общий стиль кнопок */
 .chat-input button {
-  margin-left: 8px;
+  min-width: 44px;
+  height: 40px;                 /* одинаковая высота с textarea */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   border-radius: 12px;
-  padding: 10px 16px;
+  padding: 0 12px;
   cursor: pointer;
-  background: linear-gradient(135deg,#ffb703,#fb8500);
-  color: white;
-  font-weight: bold;
   font-size: 16px;
-  transition: background 0.3s ease;
+  font-weight: bold;
+  color: #fff;
+  transition: background 0.3s ease, transform 0.15s ease;
 }
 
-.chat-input button:hover {
-  background: linear-gradient(135deg,#fb8500,#ffb703);
+/* Кнопка отправки 🦆 */
+#send-btn {
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+}
+#send-btn:hover {
+  background: linear-gradient(135deg, #fb8500, #ffb703);
+  transform: scale(1.05);
+}
+
+/* Кнопка GIF */
+#sendgif-btn {
+  background: linear-gradient(135deg, #8338ec, #3a86ff);
+}
+#sendgif-btn:hover {
+  background: linear-gradient(135deg, #3a86ff, #8338ec);
+  transform: scale(1.05);
+}
+
+/* Кнопка смайлов */
+#sendsmale-btn {
+  background: linear-gradient(135deg, #06d6a0, #118ab2);
+}
+#sendsmale-btn:hover {
+  background: linear-gradient(135deg, #118ab2, #06d6a0);
+  transform: scale(1.05);
 }

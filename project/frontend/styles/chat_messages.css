@@ -1,0 +1,73 @@
+.chat-messages {
+  word-wrap: break-word;
+  flex: 1; /* Занимает всё оставшееся место */
+  padding: 15px; /* Отступы */
+  overflow-y: auto; /* Вертикальная прокрутка */
+  background: rgba(0,0,0,0.7); /* Тёмный фон */
+  display: flex; /* Flex-контейнер */
+  flex-direction: column; /* Сообщения идут вертикально */
+}
+
+/* Пустое состояние */
+.empty-chat.muted {
+  color: #8a8f98;
+  padding: 16px;
+  text-align: center;
+}
+
+/* Ряд сообщения (контейнер) */
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+}
+
+/* Выравнивание по правому/левому краю */
+.message-row.user { justify-content: flex-end; }
+.message-row.bot  { justify-content: flex-start; }
+
+/* Аватар (опционально для бота/собеседника) */
+.msg-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 8px;
+  flex: 0 0 36px;
+}
+
+/* Пузырёк сообщения */
+.msg-bubble {
+  max-width: 75%;
+  padding: 10px 12px;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  word-break: break-word;
+  display: inline-block;
+  transform: translateY(6px);
+  opacity: 0;
+  animation: msgIn 160ms ease forwards;
+}
+
+/* Стили для пользователя (правый пузырёк) */
+.message-row.user .msg-bubble {
+  background: linear-gradient(180deg,#0b84ff,#066bdb);
+  color: #fff;
+  border-bottom-right-radius: 8px;
+}
+
+/* Стили для бота/других (левый пузырёк) */
+.message-row.bot .msg-bubble {
+  background: #eef2f6; 
+  color: #111;
+  border-bottom-left-radius: 8px;
+}
+
+/* Текст и мета (время) */
+.msg-text { white-space: pre-wrap; }
+.msg-meta {
+  font-size: 11px;
+  margin-top: 6px;
+  opacity: 0.65;
+  text-align: right;
+}

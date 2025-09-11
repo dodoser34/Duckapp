@@ -30,8 +30,13 @@ form.addEventListener("submit", async (e) => {
 	}
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 	const userLang = (navigator.language || "en").substring(0, 2);
+
+	const check = await checkToken();
+	if (check.ok) {
+		window.location = "main_chat.html";
+	}
 
 	const translations = {
     en: {

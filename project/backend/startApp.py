@@ -28,6 +28,12 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/auth")
 app.include_router(chats.router, prefix="/api")
 
+from fastapi.staticfiles import StaticFiles
+
+app.mount("/assets", StaticFiles(directory=r"project/frontend/html/assets"), name="assets")
+
+
+
 @app.get("/api/users/me")
 async def read_me(user=Depends(get_current_user)):
     return user

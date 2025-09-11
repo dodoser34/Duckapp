@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DuckApp/chat</title>
+  <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
+  <title>Чат DuckApp</title>
 
   <link rel="stylesheet" href="../styles/style_main_chat.css">
   <link rel="stylesheet" href="../styles/style_main_profile_chats.css">
@@ -11,20 +12,24 @@
   <link rel="stylesheet" href="../styles/chat_input.css">
   <link rel="stylesheet" href="../styles/chat_menu_header.css">
   <link rel="stylesheet" href="../styles/chat_friends.css">
+  <link rel="stylesheet" href="../styles/chat_messages.css">
+
 
   <script type="module" src="../js/chat_header.js" defer></script>
   <script type="module" src="../js/chat_input.js" defer></script>
   <script type="module" src="../js/main_profile_chats.js" defer></script>
   <script type="module" src="../js/checkSession.js" defer></script>
+  <script type="module" src="../js/chat_logic.js" defer></script>
+  <script type="module" src="../js/chat/profile.js" defer></script>
 </head>
 
 <body>
   <div class="chat-wrapper">
     <div class="chat-box">
-      <!-- Шапка -->
+      <!--! Шапка -->
       <div class="chat-header">
         <div class="chat-header-left">
-          <img src="none" alt="Аватар" class="avatar" id="header-avatar">
+          <!--! <img src="none" alt="Аватар" class="avatar" id="header-avatar"> -->
           <div class="chat-header-text">
             <div id="chat-title" class="chat-title">Чат</div>
             <div class="chat-subtitle">Нет подключения</div>
@@ -33,36 +38,36 @@
         <div class="chat-header-actions">
           <button class="header-icon-btn" id="menu-toggle">⋮</button>
           <div class="chat-menu" id="chat-menu">
-            <button class="menu-item" id="delete-chat">🗑️ Удалить чат</button>
             <button class="menu-item" id="rename-chat">📝 Переименовать</button>
+            <button class="menu-item" id="delete-chat">🗑️ Удалить чат</button>
           </div>
         </div>
       </div>
 
-      <!-- Сообщения -->
+      <!--! Сообщения -->
       <div class="chat-messages" id="chat-body">
         <div class="empty-chat muted">Выберите чат справа 👉</div>
       </div>
 
       <!-- Ввод -->
       <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Напишите текст ...">
+        <textarea id="message-input" placeholder="Напишите сообщение..." rows="1"></textarea>
         <button id="sendgif-btn">GIF</button>
         <button id="sendsmale-btn">😄</button>
         <button id="send-btn">🦆</button>
       </div>
     </div>
 
-    <!-- Правая колонка -->
+    <!--! Правая колонка -->
     <aside class="chat-list">
       <div class="chat-list-item profile" id="profile-toggle">
         <div class="avatar-wrapper">
-          <img src="../assets/avatar_3.png" class="avatar" id="profile-avatar">
+          <img src="" class="avatar" id="profile-avatar">
           <span class="status-indicator" id="status-indicator"></span>
         </div>
         <div>
-          <div class="name" id="profile-name">User_name</div>
-          <div class="status muted" id="profile-status">В сети</div>
+          <div class="name" id="profile-name"> </div>
+          <div class="status muted" id="profile-status"> </div>
         </div>
       </div>
 
@@ -76,10 +81,10 @@
         <button class="sub-btn" id="open-avatar-modal">Изменить аватарку</button>
       </div>
 
-      <!-- Чат ntcn -->
+      <!--! Чат ntcn -->
       <div class="chat-list-item" data-id="duck123" data-name="Уточка Иван" data-avatar="../assets/avatar_2.png" data-status="Онлайн">
         <div class="avatar-wrapper">
-          <img src="../assets/avatar_2.png" class="avatar">
+          <img src="../html/assets/avatar_2.png" class="avatar">
           <span class="status-indicator-2" id="status-indicator_2"></span>
         </div>
         <div>
@@ -111,16 +116,16 @@
     <div class="modal-content">
       <h2>Выбери аватар</h2>
       <div class="avatar-options">
-        <img src="../assets/avatar_1.png" class="avatar-choice">
-        <img src="../assets/avatar_2.png" class="avatar-choice">
-        <img src="../assets/avatar_3.png" class="avatar-choice">
-        <img src="../assets/avatar_4.png" class="avatar-choice">
-        <img src="../assets/avatar_5.png" class="avatar-choice">
-        <img src="../assets/avatar_6.png" class="avatar-choice">
-        <img src="../assets/avatar_7.png" class="avatar-choice">
-        <img src="../assets/avatar_8.png" class="avatar-choice">
-        <img src="../assets/avatar_9.png" class="avatar-choice">
-        <img src="../assets/avatar_10.png" class="avatar-choice">
+        <img src="../html/assets/avatar_1.png" class="avatar-choice">
+        <img src="../html/assets/avatar_2.png" class="avatar-choice">
+        <img src="../html/assets/avatar_3.png" class="avatar-choice">
+        <img src="../html/assets/avatar_4.png" class="avatar-choice">
+        <img src="../html/assets/avatar_5.png" class="avatar-choice">
+        <img src="../html/assets/avatar_6.png" class="avatar-choice">
+        <img src="../html/assets/avatar_7.png" class="avatar-choice">
+        <img src="../html/assets/avatar_8.png" class="avatar-choice">
+        <img src="../html/assets/avatar_9.png" class="avatar-choice">
+        <img src="../html/assets/avatar_10.png" class="avatar-choice">
       </div>
       <label class="upload-btn">
         Upload your avatar

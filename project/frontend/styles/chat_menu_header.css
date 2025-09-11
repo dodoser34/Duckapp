@@ -51,7 +51,6 @@
   border: none;
   background: linear-gradient(135deg,#ffb703,#fb8500);
   color: white;
-  font-weight: 500;
   padding: 10px 14px;
   margin: 4px 8px;
   border-radius: 10px;
@@ -62,7 +61,7 @@
 
 .chat-menu .menu-item:hover {
   background: linear-gradient(135deg, #fb8500, #ffb703);
-  transform: translateX(2px);
+  transform: translateX(-2px);
 }
 
 .hidden {

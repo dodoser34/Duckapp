@@ -52,12 +52,7 @@ body {
   overflow-y: auto;
 }
 
-/* Пустой чат (надпись при отсутствии сообщений) */
-.empty-chat {
-  color: #bbb; /* Серый текст */
-  text-align: center; /* По центру */
-  margin-top: 50px; /* Отступ сверху */
-}
+
 
 /* Аватар в списке чатов */
 .avatar-wrapper { 

@@ -17,6 +17,7 @@ form.addEventListener("submit", async (e) => {
             window.location = "main_chat.html";
         } else {
             msg.textContent = "❌ Ошибка при проверке сессии: " + (check.result.detail || "");
+            console.error("Session check error:", check.result);
         }
     } else {
         msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
@@ -26,6 +27,11 @@ form.addEventListener("submit", async (e) => {
 document.addEventListener("DOMContentLoaded", async () => {
 
     const userLang = (navigator.language || "en").substring(0, 2);
+
+    const check = await checkToken();
+        if (check.ok) {
+            window.location = "main_chat.html";
+        }
 
     const translations = {
     en: {
