@@ -10,7 +10,7 @@
 
 /* Поле ввода */
 .chat-input textarea {
-  height: 25px;
+  height: 40px;
   flex: 1;
   resize: none;
   padding: 8px 12px;
@@ -30,8 +30,8 @@
 
 /* Общий стиль кнопок */
 .chat-input button {
-  min-width: 44px;
-  height: 40px;                 /* одинаковая высота с textarea */
+  min-width: 48px;
+  height: 48px;                 /* одинаковая высота с textarea */
   display: flex;
   align-items: center;
   justify-content: center;

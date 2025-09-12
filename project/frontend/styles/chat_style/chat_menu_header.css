@@ -3,20 +3,6 @@
   position: relative;
 }
 
-.header-icon-btn {
-  font-size: 24px;
-  color: #fff;
-  padding: 8px 16px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  overflow: hidden;
-  z-index: 100;
-}
-
 /* Само меню */
 .chat-menu {
   position: absolute;
