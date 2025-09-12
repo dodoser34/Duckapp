@@ -53,29 +53,6 @@ def init_db():
     )
     """)
 
-    # Groups
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS groups (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        description TEXT,
-        avatar VARCHAR(255),
-        created_by INT NOT NULL,
-        FOREIGN KEY (created_by) REFERENCES registered_users(id)
-    )
-    """)
-
-    # Group members
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS group_members (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        group_id INT NOT NULL,
-        user_id INT NOT NULL,
-        FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
-        FOREIGN KEY (user_id) REFERENCES registered_users(id) ON DELETE CASCADE
-    )
-    """)
-
     # Messages
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS messages (
