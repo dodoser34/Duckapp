@@ -22,9 +22,8 @@
   right: 0; /* справа */
   width: 16px; 
   height: 16px;
-  border: 2px solid #fff; /* белая обводка */
+  border: 2px solid #fff; 
   border-radius: 50%; /* круг */
-  background: #2ecc71; /* зелёный цвет (онлайн) */
 }
 
 /* Имя и статус */
@@ -33,12 +32,13 @@
 
 /* ==== Панель профиля ==== */
 .profile-panel {
+  margin-top: 0;
 	max-height: 0;               /* изначально скрыта */
 	opacity: 0;
 	overflow: hidden;            /* чтобы содержимое не вылезало */
 	display: flex;
+
 	flex-direction: column;
-	gap: 5px;
 	background: rgba(255, 255, 255, 0.55);
 	padding: 0 12px;             /* по бокам оставим отступы */
 	border-radius: 12px;
@@ -55,6 +55,7 @@
 
 /* Кнопки в панели */
 .sub-btn {
+  margin-top: 8px;
   padding: 10px;
   border: none;
   border-radius: 8px;
@@ -78,7 +79,6 @@
   overflow: hidden;         /* скрываем содержимое */
   display: flex;
   flex-direction: column;
-  gap: 6px;
   transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
   padding: 0;               /* убираем отступы */
 }
@@ -86,12 +86,12 @@
 .sub-panel.open {
   max-height: 200px;        /* достаточно для кнопок */
   opacity: 1;
-  padding: 0px 0;           /* добавляем отступы при открытии */
 }
 
 /* Кнопки выбора статуса */
 .status-btn {
-  padding: 8px;
+  margin-top: 8px;
+  padding: 10px; /* как у sub-btn */
   border: none;
   border-radius: 8px;
   background: rgba(255,255,255,0.2);
@@ -113,7 +113,6 @@
 	justify-content: center;
 	background: rgba(0, 0, 0, 0.55);
 	backdrop-filter: blur(4px);
-
 	opacity: 0;
 	visibility: hidden;
 	transition: opacity 0.4s ease, visibility 0.4s ease;
@@ -201,4 +200,13 @@
 .close-btn:hover { background: #bbb;
   transform: scale(1.05); /* увеличивается на 5% */
   transition: transform 0.4s, box-shadow 0.4s;
+}
+
+.logout-btn {
+  background: linear-gradient(135deg,#d00000,#ff1e00);
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg,#ff1e00,#d00000);
+  transform: translateY(2px);
 }

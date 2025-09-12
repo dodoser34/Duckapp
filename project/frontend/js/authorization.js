@@ -17,7 +17,6 @@ form.addEventListener("submit", async (e) => {
             window.location = "main_chat.html";
         } else {
             msg.textContent = "❌ Ошибка при проверке сессии: " + (check.result.detail || "");
-            console.error("Session check error:", check.result);
         }
     } else {
         msg.textContent = "❌ Error: " + (result.detail || "Unknown error");

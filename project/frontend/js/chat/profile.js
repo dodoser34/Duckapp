@@ -1,16 +1,15 @@
-import { checkToken } from "../api.js";   // ✅ правильный импорт
+import { setupAvatarChange } from "./changeAvatar.js";
+setupAvatarChange();
 
-document.addEventListener("DOMContentLoaded", async () => {
+export async function getProfile(ok, result) {
+
     const profileName = document.getElementById("profile-name");
-    const profileAvatar = document.getElementById("profile-avatar"); // без .src, получаем сам <img>
+    const profileAvatar = document.getElementById("profile-avatar"); 
     const statusIndicator = document.getElementById("status-indicator");
 
-    const headerName = document.getElementById("chat-title");
     const headerAvatar = document.getElementById("header-avatar");
 
     try {
-        const { ok, result } = await checkToken();
-
         if (!ok) throw new Error(result.detail || "Ошибка авторизации");
 
         // result = данные из /me
@@ -50,13 +49,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const colors = {
             online: "#2ecc71",
-            invisible: "gray",
-            dnd: "red",
-            offline: "black",
+            invisible: "#888",
+            dnd: "#e74c3c",
+            offline: "#888",
         };
 
         document.getElementById("profile-status").textContent =
             statuses[status] || "Неизвестно";
         statusIndicator.style.background = colors[status] || "gray";
     }
-});
+}
+

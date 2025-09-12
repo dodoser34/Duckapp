@@ -7,6 +7,12 @@ if (!chatBody || !messageInput || !sendBtn) {
 } else {
 
   // Включаем/выключаем кнопку отправки в зависимости от текста
+  function autoResizeTextarea() {
+    messageInput.style.height = "auto";
+    messageInput.style.height = messageInput.scrollHeight + "px";
+  }
+
+  // Включаем/выключаем кнопку отправки в зависимости от текста
   function updateSendButtonState() {
     sendBtn.disabled = !messageInput.value.trim();
   }
@@ -58,7 +64,7 @@ if (!chatBody || !messageInput || !sendBtn) {
       const avatar = document.createElement('img');
       avatar.className = 'msg-avatar';
       // можно подставить реальный путь к аватарке чата, если есть
-      avatar.src = '../assets/avatar_2.png';
+      avatar.src = '../html/assets/avatar_2.png';
       avatar.alt = 'avatar';
       row.appendChild(avatar);
     }

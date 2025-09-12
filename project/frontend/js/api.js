@@ -36,15 +36,13 @@ export async function checkToken() {
   try {
     const res = await fetch(`${API_URL}/me`, {
       credentials: "include",
-      cache: "no-store" // 🚀 браузер не будет кэшировать
+      cache: "no-store"
     });
 
-    // Если токен невалидный или 401 → даже не парсим JSON
     if (!res.ok) {
       return { ok: false, result: { detail: res.statusText || "Unauthorized" } };
     }
 
-    // Только если ok → парсим JSON
     return { ok: true, result: await res.json() };
   } catch (err) {
     return { ok: false, result: { detail: err.message } };

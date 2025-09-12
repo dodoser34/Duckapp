@@ -3,7 +3,7 @@ from DataBases import db_manager as db
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from routers import auth, chats
+from routers import auth, chats, profile
 from routers.auth import get_current_user
 
 
@@ -27,6 +27,7 @@ app.add_middleware(
 # Подключаем маршруты авторизации
 app.include_router(auth.router, prefix="/api/auth")
 app.include_router(chats.router, prefix="/api")
+app.include_router(profile.router, prefix="/api")
 
 from fastapi.staticfiles import StaticFiles
 

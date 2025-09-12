@@ -14,13 +14,16 @@
   <link rel="stylesheet" href="../styles/chat_friends.css">
   <link rel="stylesheet" href="../styles/chat_messages.css">
 
-
   <script type="module" src="../js/chat_header.js" defer></script>
   <script type="module" src="../js/chat_input.js" defer></script>
-  <script type="module" src="../js/main_profile_chats.js" defer></script>
   <script type="module" src="../js/checkSession.js" defer></script>
   <script type="module" src="../js/chat_logic.js" defer></script>
+
+  <script type="module" src="../js/chat/changeStats.js" defer></script>
   <script type="module" src="../js/chat/profile.js" defer></script>
+
+  <script type="module" src="../js/chat/logoutProfile.js" defer></script>
+
 </head>
 
 <body>
@@ -29,7 +32,7 @@
       <!--! Шапка -->
       <div class="chat-header">
         <div class="chat-header-left">
-          <!--! <img src="none" alt="Аватар" class="avatar" id="header-avatar"> -->
+          <!-- <img src="none" alt="Аватар" class="avatar" id="header-avatar"> -->
           <div class="chat-header-text">
             <div id="chat-title" class="chat-title">Чат</div>
             <div class="chat-subtitle">Нет подключения</div>
@@ -79,6 +82,7 @@
           <button class="status-btn" data-status="dnd">⛔ Не беспокоить</button>
         </div>
         <button class="sub-btn" id="open-avatar-modal">Изменить аватарку</button>
+        <button class="sub-btn logout-btn" id="logout-btn">Выйти</button>
       </div>
 
       <!--! Чат тест -->

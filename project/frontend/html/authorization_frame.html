@@ -13,37 +13,28 @@
 </head>
 
 <body>
-    <!-- Основной контейнер формы авторизации -->
     <div class="authorization-container">
-        <!-- Логотип -->
         <div class="logo">🦆</div>
 
-        <!-- Заголовок формы -->
         <h2>Authorization in DuckApp</h2>
 
-        <!-- Форма авторизации -->
         <form id="loginForm" autocomplete="on">
             
-            <!-- Поле ввода логина -->
             <div class="input-group">
                 <input type="text" id="username" placeholder="" required>
                 <label>Username</label>
             </div>
         
-            <!-- Поле ввода пароля -->
             <div class="input-group" autocomplete="on">
                 <input type="password" id="password" placeholder="" required>
                 <label>Password</label>
             </div>
         
-            <!-- Кнопка входа -->
             <button type="submit">Login</button>
         </form>
 
-        <!-- Блок для вывода ошибок -->
         <div class="error" id="errorMsg"></div>
 
-        <!-- Ссылка на регистрацию -->
         <span class="noAccountToRegister">
             Don't have an account? <a href="register_frame.html">Sign up</a>
         </span>
