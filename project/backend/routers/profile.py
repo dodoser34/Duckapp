@@ -42,7 +42,7 @@ def update_profile(
             cursor.execute("UPDATE user_profiles SET avatar = %s WHERE user_id = %s", (data.avatar, user_id))
     else:
         cursor.execute("INSERT INTO user_profiles (user_id, status, avatar) VALUES (%s, %s, %s)",
-                       (user_id, data.status or "online", data.avatar or "avatar_1.png"))
+                    (user_id, data.status or "online", data.avatar or "avatar_1.png"))
 
     conn.commit()
     cursor.close()
