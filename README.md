@@ -32,7 +32,7 @@
 
 <h2>🧭 Tech Stack</h2>
 <ul>
-  <li><strong>Frontend:</strong> HTML, CSS (Flexbox / Grid), JavaScript (ES6 modules)</li>
+  <li><strong>Frontend:</strong> HTML, CSS , JavaScript</li>
   <li><strong>Backend:</strong> Python + FastAPI</li>
   <li><strong>Database:</strong> MySQL</li>
 </ul>
