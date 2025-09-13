@@ -48,5 +48,3 @@ export async function checkToken() {
     return { ok: false, result: { detail: err.message } };
   }
 }
-
-//! ----------  ----------

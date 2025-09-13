@@ -10,7 +10,6 @@ router = APIRouter()
 SECRET_KEY = os.getenv("JWT_KEY")
 ALGORITHM = "HS256"
 
-
 #! ---------- REGISTER ----------
 @router.post("/register")
 async def register(response: Response, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
@@ -55,7 +54,6 @@ async def register(response: Response, username: str = Form(...), email: str = F
 
     return {"message": "User registered successfully"}
 
-
 #! ---------- LOGIN ----------
 @router.post("/login")
 async def login(response: Response, username: str = Form(...), password: str = Form(...)):
@@ -86,13 +84,11 @@ async def login(response: Response, username: str = Form(...), password: str = F
 
     return {"message": "Logged in successfully"}
 
-
 #! ---------- LOGOUT ----------
 @router.post("/logout")
 async def logout(response: Response):
     response.delete_cookie("access_token")
     return {"message": "Logged out"}
-
 
 #! ---------- Проверка токена ----------
 def verify_token(token: str):
@@ -104,13 +100,11 @@ def verify_token(token: str):
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-
 def get_token_from_cookie(request: Request):
     token = request.cookies.get("access_token")
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     return token
-
 
 #! ---------- /me ----------
 @router.get("/me")
@@ -152,9 +146,6 @@ def get_me(token: str = Depends(get_token_from_cookie)):
         "avatar": user.get("avatar") or "../assets/avatar_1.png",  # дефолтная аватарка
         "status": user.get("status") or "online"
     }
-
-
-
 
 def get_current_user(request: Request):
     token = get_token_from_cookie(request)

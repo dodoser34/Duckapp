@@ -33,12 +33,9 @@ from fastapi.staticfiles import StaticFiles
 
 app.mount("/assets", StaticFiles(directory=r"project/frontend/html/assets"), name="assets")
 
-
-
 @app.get("/api/users/me")
 async def read_me(user=Depends(get_current_user)):
     return user
-
 
 if __name__ == "__main__":
     import uvicorn
