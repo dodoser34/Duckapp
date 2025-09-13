@@ -59,4 +59,3 @@ export async function getProfile(ok, result) {
         statusIndicator.style.background = colors[status] || "gray";
     }
 }
-
