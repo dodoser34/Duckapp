@@ -1,5 +1,4 @@
-# DuckApp
-<h1>DuckApp 🦆</h1>
+# DuckApp 🦆
 
 <p><strong>DuckApp — a playful and vibrant web messenger</strong></p>
 
@@ -25,7 +24,6 @@
 <ul>
   <li>Chat list with avatars and online/offline statuses</li>
   <li>Chat window with message history and timestamps</li>
-  <li>Profile and settings modals</li>
   <li>Smooth open/close animations for panels</li>
   <li>API for user registration/authentication and message sending</li>
 </ul>
