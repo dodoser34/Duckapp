@@ -4,27 +4,6 @@ from routers.auth import get_current_user
 
 router = APIRouter()
 
-# ---------------- PROFILE ----------------
-@router.post("/profile/update")
-async def update_profile(name: str = Form(None), status: str = Form(None), user=Depends(get_current_user)):
-    conn = db.get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id FROM user_profiles WHERE user_id=%s", (user["id"],))
-    profile = cursor.fetchone()
-
-    if profile:
-        cursor.execute("UPDATE user_profiles SET name=%s, status=%s WHERE user_id=%s",
-                    (name, status, user["id"]))
-    else:
-        cursor.execute("INSERT INTO user_profiles (user_id, name, status) VALUES (%s,%s,%s)",
-                    (user["id"], name, status))
-
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return {"ok": True, "result": {"name": name, "status": status}}
-
 # ---------------- CHATS LIST ----------------
 @router.get("/chats")
 async def get_chats(user=Depends(get_current_user)):
