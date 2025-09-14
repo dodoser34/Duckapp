@@ -114,8 +114,7 @@
 
 /* Уникальный контейнер контента */
 #add-friend-modal .add-friend-content {
-  width: 320px;
-  height: 160px;
+  width: 350px;
   background: #1e1e1e;
   border: 2px solid #ffee00;
   border-radius: 12px;

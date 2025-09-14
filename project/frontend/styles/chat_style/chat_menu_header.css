@@ -63,7 +63,7 @@
 
 .rename-content {
   width: 320px;
-  background: #222; /* тёмный фон */
+  background: rgb(34, 34, 34); /* тёмный фон */
   border: 2px solid #ffee00; /* жёлтая рамка */
   border-radius: 12px;
   padding: 20px;

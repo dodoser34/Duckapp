@@ -13,14 +13,13 @@
   <link rel="stylesheet" href="../styles/chat_style/chat_menu_header.css">
   <link rel="stylesheet" href="../styles/chat_style/chat_friends.css">
   <link rel="stylesheet" href="../styles/chat_style/chat_add_friend.css">
-  <!-- <link rel="stylesheet" href="../styles/chat_style/chat_messages.css"> -->
+  <link rel="stylesheet" href="../styles/chat_style/chat_messages.css">
 
   <script type="module" src="../js/chat/chat_header.js" defer></script>
-  <script type="module" src="../js/addFriend.js" defer></script>
+  <script type="module" src="../js/chat/addFriend.js" defer></script>
   <script type="module" src="../js/chat/changeStats.js" defer></script>
   <script type="module" src="../js/chat/profile.js" defer></script>
   <script type="module" src="../js/chat/logoutProfile.js" defer></script>
-
   <script type="module" src="../js/chat/chat_logic.js" defer></script>
 
   <script type="module" src="../js/checkSession.js" defer></script>
@@ -47,6 +46,41 @@
         </div>
       </div>
 
+
+
+
+
+
+
+
+
+
+
+<!-- НУЖНО СДЕЛАТЬ:
+1. Убрать из проекта файл chat_router.js и все связанные с ним импорты и использования в других файлах.
+2. В файле main_chat.html:
+   - В шапке страницы изменить заголовок на "Чат DuckApp".
+   - В текстовом поле ввода сообщения добавить атрибут maxlength="3000" для ограничения длины сообщения.
+3. СДЕЛАТЬ ЧТОБ МОДАЛКА В ПРОФИЛЕ ПРИ ОТКРЫТИИ БЫЛА РАЗВЕРНУТА на 100%, а не сворачивалась и не важно сколько друзей чтоб не наслайвалось друг на друга и не перекрывалось. -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       <!--! Сообщения -->
       <div class="chat-messages" id="chat-body">
         <div class="empty-chat muted">Выберите чат справа 👉</div>
@@ -54,7 +88,7 @@
 
       <!-- Ввод -->
       <div class="chat-input">
-        <textarea id="message-input" placeholder="Напишите сообщение..." rows="1"></textarea>
+        <textarea id="message-input" placeholder="Напишите сообщение..." rows="1" maxlength="3000"></textarea>
         <button id="sendgif-btn">GIF</button>
         <button id="sendsmale-btn">😄</button>
         <button id="send-btn">🦆</button>
@@ -82,7 +116,7 @@
           <button class="status-btn" data-status="dnd">⛔ Не беспокоить</button>
         </div>
         <button class="sub-btn" id="open-avatar-modal">Изменить аватарку</button>
-        <button class="sub-btn logout-btn" id="logout-btn">Выйти</button>
+        <button class="sub-btn logout-btn" id="logout-btn">Выйти из учетной записи</button>
       </div>
 
     <div class="friends-panel-wrapper">
@@ -123,7 +157,7 @@
   <div id="add-friend-modal" class="modal">
     <div class="add-friend-content">
       <h2>Добавить друга</h2>
-      <input type="text" id="friend-search" placeholder="Ник или ID друга" />
+      <input type="text" id="friend-search" placeholder="Ник или ID друга"  maxlength="18" required/>
       <div class="add-friend-buttons">
         <button id="search-friend-btn">Найти</button>
         <button id="close-add-friend">Отмена</button>
@@ -136,7 +170,7 @@
   <div id="rename-modal" class="modal rename-modal">
     <div class="modal-content rename-content">
       <h3>Введите новое имя</h3>
-      <input type="text" id="rename-input" placeholder="Новое имя" maxlength="41"/>
+      <input type="text" id="rename-input" placeholder="Новое имя" maxlength="18"/>
       <div class="modal-buttons">
         <button id="rename-confirm">Сохранить</button>
         <button id="rename-cancel">Отмена</button>
@@ -164,7 +198,6 @@
         Upload your avatar
         <input type="file" id="avatar-input" accept="image/*">
       </label>
-      <button class="close-btn" id="close-avatar-modal">close</button>
     </div>
   </div>
 </body>

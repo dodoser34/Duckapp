@@ -27,7 +27,7 @@
             
             <!-- Поле ввода имени пользователя -->
             <div class="input-group">
-                <input type="text" id="username" name="username" placeholder=" " required>
+                <input type="text" id="username" name="username" placeholder=" " maxlength="21" required>
                 <label for="username">Username</label>
             </div>
 
@@ -39,13 +39,13 @@
 
             <!-- Поле ввода пароля -->
             <div class="input-group">
-                <input type="password" id="password" name="password" placeholder=" " required>
+                <input type="password" id="password" name="password" placeholder=" " minlength="3" required>
                 <label for="password">Password</label>
             </div>
 
             <!-- Поле подтверждения пароля -->
             <div class="input-group">
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " required>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " minlength="3" required>
                 <label for="confirmPassword">Confirm Password</label>
             </div>
 

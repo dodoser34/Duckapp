@@ -37,20 +37,18 @@
 	opacity: 0;
 	overflow: hidden;            /* чтобы содержимое не вылезало */
 	display: flex;
-
 	flex-direction: column;
 	background: rgba(255, 255, 255, 0.55);
 	padding: 0 12px;             /* по бокам оставим отступы */
 	border-radius: 12px;
 	color: white;
-
 	transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
 }
 
 .profile-panel.open {
 	max-height: 500px;           /* достаточно большое значение */
 	opacity: 1;
-	padding: 10px;               /* возвращаем отступы */
+  padding: 10px 12px;               /* возвращаем отступы */
 }
 
 /* Кнопки в панели */
@@ -116,8 +114,7 @@
 	opacity: 0;
 	visibility: hidden;
 	transition: opacity 0.4s ease, visibility 0.4s ease;
-
-  /* z-index: 999; */
+  z-index: 999;
 }
 
 .modal.open {
@@ -128,9 +125,9 @@
 /* ===== Контент модалки ===== */
 .modal-content {
 	width: 350px;
-	background: rgb(255, 255, 255, 0.70);
-	border-radius: 16px;
+  background: rgb(34, 34, 34); /* тёмный фон */
   border: 2px solid #ffee00; /* жёлтая рамка */
+	border-radius: 16px;
 	padding: 20px;
 	text-align: center;
 	transform: translateY(40px);
@@ -144,7 +141,10 @@
 	opacity: 1;
 }
 
-.modal-content h2 { margin-bottom: 16px; }
+.modal-content h2 { 
+  margin-bottom: 16px; 
+  color: rgb(255, 255, 255);
+}
 
 /* Выбор аватаров */
 .avatar-options {
@@ -174,7 +174,7 @@
   padding: 10px 16px;
   border-radius: 8px;
   background: linear-gradient(135deg,#ffb703,#fb8500); /* жёлто-оранжевый */
-  color: white;
+  color: rgb(255, 255, 255);
   font-weight: bold;
   cursor: pointer;
 }
@@ -182,21 +182,6 @@
 .upload-btn input { display: none; } /* скрываем input */
 
 .upload-btn:hover { 
-  transform: scale(1.05); /* увеличивается на 5% */
-  transition: transform 0.4s, box-shadow 0.4s;
-}
-
-/* Кнопка закрытия модалки */
-.close-btn {
-  margin-top: 14px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #ccc;
-  cursor: pointer;
-}
-
-.close-btn:hover { background: #bbb;
   transform: scale(1.05); /* увеличивается на 5% */
   transition: transform 0.4s, box-shadow 0.4s;
 }
