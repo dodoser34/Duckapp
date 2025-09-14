@@ -6,6 +6,7 @@
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0 0 0px 12px;
 }
 
 /* Поле ввода */
@@ -22,6 +23,27 @@
   transition: border 0.3s ease, box-shadow 0.2s ease;
   display: flex;
   align-items: center;          /* выравнивание текста по центру */
+  overflow-y: auto; /* скролл, если друзей много */
+}
+
+/* Стили для тонкого скролла */
+.chat-input textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-input textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.chat-input textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Firefox */
+.chat-input textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.3) transparent;
 }
 
 .chat-input textarea:focus {

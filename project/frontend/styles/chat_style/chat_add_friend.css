@@ -1,0 +1,204 @@
+/* === Список друзей === */
+.chat-list-items {
+  max-height: 620px; /* ограничение по высоте */
+  overflow-y: auto; /* скролл, если друзей много */
+}
+
+/* Стили для тонкого скролла */
+.chat-list-items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-list-items::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.chat-list-items::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Firefox */
+.chat-list-items {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.3) transparent;
+}
+
+
+.friends-container {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.friends-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.friends-container::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+
+.friends-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.friends-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;           /* расстояние между кнопкой и друзьями */
+  max-height: calc(100vh - 120px); /* подгоняем под экран, учитывая профиль */
+  overflow-y: auto;    /* скролл, если друзей много */
+  margin-top: 0;
+}
+
+/* Панель Add Friend под профилем */
+.profile-panel-friends {
+  margin-top: 4px; /* отступ между профилем и кнопкой */
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* расстояние между друзьями */
+}
+
+/* === Кнопка Add Friend в панели профиля === */
+#profile-panel-friends {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+#profile-add-friend-btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  color: white;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+
+#profile-add-friend-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #fb8500, #ffb703);
+}
+
+/* === Модалка Add Friend (отдельный стиль) === */
+#add-friend-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  z-index: 9999; /* поверх всех элементов */
+}
+
+#add-friend-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Уникальный контейнер контента */
+#add-friend-modal .add-friend-content {
+  width: 320px;
+  height: 160px;
+  background: #1e1e1e;
+  border: 2px solid #ffee00;
+  border-radius: 12px;
+  padding: 20px;
+  color: #fff;
+  text-align: left;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+#add-friend-modal.open .add-friend-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Заголовок */
+#add-friend-modal h2 {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Поле ввода */
+#add-friend-modal input#friend-search {
+  width: 94%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 12px;
+  background: #2a2a2a;
+  color: #fff;
+}
+
+#add-friend-modal input#friend-search:focus {
+  border: 1px solid #ffee00;
+  outline: none;
+}
+
+/* Кнопки модалки */
+#add-friend-modal .add-friend-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+#add-friend-modal .add-friend-buttons button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  color: white;
+  transition: transform 0.2s, background 0.3s;
+}
+
+#add-friend-modal .add-friend-buttons button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #fb8500, #ffb703);
+}
+
+/* Результат поиска */
+#add-friend-modal #friend-result {
+  margin-top: 14px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #fff;
+}
+
+#add-friend-modal #friend-result button {
+  margin-left: 8px;
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+
+#add-friend-modal #friend-result button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #fb8500, #ffb703);
+}

@@ -12,7 +12,6 @@ async def lifespan(app: FastAPI):
     db.init_db()
     yield
 
-
 app = FastAPI(title="DuckApp Messenger", lifespan=lifespan)
 
 # Разрешаем фронту коннектиться

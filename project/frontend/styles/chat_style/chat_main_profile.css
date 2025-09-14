@@ -130,14 +130,13 @@
 	width: 350px;
 	background: rgb(255, 255, 255, 0.70);
 	border-radius: 16px;
+  border: 2px solid #ffee00; /* жёлтая рамка */
 	padding: 20px;
 	text-align: center;
-
 	transform: translateY(40px);
 	opacity: 0;
 	transition: transform 0.4s ease, opacity 0.4s ease;
-
-  /* z-index: 1000; */
+  z-index: 1000;
 }
 
 .modal.open .modal-content {

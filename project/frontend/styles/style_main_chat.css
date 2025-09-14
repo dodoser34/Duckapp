@@ -48,7 +48,7 @@ body {
   display: flex; /* Flex-контейнер */
   flex-direction: column; /* Чаты в колонку */
   padding: 16px; /* Внутренние отступы */
-  gap: 8px; /* Расстояние между элементами */
+  gap: 4px; /* Расстояние между элементами */
   overflow-y: auto;
 }
 
