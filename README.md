@@ -5,8 +5,6 @@
 <p>
   DuckApp is a lightweight web messenger with a fun “duck-themed” interface:
   quirky icons, rounded avatars, a soft color palette, and smooth animations.
-  The project uses a simple frontend + backend structure, perfect for learning
-  and prototyping chat applications.
 </p>
 
 <hr>
