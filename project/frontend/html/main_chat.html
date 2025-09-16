@@ -23,6 +23,7 @@
   <script type="module" src="../js/chat/chat_logic.js" defer></script>
 
   <script type="module" src="../js/checkSession.js" defer></script>
+  <script type="module" src="../js/chat/loadFriend.js" defer></script>
 </head>
 
 <body>
@@ -116,7 +117,7 @@
           <button class="status-btn" data-status="dnd">⛔ Не беспокоить</button>
         </div>
         <button class="sub-btn" id="open-avatar-modal">Изменить аватарку</button>
-        <button class="sub-btn logout-btn" id="logout-btn">Выйти из учетной записи</button>
+        <button class="sub-btn logout-btn" id="logout-btn">Выйти из аккаунта</button>
       </div>
 
     <div class="friends-panel-wrapper">
@@ -130,15 +131,6 @@
 
       <!-- Список друзей -->
       <div class="chat-list-items">
-        <div class="chat-list-item" data-id="duck123" data-name="Уточка Иван" data-avatar="../html/assets/avatar_2.png" data-status="Онлайн">
-          <div class="avatar-wrapper">
-            <img src="../html/assets/avatar_2.png" class="avatar">
-            <span class="status-indicator-2" id="status-indicator_2"></span>
-          </div>
-          <div>
-            <div class="name">Уточка Иван</div>
-            <div class="status muted">Онлайн</div>
-          </div>
         </div>
       </div>
     </div>

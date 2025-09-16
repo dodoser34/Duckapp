@@ -13,7 +13,7 @@
 /* Ховер на чате */
 .chat-list-item:hover { 
   background: rgba(255, 255, 255, 0.8); /* фон становится светлее */
-  transform: translateY(-4px); /* лёгкое поднятие */
+  transform: translateY(-2px); /* лёгкое поднятие */
 }
 
 .sub-panel.open {

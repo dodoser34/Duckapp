@@ -7,7 +7,6 @@ const profileStatus = document.getElementById("profile-status");
 const statusIndicator = document.getElementById("status-indicator");
 const avatarModal = document.getElementById("avatar-modal");
 const openAvatarModal = document.getElementById("open-avatar-modal");
-const closeAvatarModal = document.getElementById("close-avatar-modal");
 const avatarChoices = document.querySelectorAll(".avatar-choice");
 const profileAvatar = document.getElementById("profile-avatar");
 const avatarInput = document.getElementById("avatar-input");
@@ -61,7 +60,7 @@ statusBtns.forEach(btn => {
 });
 
 openAvatarModal.addEventListener("click", () => avatarModal.classList.add("open"));
-closeAvatarModal.addEventListener("click", () => avatarModal.classList.remove("open"));
+
 
 avatarChoices.forEach(choice => {
 	choice.addEventListener("click", () => {

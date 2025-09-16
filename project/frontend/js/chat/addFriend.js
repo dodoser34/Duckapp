@@ -1,50 +1,84 @@
+import { API_URL } from "../api.js"; // там у тебя хранится http://127.0.0.1:8000/api/auth
+
 // Элементы модалки и кнопки
-const profileAddFriendBtn = document.getElementById('profile-add-friend-btn');
-const addFriendModal = document.getElementById('add-friend-modal');
-const addFriendBtn = document.getElementById('search-friend-btn');
-const closeAddFriendBtn = document.getElementById('close-add-friend');
-const friendSearchInput = document.getElementById('friend-search');
-const friendResult = document.getElementById('friend-result');
+const profileAddFriendBtn = document.getElementById("profile-add-friend-btn");
+const addFriendModal = document.getElementById("add-friend-modal");
+const addFriendBtn = document.getElementById("search-friend-btn");
+const closeAddFriendBtn = document.getElementById("close-add-friend");
+const friendSearchInput = document.getElementById("friend-search");
+const friendResult = document.getElementById("friend-result");
 
 // Контейнер для друзей
-const friendsContainer = document.querySelector('.chat-list-items');
+const friendsContainer = document.querySelector(".chat-list-items");
 
 // --- Открытие модалки ---
-profileAddFriendBtn.addEventListener('click', () => {
-    addFriendModal.classList.add('open');
+profileAddFriendBtn.addEventListener("click", () => {
+  addFriendModal.classList.add("open");
 });
 
 // --- Закрытие модалки ---
-closeAddFriendBtn.addEventListener('click', () => {
-    addFriendModal.classList.remove('open');
-    friendSearchInput.value = '';
-    friendResult.innerHTML = '';
+closeAddFriendBtn.addEventListener("click", () => {
+  addFriendModal.classList.remove("open");
+  friendSearchInput.value = "";
+  friendResult.innerHTML = "";
 });
 
-// --- Поиск и добавление друга ---
-addFriendBtn.addEventListener('click', () => {
-    const query = friendSearchInput.value.trim();
-    if (!query) {
-        friendResult.innerHTML = 'Введите ник или ID.';
-        return;
+// --- Поиск друга ---
+addFriendBtn.addEventListener("click", async () => {
+  const query = friendSearchInput.value.trim();
+  if (!query) {
+    friendResult.innerHTML = "Введите ник.";
+    return;
+  }
+
+  try {
+    // ищем на сервере
+    const res = await fetch(
+      `${API_URL.replace("/auth", "")}/friends/search?names=${encodeURIComponent(
+        query
+      )}`,
+      { credentials: "include" }
+    );
+    const data = await res.json();
+
+    if (!res.ok) {
+      friendResult.innerHTML = data.detail || "Пользователь не найден";
+      return;
     }
 
-    // Показываем найденного друга с кнопкой "Добавить"
+    // показываем найденного
     friendResult.innerHTML = `
-      Найден: <b>${query}</b> 
+      Найден: <b>${data.names}</b>
       <button id="add-friend-final">Добавить</button>
     `;
 
-    const addFinalBtn = document.getElementById('add-friend-final');
+    // обработчик добавления
+    document
+      .getElementById("add-friend-final")
+      .addEventListener("click", async () => {
+        const addRes = await fetch(
+          `${API_URL.replace("/auth", "")}/friends/add`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ friend_id: data.id }),
+          }
+        );
 
-    // Добавление нового друга в список
-    addFinalBtn.addEventListener('click', () => {
-        const newFriend = document.createElement('div');
-        newFriend.className = 'chat-list-item';
-        newFriend.dataset.name = query;
-        newFriend.dataset.id = 'friend-' + Date.now();
-        newFriend.dataset.avatar = '../html/assets/avatar_2.png';
-        newFriend.dataset.status = 'offline';
+        const addData = await addRes.json();
+        if (!addRes.ok) {
+          alert(addData.detail || "Ошибка");
+          return;
+        }
+
+        // добавляем друга в список справа
+        const newFriend = document.createElement("div");
+        newFriend.className = "chat-list-item";
+        newFriend.dataset.name = data.names;
+        newFriend.dataset.id = data.id;
+        newFriend.dataset.avatar = "../html/assets/avatar_2.png";
+        newFriend.dataset.status = "offline";
 
         newFriend.innerHTML = `
           <div class="avatar-wrapper">
@@ -52,7 +86,7 @@ addFriendBtn.addEventListener('click', () => {
             <span class="status-indicator-2"></span>
           </div>
           <div>
-            <div class="name">${query}</div>
+            <div class="name">${data.names}</div>
             <div class="status muted">Не в сети</div>
           </div>
         `;
@@ -60,9 +94,13 @@ addFriendBtn.addEventListener('click', () => {
         friendsContainer.appendChild(newFriend);
         friendsContainer.scrollTop = friendsContainer.scrollHeight;
 
-        // Закрываем модалку
-        addFriendModal.classList.remove('open');
-        friendSearchInput.value = '';
-        friendResult.innerHTML = '';
-    });
+        // закрываем модалку
+        addFriendModal.classList.remove("open");
+        friendSearchInput.value = "";
+        friendResult.innerHTML = "";
+      });
+  } catch (err) {
+    console.error(err);
+    friendResult.innerHTML = "Ошибка подключения к серверу";
+  }
 });

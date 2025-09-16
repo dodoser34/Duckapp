@@ -126,7 +126,7 @@ def get_me(token: str = Depends(get_token_from_cookie)):
             up.avatar,
             up.status
         FROM registered_users ru
-        LEFT JOIN user_profiles up ON ru.id = up.user_id
+        LEFT JOIN user_profiles up ON ru.id = up.id
         WHERE ru.username = %s
     """, (username,))
     
@@ -154,7 +154,7 @@ def get_current_user(request: Request):
 
     conn = db.get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT username, email, created_at FROM registered_users WHERE username = %s", (username,))
+    cursor.execute("SELECT id, username, email, created_at FROM registered_users WHERE username = %s", (username,))
     user = cursor.fetchone()
     cursor.close()
     conn.close()

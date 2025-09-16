@@ -74,6 +74,7 @@
   margin-top: 8px;
   display: flex;
   justify-content: center;
+  background-color: transparent;
 }
 
 #profile-add-friend-btn {
