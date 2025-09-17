@@ -1,5 +1,7 @@
 import { setupAvatarChange } from "./changeAvatar.js";
+import { loadFriends } from "./loadFriend.js";
 setupAvatarChange();
+loadFriends()
 
 export async function getProfile(ok, result) {
 

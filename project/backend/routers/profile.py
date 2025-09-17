@@ -29,20 +29,20 @@ def update_profile(
         conn.close()
         raise HTTPException(status_code=404, detail="User not found")
 
-    user_id = user["id"]
+    id = user["id"]
 
     # если нет строки в user_profiles — создаём
-    cursor.execute("SELECT user_id FROM user_profiles WHERE user_id = %s", (user_id,))
+    cursor.execute("SELECT id FROM user_profiles WHERE id = %s", (id,))
     exists = cursor.fetchone()
 
     if exists:
         if data.status:
-            cursor.execute("UPDATE user_profiles SET status = %s WHERE user_id = %s", (data.status, user_id))
+            cursor.execute("UPDATE user_profiles SET status = %s WHERE id = %s", (data.status, id))
         if data.avatar:
-            cursor.execute("UPDATE user_profiles SET avatar = %s WHERE user_id = %s", (data.avatar, user_id))
+            cursor.execute("UPDATE user_profiles SET avatar = %s WHERE id = %s", (data.avatar, id))
     else:
-        cursor.execute("INSERT INTO user_profiles (user_id, status, avatar) VALUES (%s, %s, %s)",
-                    (user_id, data.status or "online", data.avatar or "avatar_1.png"))
+        cursor.execute("INSERT INTO user_profiles (id, status, avatar) VALUES (%s, %s, %s)",
+                    (id, data.status or "online", data.avatar or "avatar_1.png"))
 
     conn.commit()
     cursor.close()

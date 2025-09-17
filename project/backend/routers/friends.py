@@ -82,21 +82,15 @@ async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_use
 async def get_friends(current_user=Depends(get_current_user)):
     user_id = current_user.get("id") or current_user.get("user_id")
 
-    def query():
-        conn = get_connection()
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute("""
-                    SELECT u.id, u.names, u.avatar, u.status
-                    FROM friends f
-                    JOIN user_profiles u ON f.friend_id = u.id
-                    WHERE f.user_id = %s
-                """, (user_id,))
-                return cursor.fetchall()
-        finally:
-            conn.close()
-
-    result = await asyncio.to_thread(query)
-    return result
-
-
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT u.id, u.names, u.avatar, u.status
+                FROM friends f
+                JOIN user_profiles u ON f.friend_id = u.id
+                WHERE f.user_id = %s
+            """, (user_id,))
+            return cursor.fetchall()
+    finally:
+        conn.close()

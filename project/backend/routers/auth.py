@@ -47,7 +47,7 @@ async def register(response: Response, username: str = Form(...), email: str = F
         key="access_token",
         value=token,
         httponly=True,
-        max_age=3600,
+        max_age=10800,
         samesite="lax",
         secure=False
     )
@@ -77,7 +77,7 @@ async def login(response: Response, username: str = Form(...), password: str = F
         key="access_token",
         value=token,
         httponly=True,
-        max_age=3600,
+        max_age=10800,
         samesite="lax",
         secure=False
     )
