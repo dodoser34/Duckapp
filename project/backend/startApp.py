@@ -1,12 +1,10 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from DataBases import db_manager as db
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from routers import auth, profile, friends
-from routers.auth import get_current_user
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

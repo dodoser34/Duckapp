@@ -1,0 +1,28 @@
+{
+    "ru": {
+        "authorization": {
+            "title": "Авторизация в DuckApp",
+            "welcome_message": "",
+            "login": "Войти",
+            "signup": "Зарегистрироваться",
+            "noAccountToRegister": "Нет Аккаунта? Зарегистрируйтесь"
+        }
+    },
+
+    "en": {
+        "app_name": "DuckApp",
+        "welcome_message": "Welcome to DuckApp!",
+        "login": "Login",
+        "signup": "Sign Up",
+        "username": "Username"
+    },
+
+    "kz": {
+        "app_name": "DuckApp",
+        "welcome_message": "DuckApp-қа қош келдіңіз!",
+        "login": "Кіру",
+        "signup": "Тіркелу",
+        "username": "Пайдаланушы аты"
+    }
+
+}
