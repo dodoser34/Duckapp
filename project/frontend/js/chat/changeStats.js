@@ -51,7 +51,7 @@ statusBtns.forEach(btn => {
 					throw new Error("Ошибка сохранения статуса");
 				}
 				
-				const data = await res.json();
+				//const data = await res.json();
 			
 			} catch (err) {
 				console.error("Не удалось обновить статус:", err);

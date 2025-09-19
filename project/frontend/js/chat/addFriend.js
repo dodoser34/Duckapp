@@ -35,38 +35,48 @@ friendSearchInput.addEventListener("input", () => {
 // --- Поиск друга ---
 addFriendBtn.addEventListener("click", async () => {
 
+	const avatarBaseUrl = "http://127.0.0.1:8000/assets/";
+
 	const query = friendSearchInput.value.trim();
 	if (!query) {
-		errorMessage.innerHTML = "Поле ввода ника пусто";
+		showError("Поле ввода ника пусто");
 		friendSearchInput.classList.add("input-error");
 		return;
 	}
-	
+
 	try {
 		const res = await fetch(
-			`${API_URL.replace("/auth", "")}/friends/search?names=${encodeURIComponent(
-				query
-			)}`,
+			`${API_URL.replace("/auth", "")}/friends/search?names=${encodeURIComponent(query)}`,
 			{ credentials: "include" }
 		);
-		
+
 		const data = await res.json();
-		
+
 		if (!res.ok) {
-			friendResult.innerHTML = data.detail || "Пользователь не найден";
+			showError(data.detail || "Пользователь не найден");
 			return;
 		}
 
-    	// показываем найденного пользователя
+		// панель найденного пользователя
 		friendResult.innerHTML = `
-		Найден: <b>${data.names}</b>
-		<button id="add-friend-final">Добавить</button>
+			<div class="friend-card">
+				<div class="avatar-wrapper">
+					<img src="${avatarBaseUrl + data.avatar || "assets/avatar_2.png"}" class="avatar">
+					<span class="status-indicator ${data.status || "offline"}"></span>
+				</div>
+				<div class="friend-info">
+					<div class="name">${data.names}</div>
+					<div class="status muted">${data.status === "online" ? "В сети" : "Не в сети"}</div>
+				</div>
+
+			</div>
+			<div class="add_button">
+				<button id="add-friend-final">Добавить</button>
+			</div>
 		`;
 
-    	// обработчик добавления
-		document
-		.getElementById("add-friend-final")
-		.addEventListener("click", async () => {
+		// обработчик добавления
+		document.getElementById("add-friend-final").addEventListener("click", async () => {
 			const addRes = await fetch(
 				`${API_URL.replace("/auth", "")}/friends/add`,
 				{
@@ -76,36 +86,36 @@ addFriendBtn.addEventListener("click", async () => {
 					body: JSON.stringify({ friend_id: data.id }),
 				}
 			);
-			
+
 			const addData = await addRes.json();
-			
+
 			if (!addRes.ok) {
-				alert(addData.detail || "Ошибка");
+				showError(addData.detail || "Ошибка");
 				return;
 			}
-			
-			// добавляем друга в список Друзей
+
+			// Добавляем в список друзей справа
 			const newFriend = document.createElement("div");
 			newFriend.className = "chat-list-item";
 			newFriend.dataset.name = data.names;
 			newFriend.dataset.id = data.id;
-			newFriend.dataset.avatar = "../html/assets/avatar_2.png";
-			newFriend.dataset.status = "offline";
-			
+			newFriend.dataset.avatar = data.avatar || "../html/assets/avatar_2.png";
+			newFriend.dataset.status = data.status || "offline";
+
 			newFriend.innerHTML = `
-			<div class="avatar-wrapper">
-			<img src="../html/assets/avatar_2.png" class="avatar">
-            <span class="status-indicator-2"></span>
-			</div>
-			<div>
-			<div class="name">${data.names}</div>
-			<div class="status muted">Не в сети</div>
-			</div>
+				<div class="avatar-wrapper">
+					<img src="${data.avatar || "../html/assets/avatar_2.png"}" class="avatar">
+					<span class="status-indicator-2 ${data.status || "offline"}"></span>
+				</div>
+				<div>
+					<div class="name">${data.names}</div>
+					<div class="status muted">${data.status === "online" ? "В сети" : "Не в сети"}</div>
+				</div>
 			`;
-			
+
 			friendsContainer.appendChild(newFriend);
 			friendsContainer.scrollTop = friendsContainer.scrollHeight;
-			
+
 			// закрываем модалку
 			addFriendModal.classList.remove("open");
 			friendSearchInput.value = "";
@@ -113,6 +123,11 @@ addFriendBtn.addEventListener("click", async () => {
 		});
 	} catch (err) {
 		console.error(err);
-		friendResult.innerHTML = "Ошибка подключения к серверу";
+		showError("Ошибка подключения к серверу");
 	}
 });
+
+function showError(msg) {
+	errorMessage.innerHTML = msg;
+	errorMessage.style.color = "red"; 
+}

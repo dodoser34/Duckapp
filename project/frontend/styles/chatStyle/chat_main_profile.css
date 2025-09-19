@@ -1,55 +1,87 @@
 /* Блок профиля */
 .chat-list-item.profile {
-  display: flex; /* элементы в строку */
-  align-items: center; /* выравнивание по центру */
-  gap: 12px; /* отступы между элементами */
-  padding: 12px; /* внутренние отступы */
-  border-radius: 12px; /* скруглённые углы */
-  background: rgba(255,255,255,0.6); /* светлый фон */
-  cursor: pointer; /* курсор = палец */
-  transition: background 0.2s, transform 0.2s; /* анимация при наведении */
+  display: flex;
+  /* элементы в строку */
+  align-items: center;
+  /* выравнивание по центру */
+  gap: 12px;
+  /* отступы между элементами */
+  padding: 12px;
+  /* внутренние отступы */
+  border-radius: 12px;
+  /* скруглённые углы */
+  background: rgba(255, 255, 255, 0.6);
+  /* светлый фон */
+  cursor: pointer;
+  /* курсор = палец */
+  transition: background 0.2s, transform 0.2s;
+  /* анимация при наведении */
 }
 
-.chat-list-item.profile:hover { 
-  background: rgba(255,255,255,0.8); /* фон становится светлее */
-  transform: translateY(-6px); /* лёгкое поднятие */
+.chat-list-item.profile:hover {
+  background: rgba(255, 255, 255, 0.8);
+  /* фон становится светлее */
+  transform: translateY(-6px);
+  /* лёгкое поднятие */
 }
 
 /* Индикатор статуса */
 .status-indicator {
-  position: absolute; /* позиционируется относительно avatar-wrapper */
-  bottom: 0; /* снизу */
-  right: 0; /* справа */
-  width: 16px; 
+  position: absolute;
+  /* позиционируется относительно avatar-wrapper */
+  bottom: 0;
+  /* снизу */
+  right: 0;
+  /* справа */
+  width: 16px;
   height: 16px;
-  border: 2px solid #fff; 
-  border-radius: 50%; /* круг */
+  border: 2px solid #fff;
+  border-radius: 50%;
+  /* круг */
 }
 
 /* Имя и статус */
-.name { font-size: 16px; font-weight: bold; color: #333; }
-.status { font-size: 13px; color: #555; }
+.name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.status {
+  font-size: 13px;
+  color: #555;
+}
 
 /* ==== Панель профиля ==== */
 .profile-panel {
-  margin-top: 0;
-	max-height: 0;               /* изначально скрыта */
-	opacity: 0;
-	overflow: hidden;            /* чтобы содержимое не вылезало */
-	display: flex;
-	flex-direction: column;
-	background: rgba(255, 255, 255, 0.55);
-	padding: 0 12px;             /* по бокам оставим отступы */
-	border-radius: 12px;
-	color: white;
-	transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+  position: fixed;
+  /* фиксируем относительно окна */
+  top: 112px;
+  /* можно подвинуть вниз от хедера */
+  right: 16px;
+  /* справа */
+  width: 268px;
+  /* фиксируем ширину */
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0 12px;
+  border-radius: 12px;
+  color: black;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+  z-index: 9999;
+  /* поверх друзей */
 }
 
 .profile-panel.open {
-	max-height: 500px;           /* достаточно большое значение */
-	opacity: 1;
-  padding: 10px 12px;               /* возвращаем отступы */
+  max-height: 500px;
+  opacity: 1;
+  padding: 10px 12px;
 }
+
 
 /* Кнопки в панели */
 .sub-btn {
@@ -57,99 +89,109 @@
   padding: 10px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg,#ffb703,#fb8500);
+  background: linear-gradient(135deg, #ffb703, #fb8500);
   color: white;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.3s;
-  text-align: left; /* текст прижат к левому краю */
+  text-align: left;
+  /* текст прижат к левому краю */
 }
 
-.sub-btn:hover { 
+.sub-btn:hover {
   background: linear-gradient(135deg, #fb8500, #ffb703);
   transform: translateY(2px);
 }
 
 /* ==== Подпанель со статусами ==== */
 .sub-panel {
-  max-height: 0;            /* изначально свернута */
+  max-height: 0;
+  /* изначально свернута */
   opacity: 0;
-  overflow: hidden;         /* скрываем содержимое */
+  overflow: hidden;
+  /* скрываем содержимое */
   display: flex;
   flex-direction: column;
   transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
-  padding: 0;               /* убираем отступы */
+  padding: 0;
+  /* убираем отступы */
 }
 
 .sub-panel.open {
-  max-height: 200px;        /* достаточно для кнопок */
+  max-height: 200px;
+  /* достаточно для кнопок */
   opacity: 1;
 }
 
 /* Кнопки выбора статуса */
 .status-btn {
   margin-top: 8px;
-  padding: 10px; /* как у sub-btn */
+  padding: 10px;
+  /* как у sub-btn */
   border: none;
   border-radius: 8px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.6);
   color: rgb(0, 0, 0);
   cursor: pointer;
   text-align: left;
 }
-.status-btn:hover { 
-  background: rgba(255,255,255,0.25);
-  transform: translateX(2px); 
+
+.status-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateX(2px);
 }
 
 /* ===== Модальное окно ===== */
 .modal {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(0, 0, 0, 0.55);
-	backdrop-filter: blur(4px);
-	opacity: 0;
-	visibility: hidden;
-	transition: opacity 0.4s ease, visibility 0.4s ease;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
   z-index: 999;
 }
 
 .modal.open {
-	opacity: 1;
-	visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }
 
 /* ===== Контент модалки ===== */
 .modal-content {
-	width: 350px;
-  background: rgb(34, 34, 34); /* тёмный фон */
-  border: 2px solid #ffee00; /* жёлтая рамка */
-	border-radius: 16px;
-	padding: 20px;
-	text-align: center;
-	transform: translateY(40px);
-	opacity: 0;
-	transition: transform 0.4s ease, opacity 0.4s ease;
+  width: 350px;
+  background: rgb(34, 34, 34);
+  /* тёмный фон */
+  border: 2px solid #ffee00;
+  /* жёлтая рамка */
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transform: translateY(40px);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
   z-index: 1000;
 }
 
 .modal.open .modal-content {
-	transform: translateY(0);
-	opacity: 1;
+  transform: translateY(0);
+  opacity: 1;
 }
 
-.modal-content h2 { 
-  margin-bottom: 16px; 
+.modal-content h2 {
+  margin-bottom: 16px;
   color: rgb(255, 255, 255);
 }
 
 /* Выбор аватаров */
 .avatar-options {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* сетка из 5 колонок */
+  grid-template-columns: repeat(5, 1fr);
+  /* сетка из 5 колонок */
   gap: 10px;
   margin-bottom: 16px;
 }
@@ -157,14 +199,17 @@
 .avatar-choice {
   width: 60px;
   height: 60px;
-  border-radius: 50%; /* круглые аватарки */
+  border-radius: 50%;
+  /* круглые аватарки */
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .avatar-choice:hover {
-  transform: scale(1.1); /* увеличение */
-  box-shadow: 0 0 10px rgba(0,0,0,0.3); /* тень */
+  transform: scale(1.1);
+  /* увеличение */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* тень */
 }
 
 /* Кнопка загрузки своего аватара */
@@ -173,24 +218,30 @@
   margin-top: 10px;
   padding: 10px 16px;
   border-radius: 8px;
-  background: linear-gradient(135deg,#ffb703,#fb8500); /* жёлто-оранжевый */
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  /* жёлто-оранжевый */
   color: rgb(255, 255, 255);
   font-weight: bold;
   cursor: pointer;
 }
 
-.upload-btn input { display: none; } /* скрываем input */
+.upload-btn input {
+  display: none;
+}
 
-.upload-btn:hover { 
-  transform: scale(1.05); /* увеличивается на 5% */
+/* скрываем input */
+
+.upload-btn:hover {
+  transform: scale(1.05);
+  /* увеличивается на 5% */
   transition: transform 0.4s, box-shadow 0.4s;
 }
 
 .logout-btn {
-  background: linear-gradient(135deg,#d00000,#ff1e00);
+  background: linear-gradient(135deg, #d00000, #ff1e00);
 }
 
 .logout-btn:hover {
-  background: linear-gradient(135deg,#ff1e00,#d00000);
+  background: linear-gradient(135deg, #ff1e00, #d00000);
   transform: translateY(2px);
 }

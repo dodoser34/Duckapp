@@ -21,6 +21,7 @@
 	<script type="module" src="../js/chat/profile.js" defer></script>
 	<script type="module" src="../js/chat/logoutProfile.js" defer></script>
 	<script type="module" src="../js/chat/chat_logic.js" defer></script>
+	<script type="module" src="../js/chat/gifHandler.js" defer></script>
 
 	<script type="module" src="../js/checkSession.js" defer></script>
 </head>
@@ -109,8 +110,8 @@
 				<button id="search-friend-btn">Найти</button>
 				<button id="close-add-friend">Отмена</button>
 			</div>
-			<div id="error-message"></div>
 			<div id="friend-result"></div>
+			<div id="error-message"></div>
 		</div>
 	</div>
 	
@@ -146,6 +147,19 @@
 				Upload your avatar
 				<input type="file" id="avatar-input" accept="image/*">
 			</label>
+		</div>
+	</div>
+
+
+
+	<!--! Модалка поиска GIF -->
+	<div id="gif-modal" class="modal">
+		<div class="modal-content">
+			<h2>Поиск GIF</h2>
+			<input type="text" id="gifSearchInput" placeholder="Введите слово...">
+			<button id="gifSearchBtn">🔍</button>
+			<div id="gif-results"></div>
+			<button id="gifCloseBtn">Закрыть</button>
 		</div>
 	</div>
 </body>

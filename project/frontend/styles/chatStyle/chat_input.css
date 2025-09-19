@@ -1,7 +1,8 @@
 /* Контейнер ввода */
 .chat-input {
   display: flex;
-  align-items: center;       /* выравниваем ВСЕ элементы по центру */
+  align-items: center;
+  /* выравниваем ВСЕ элементы по центру */
   gap: 8px;
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
@@ -22,8 +23,10 @@
   background: rgba(255, 255, 255, 0.9);
   transition: border 0.3s ease, box-shadow 0.2s ease;
   display: flex;
-  align-items: center;          /* выравнивание текста по центру */
-  overflow-y: auto; /* скролл, если друзей много */
+  align-items: center;
+  /* выравнивание текста по центру */
+  overflow-y: auto;
+  /* скролл, если друзей много */
 }
 
 /* Стили для тонкого скролла */
@@ -43,7 +46,7 @@
 /* Firefox */
 .chat-input textarea {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.3) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
 .chat-input textarea:focus {
@@ -53,7 +56,8 @@
 /* Общий стиль кнопок */
 .chat-input button {
   min-width: 48px;
-  height: 48px;                 /* одинаковая высота с textarea */
+  height: 48px;
+  /* одинаковая высота с textarea */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,6 +75,7 @@
 #send-btn {
   background: linear-gradient(135deg, #ffb703, #fb8500);
 }
+
 #send-btn:hover {
   background: linear-gradient(135deg, #fb8500, #ffb703);
   transform: scale(1.05);
@@ -80,6 +85,7 @@
 #sendgif-btn {
   background: linear-gradient(135deg, #8338ec, #3a86ff);
 }
+
 #sendgif-btn:hover {
   background: linear-gradient(135deg, #3a86ff, #8338ec);
   transform: scale(1.05);
@@ -89,7 +95,37 @@
 #sendsmale-btn {
   background: linear-gradient(135deg, #06d6a0, #118ab2);
 }
+
 #sendsmale-btn:hover {
   background: linear-gradient(135deg, #118ab2, #06d6a0);
   transform: scale(1.05);
+}
+
+/* Базовое состояние (скрыто) */
+#gif-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  z-index: 9999;
+}
+
+/* Открытое состояние */
+#gif-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+#gif-modal .modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
 }
