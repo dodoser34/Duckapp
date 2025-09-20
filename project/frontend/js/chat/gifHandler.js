@@ -1,4 +1,3 @@
-
   // --- Элементы ---
 const gifModal = document.getElementById("gif-modal");   // модалка
 const gifBtn = document.getElementById("sendgif-btn");   // кнопка GIF
@@ -10,7 +9,6 @@ const chatBody = document.getElementById("chat-body"); // чат
 
   // 🔑 API KEY Giphy (получаешь тут: https://developers.giphy.com/)
 const apiKey = "B9T5fDXrQbPNL35xmHCFUHUKUTJKf7Xf"; 
-
 
 gifBtn.addEventListener("click", () => {
 	console.log("Открываю модалку ✅");

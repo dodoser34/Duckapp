@@ -33,7 +33,6 @@ export async function getProfile(ok, result) {
                 : avatarBaseUrl + "avatar_1.png";
         }
 
-
     } catch (err) {
         console.error("Ошибка загрузки профиля:", err);
         profileName.textContent = "Гость";

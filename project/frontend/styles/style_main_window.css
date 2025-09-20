@@ -1,0 +1,316 @@
+/* ====== ОБЩИЙ СТИЛЬ ====== */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #4e98ff, #89f7fe);
+  color: #333;
+  overflow: hidden;
+}
+
+/* ====== ХЕДЕР ====== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+header .logo {
+  font-size: 26px;
+  font-weight: bold;
+  display: inline-block;
+  background: linear-gradient(90deg, #ffb703, #fb8500, #ffb703);
+  background-size: 200% auto;
+  background-position: left center;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+nav a {
+  margin: 0 15px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  color: #ffb703;
+}
+
+/* ====== HERO ====== */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 80px;
+  min-height: 80vh;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-text {
+  max-width: 520px;
+  animation: fadeIn 1s ease;
+}
+
+.hero-text h1 {
+  font-size: 42px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.hero-text p {
+  font-size: 18px;
+  color: #f1f1f1;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.hero-text button {
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  border: none;
+  padding: 16px 32px;
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(251, 133, 0, 0.4);
+}
+
+.hero-text button:hover {
+  background: linear-gradient(135deg, #fb8500, #ffb703);
+  transform: translateY(2px);
+  box-shadow: 0 6px 14px rgba(251, 133, 0, 0.5);
+}
+
+/* ====== СЛАЙДЕР ====== */
+.slider {
+  position: relative;
+  width: 800px; /* можно оставить фикс, если точно знаешь размер */
+  max-width: 100%; /* чтобы не вылезало за экран */
+  aspect-ratio: 4/3; /* пропорции */
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  border: 6px solid #ffb703;
+}
+
+.slides {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slides img {
+  width: 100%;   /* растягиваем под слайдер */
+  height: 100%;  /* сохраняем пропорции */
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Индикаторы */
+.dots {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 5px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.dot.active {
+  background: #fb8500;
+  transform: scale(1.2);
+}
+
+/* ====== ФУТЕР ====== */
+footer {
+  margin-top: 190px;
+  max-width: 370px;
+  padding: 14px 20px;
+  font-size: 14px;
+  text-align: center;
+  color: #fff;
+  background: rgba(0,0,0,0.25);
+  border-radius: 12px;
+  margin-left: 0px;
+  margin-right: 12px;
+}
+
+/* ====== МОДАЛКИ ====== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.5s;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: scaleUp 0.4s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.modal-content h2 {
+  color: #fb8500;
+  margin-bottom: 15px;
+}
+
+.modal-content p {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  transition: 0.3s;
+}
+
+.close:hover {
+  color: #fb8500;
+}
+
+/* ====== БЛОКИ В МОДАЛКАХ ====== */
+.modal-block {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.team-member {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f1f1f1;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.team-member h3 {
+  margin-bottom: 5px;
+  color: #fb8500;
+}
+
+.team-member a {
+  color: #219ebc;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.team-member a:hover {
+  text-decoration: underline;
+}
+
+/* Состояние закрытия */
+.modal.closing {
+  animation: fadeOut 0.4s forwards;
+}
+
+.modal.closing .modal-content {
+  animation: scaleDown 0.4s ease forwards;
+}
+
+/* ====== АНИМАЦИИ ====== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+/* Анимация исчезновения */
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scaleDown {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.8); opacity: 0; }
+}
+
+/* ====== УТОЧКИ ====== */
+#ducks {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.duck {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.85;
+  user-select: none;
+  transition: transform 0.3s;
+}
+
+/* ====== АДАПТИВ ====== */
+@media (max-width: 1100px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .slider {
+    width: 95%;
+    height: auto;
+  }
+  .slides img {
+    width: 100%;
+    height: auto;
+  }
+  footer {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-top: 100px;
+    font-size: 12px;
+    padding: 12px;
+  }
+}
