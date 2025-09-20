@@ -5,7 +5,7 @@ body {
   display: flex; /* Используем flex-контейнер для центрирования */
   align-items: center; /* Выравнивание по вертикали */
   justify-content: center; /* Выравнивание по горизонтали */
-  background: linear-gradient(135deg,#89f7fe,#66a6ff); /* Градиентный фон */
+  background: linear-gradient(135deg, #4e98ff, #89f7fe); /* Градиентный фон */
   font-family: "Segoe UI", Arial, sans-serif; /* Шрифт для всего документа */
   overflow: hidden; /* Скрываем прокрутку (чтобы фон был статичным) */
 }
@@ -76,4 +76,22 @@ body {
   color: #bbb;
   text-align: center;
   border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ====== УТОЧКИ ====== */
+#ducks {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.duck {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.85;
+  user-select: none;
+  transition: transform 0.3s;
 }

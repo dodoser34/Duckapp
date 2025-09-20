@@ -1,7 +1,7 @@
 /* ====== ОБЩИЙ СТИЛЬ BODY ====== */
 body {
     font-family: "Segoe UI", Arial, sans-serif; /* Основной шрифт страницы */
-    background: linear-gradient(135deg, #89f7fe, #4e98ff); /* Фон с диагональным градиентом */
+    background: linear-gradient(135deg, #4e98ff, #89f7fe); /* Фон с диагональным градиентом */
     display: flex; /* Включаем флексбокс для центрирования */
     justify-content: center; /* Горизонтальное центрирование */
     align-items: center; /* Вертикальное центрирование */
@@ -163,4 +163,22 @@ footer {
     text-align: center; /* Центрируем */
     color: #555; /* Серый цвет */
     padding: 10px; /* Отступы */
+}
+
+/* ====== УТОЧКИ ====== */
+#ducks {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.duck {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.85;
+  user-select: none;
+  transition: transform 0.3s;
 }

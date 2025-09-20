@@ -88,3 +88,55 @@ document.addEventListener("DOMContentLoaded", async () => {
 		t.haveAccount + `<a href="authorization_frame.html">${t.signup}</a>`;
 	document.querySelector("footer").textContent = t.footer;
 });
+
+/* ====== УТОЧКИ ====== */
+const duckCount = 8;
+const ducksContainer = document.getElementById("ducks");
+
+function spawnDuck() {
+    const duck = document.createElement("div");
+    duck.classList.add("duck");
+    duck.textContent = "🦆";
+
+    // размер
+    const size = Math.random() * 20 + 30;
+    duck.style.fontSize = size + "px";
+
+    // высота
+    const top = Math.random() * 90;
+    duck.style.top = top + "vh";
+
+    // скорость
+    const speed = Math.random() * 6 + 6;
+
+    // направление
+    const direction = Math.random() < 0.5 ? "right" : "left";
+
+    if (direction === "right") {
+        duck.style.left = "-80px";
+        duck.style.transform = "scaleX(-1)";
+    } else {
+        duck.style.left = "100vw";
+        duck.style.transform = "scaleX(1)";
+    }
+
+    ducksContainer.appendChild(duck);
+
+    requestAnimationFrame(() => {
+        duck.style.transition = `left ${speed}s linear`;
+        if (direction === "right") {
+            duck.style.left = "110vw";
+        } else {
+            duck.style.left = "-100px";
+        }
+    });
+
+    setTimeout(() => {
+        duck.remove();
+        spawnDuck();
+    }, speed * 1000);
+}
+
+for (let i = 0; i < duckCount; i++) {
+    setTimeout(spawnDuck, i * 1000);
+}

@@ -1,7 +1,7 @@
 /* Общий фон */
 body {
   font-family: "Segoe UI", Arial, sans-serif;   /* Основной шрифт для текста: сначала Segoe UI, если нет — Arial, потом стандартный sans-serif */
-  background: linear-gradient(135deg, #89f7fe, #66a6ff);  /* Градиентный фон от голубого к синему под углом 135° */
+  background: linear-gradient(135deg, #4e98ff, #89f7fe);  /* Градиентный фон от голубого к синему под углом 135° */
   display: flex;   /* Flexbox для выравнивания содержимого */
   justify-content: center;   /* Горизонтальное центрирование */
   align-items: center;       /* Вертикальное центрирование */
@@ -170,4 +170,22 @@ footer {
   text-align: center; /* Центрируем */
   color: #555;        /* Серый цвет */
   padding: 10px;      /* Внутренние отступы */
+}
+
+/* ====== УТОЧКИ ====== */
+#ducks {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.duck {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.85;
+  user-select: none;
+  transition: transform 0.3s;
 }
