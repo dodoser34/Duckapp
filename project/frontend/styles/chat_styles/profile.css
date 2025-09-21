@@ -139,7 +139,7 @@
 
 .status-btn:hover {
   background: linear-gradient(135deg, rgb(251, 133, 0, 0.68), rgb(255, 183, 3, 0.68));
-  transform: translateX(4px);
+  transform: translateX(10px);
 }
 
 /* ===== Модальное окно ===== */
