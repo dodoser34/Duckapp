@@ -101,31 +101,82 @@
   transform: scale(1.05);
 }
 
-/* Базовое состояние (скрыто) */
-#gif-modal {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
-  z-index: 9999;
+/* ====== Контейнер для GIF панели ====== */
+.gif-wrapper {
+  position: relative;
 }
 
-/* Открытое состояние */
-#gif-modal.open {
-  opacity: 1;
-  visibility: visible;
-}
-
-#gif-modal .modal-content {
-  background: #fff;
-  padding: 20px;
+/* ====== GIF-панель (всплывающее окно возле кнопки) ====== */
+.gif-panel {
+  display: none; /* по умолчанию скрыта */
+  position: absolute;
+  bottom: 50px; /* чуть выше кнопки GIF */
+  left: 0;
+  width: 400px; /* увеличили ширину */
+  max-height: 500px; /* увеличили высоту */
+  background: #2f3136; /* темный фон DuckApp */
+  color: #fff;
   border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  padding: 16px;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+/* Открытая GIF-панель */
+.gif-panel.open {
+  display: flex;
+}
+
+/* Поле поиска */
+.gif-panel input {
+  width: calc(100% - 36px); /* оставляем место для маленькой кнопки */
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  background: #40444b;
+  color: #fff;
+  margin-right: 4px;
+}
+
+/* Кнопка поиска */
+.gif-panel button {
+  padding: 6px 8px; /* меньше кнопка */
+  border-radius: 8px;
+  border: none;
+  background: #5865f2;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 14px;
+}
+
+.gif-panel button:hover {
+  background: #4752c4;
+}
+
+/* Контейнер с GIF результатами */
+#gif-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  max-height: 400px; /* увеличенный блок для прокрутки */
+  overflow-y: auto;
+}
+
+/* Каждый GIF */
+#gif-results img {
+  width: 90px; /* увеличили размер */
+  height: 90px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.15s ease;
+}
+
+#gif-results img:hover {
+  transform: scale(1.1);
 }

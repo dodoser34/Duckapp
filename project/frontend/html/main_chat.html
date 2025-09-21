@@ -49,6 +49,7 @@
 					</div>
 				</div>
 			</div>
+
 			<!--! Сообщения -->
 			<div class="chat-messages" id="chat-body">
 				<div class="empty-chat muted">Выберите чат справа 👉</div>
@@ -56,10 +57,19 @@
 
 			<!--! Ввод -->
 			<div class="chat-input">
-				<textarea id="message-input" placeholder="Напишите сообщение..." rows="1" maxlength="3000"></textarea>
+			<textarea id="message-input" placeholder="Напишите сообщение..." rows="1" maxlength="3000"></textarea>
+
+			<div class="gif-wrapper">
 				<button id="sendgif-btn">GIF</button>
-				<button id="sendsmale-btn">😄</button>
-				<button id="send-btn">🦆</button>
+				<div id="gif-panel" class="gif-panel">
+				<input type="text" id="gifSearchInput" placeholder="Поиск GIF...">
+				<button id="gifSearchBtn">🔍</button>
+				<div id="gif-results"></div>
+				</div>
+			</div>
+
+			<button id="sendsmale-btn">😄</button>
+			<button id="send-btn">🦆</button>
 			</div>
 		</div>
 
@@ -88,27 +98,21 @@
 			</div>
 			
 			<div class="friends-panel-wrapper">
-				<!--! Кнопка Add Friend -->
 				<div id="profile-panel-friends" class="profile-panel-friends">
 					<button id="profile-add-friend-btn">Add Friend</button>
 				</div>
-				
-				<!--! Список друзей -->
 				<div class="chat-list-items"></div>
 			</div>
 			
-			<!--! Футер -->
 			<footer class="footer">LLC UTYAPUTYA © 2025 <br> All rights reserved</footer>
 		</aside>
 	</div>
-
-	<!--! ========== МОДАЛКИ ВЫНЕСЕНЫ В КОНЕЦ BODY ========== -->
 
 	<!--! Модалка Add Friend -->
 	<div id="add-friend-modal" class="modal">
 		<div class="add-friend-content">
 			<h2>Добавить друга</h2>
-			<input type="text" id="friend-search" placeholder="Введите ник друга"  maxlength="18" required/>
+			<input type="text" id="friend-search" placeholder="Введите ник друга" maxlength="18" required/>
 			<div class="add-friend-buttons">
 				<button id="search-friend-btn">Найти</button>
 				<button id="close-add-friend">Отмена</button>
@@ -150,17 +154,6 @@
 				Upload your avatar
 				<input type="file" id="avatar-input" accept="image/*">
 			</label>
-		</div>
-	</div>
-
-	<!--! Модалка поиска GIF -->
-	<div id="gif-modal" class="modal">
-		<div class="modal-content">
-			<h2>Поиск GIF</h2>
-			<input type="text" id="gifSearchInput" placeholder="Введите слово...">
-			<button id="gifSearchBtn">🔍</button>
-			<div id="gif-results"></div>
-			<button id="gifCloseBtn">Закрыть</button>
 		</div>
 	</div>
 </body>

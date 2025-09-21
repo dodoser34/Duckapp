@@ -1,4 +1,4 @@
-// === Элементы DOM ===
+// === DOM элементы ===
 const chatBody = document.getElementById("chat-body");
 const messageInput = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-btn");
@@ -7,9 +7,9 @@ const chatSubtitle = document.querySelector(".chat-subtitle");
 const headerAvatar = document.getElementById("header-avatar");
 const chatListItems = document.querySelectorAll(".chat-list-item:not(.profile)");
 
-const gifModal = document.getElementById("gif-modal");
+const gifWrapper = document.querySelector(".gif-wrapper");
+const gifPanel = document.getElementById("gif-panel");
 const gifBtn = document.getElementById("sendgif-btn");
-const gifCloseBtn = document.getElementById("gifCloseBtn");
 const gifSearchBtn = document.getElementById("gifSearchBtn");
 const gifSearchInput = document.getElementById("gifSearchInput");
 const gifResults = document.getElementById("gif-results");
@@ -17,12 +17,12 @@ const gifResults = document.getElementById("gif-results");
 // 🔑 API KEY Giphy
 const apiKey = "B9T5fDXrQbPNL35xmHCFUHUKUTJKf7Xf";
 
-// === Переменные текущего друга ===
+// === Текущий друг ===
 let currentFriend = null;
 let currentFriendName = "";
 let currentFriendAvatar = "";
 
-// === Функция создания текстового сообщения ===
+// === Создание текстового сообщения ===
 function createMessage(text, type = "user", avatarSrc) {
   const messageRow = document.createElement("div");
   messageRow.classList.add("message-row", type);
@@ -56,7 +56,7 @@ function createMessage(text, type = "user", avatarSrc) {
   return messageRow;
 }
 
-// === Функция вставки GIF в чат ===
+// === Отправка GIF ===
 function sendGif(url, type = "user") {
   const messageRow = document.createElement("div");
   messageRow.classList.add("message-row", type);
@@ -90,12 +90,12 @@ function sendGif(url, type = "user") {
   chatBody.appendChild(messageRow);
   chatBody.scrollTop = chatBody.scrollHeight;
 
-  // закрываем модалку
-  gifModal.classList.remove("open");
+  // Закрываем popup
+  gifPanel.classList.remove("open");
   gifResults.innerHTML = "";
   gifSearchInput.value = "";
 
-  // Автоответ бота для своих GIF
+  // Автоответ бота
   if (type === "user" && currentFriend) {
     setTimeout(() => {
       const botMsg = createMessage(`Привет! Я ${currentFriendName}`, "bot", currentFriendAvatar);
@@ -124,10 +124,10 @@ function openChat(friendElement) {
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-// === Обработчики клика по друзьям ===
+// === Клик по друзьям ===
 chatListItems.forEach(item => item.addEventListener("click", () => openChat(item)));
 
-// === Отправка текстового сообщения ===
+// === Отправка текста ===
 function sendMessage() {
   const text = messageInput.value.trim();
   if (!text) return;
@@ -146,7 +146,6 @@ function sendMessage() {
   }
 }
 
-// === Кнопка и Enter для отправки ===
 sendBtn.addEventListener("click", sendMessage);
 messageInput.addEventListener("keydown", e => {
   if (e.key === "Enter" && !e.shiftKey) {
@@ -155,9 +154,10 @@ messageInput.addEventListener("keydown", e => {
   }
 });
 
-// === Модалка GIF ===
-gifBtn.addEventListener("click", () => gifModal.classList.add("open"));
-gifCloseBtn.addEventListener("click", () => gifModal.classList.remove("open"));
+// === Открытие / закрытие popup GIF ===
+gifBtn.addEventListener("click", e => {
+  gifPanel.classList.toggle("open");
+});
 
 // === Поиск GIF ===
 gifSearchBtn.addEventListener("click", async () => {
@@ -178,14 +178,19 @@ gifSearchBtn.addEventListener("click", async () => {
   data.data.forEach(gif => {
     const img = document.createElement("img");
     img.src = gif.images.fixed_height_small.url;
-    img.style.cursor = "pointer";
-    img.style.borderRadius = "6px";
     img.title = "Отправить в чат";
 
     img.addEventListener("click", () => {
-      sendGif(gif.images.original.url, "user"); // вставка GIF как своё сообщение
+      sendGif(gif.images.original.url, "user");
     });
 
     gifResults.appendChild(img);
   });
+});
+
+// === Закрытие popup кликом вне ===
+document.addEventListener("click", e => {
+  if (!gifWrapper.contains(e.target)) {
+    gifPanel.classList.remove("open");
+  }
 });
