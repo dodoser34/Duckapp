@@ -26,7 +26,6 @@ app.include_router(friends.router)
 
 app.mount("/assets", StaticFiles(directory=r"project/frontend/html/assets"), name="assets")
 
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("startApp:app", host="127.0.0.1", port=8000, reload=True)

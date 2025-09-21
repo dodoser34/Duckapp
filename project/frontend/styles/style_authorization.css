@@ -18,6 +18,7 @@ body {
     width: 360px; /* Ширина контейнера */
     text-align: center; /* Центрирование текста */
     animation: fadeIn 0.8s ease-in-out; /* Анимация появления */
+    z-index: 1000; /* Поверх уток */
 }
 
 .authorization-container h2 {

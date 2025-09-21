@@ -130,15 +130,16 @@
   /* как у sub-btn */
   border: none;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.6);
-  color: rgb(0, 0, 0);
+  background: linear-gradient(135deg, rgb(255, 183, 3, 0.68), rgb(251, 133, 0, 0.68));
+  color: rgb(255, 255, 255);
   cursor: pointer;
   text-align: left;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .status-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
-  transform: translateX(2px);
+  background: linear-gradient(135deg, rgb(251, 133, 0, 0.68), rgb(255, 183, 3, 0.68));
+  transform: translateX(4px);
 }
 
 /* ===== Модальное окно ===== */
