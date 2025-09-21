@@ -21,6 +21,20 @@ header {
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+  /* анимация появления сверху вниз */
+  transform: translateY(-100%);
+  opacity: 0;
+  animation: slideDown 0.6s ease forwards;
+  animation-delay: 0.2s;
+}
+
+/* ====== Анимация для шапки ====== */
+@keyframes slideDown {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 header .logo {
@@ -61,9 +75,30 @@ nav a:hover {
   z-index: 1;
 }
 
+/* ====== Анимация появления всех элементов кроме кнопки ====== */
+.hero > *:not(.hero-text button) {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInAll 0.8s ease forwards;
+}
+
+/* Задержка появления по очереди */
+.hero > *:not(.hero-text button):nth-child(1) { animation-delay: 0.2s; }
+.hero > *:not(.hero-text button):nth-child(2) { animation-delay: 0.4s; }
+.hero > *:not(.hero-text button):nth-child(3) { animation-delay: 0.6s; }
+
+/* Анимация */
+@keyframes fadeInAll {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ====== HERO TEXT ====== */
 .hero-text {
   max-width: 520px;
-  animation: fadeIn 1s ease;
+  animation: fadeIn 1s ease; /* анимация для текста */
 }
 
 .hero-text h1 {
@@ -101,9 +136,9 @@ nav a:hover {
 /* ====== СЛАЙДЕР ====== */
 .slider {
   position: relative;
-  width: 800px; /* можно оставить фикс, если точно знаешь размер */
-  max-width: 100%; /* чтобы не вылезало за экран */
-  aspect-ratio: 4/3; /* пропорции */
+  width: 800px;
+  max-width: 100%;
+  aspect-ratio: 4/3;
   overflow: hidden;
   border-radius: 24px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.25);
@@ -118,8 +153,8 @@ nav a:hover {
 }
 
 .slides img {
-  width: 100%;   /* растягиваем под слайдер */
-  height: 100%;  /* сохраняем пропорции */
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -189,6 +224,7 @@ footer {
 .modal-content h2 {
   color: #fb8500;
   margin-bottom: 15px;
+  font-size: 32px;
 }
 
 .modal-content p {
@@ -211,7 +247,7 @@ footer {
   color: #fb8500;
 }
 
-/* ====== БЛОКИ В МОДАЛКАХ ====== */
+/* Блоки в модалках */
 .modal-block {
   margin: 15px 0;
   padding: 15px;
@@ -262,7 +298,7 @@ footer {
   from { transform: scale(0.8); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
-/* Анимация исчезновения */
+
 @keyframes fadeOut {
   from { opacity: 1; }
   to { opacity: 0; }

@@ -52,8 +52,6 @@ body {
   overflow-y: auto;
 }
 
-
-
 /* Аватар в списке чатов */
 .avatar-wrapper { 
   position: relative; /*  для индикатора статуса */
