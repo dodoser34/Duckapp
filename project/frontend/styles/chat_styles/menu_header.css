@@ -13,7 +13,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  min-width: 180px;
+  min-width: 220px;
   overflow: hidden;
   z-index: 100;
 
@@ -33,7 +33,7 @@
 
 /* Кнопки в меню */
 .chat-menu .menu-item {
-  width: 100%;
+  width: 95%;
   border: none;
   background: linear-gradient(135deg,#ffb703,#fb8500);
   color: white;
@@ -47,7 +47,7 @@
 
 .chat-menu .menu-item:hover {
   background: linear-gradient(135deg, #fb8500, #ffb703);
-  transform: translateX(-2px);
+  transform: translateX(10px);
 }
 
 .hidden {
