@@ -4,7 +4,6 @@ body {
   margin: 0;
   background: linear-gradient(135deg, #4e98ff, #89f7fe);
   color: #333;
-  overflow: hidden;
 }
 
 /* ====== ХЕДЕР ====== */
@@ -183,7 +182,6 @@ nav a:hover {
 
 /* ====== ФУТЕР ====== */
 footer {
-  margin-top: 190px;
   max-width: 370px;
   padding: 14px 20px;
   font-size: 14px;
@@ -191,8 +189,7 @@ footer {
   color: #fff;
   background: rgba(0,0,0,0.25);
   border-radius: 12px;
-  margin-left: 0px;
-  margin-right: 12px;
+  margin: 0px auto 10px auto;
 }
 
 /* ====== МОДАЛКИ ====== */
@@ -349,4 +346,39 @@ footer {
     font-size: 12px;
     padding: 12px;
   }
+}
+
+@media (max-width: 1100px) {
+  .slider {
+    width: 95%;
+    height: auto;
+  }
+}
+
+
+/* ===== Chrome, Edge, Safari ===== */
+::-webkit-scrollbar {
+  width: 2px;          /* ширина вертикального скролла */
+  height: 2px;         /* высота горизонтального скролла */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;  /* фон под скроллом */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: orange;  /* цвет ползунка */
+  border-radius: 4px;        /* скругление */
+  border: 2px solid transparent; /* чтобы не прилипал */
+}
+
+/* При наведении */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #ff9900;
+}
+
+/* ===== Firefox ===== */
+* {
+  scrollbar-width: thin;              /* тонкий */
+  scrollbar-color: orange transparent; /* цвет ползунка и трека */
 }

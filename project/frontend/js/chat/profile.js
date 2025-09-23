@@ -9,8 +9,6 @@ export async function getProfile(ok, result) {
     const profileAvatar = document.getElementById("profile-avatar"); 
     const statusIndicator = document.getElementById("status-indicator");
 
-    const headerAvatar = document.getElementById("header-avatar");
-
     try {
         if (!ok) throw new Error(result.detail || "Ошибка авторизации");
 
@@ -26,12 +24,6 @@ export async function getProfile(ok, result) {
         profileAvatar.src = result.avatar
             ? avatarBaseUrl + result.avatar
             : avatarBaseUrl + "avatar_1.png";
-
-        if (headerAvatar) {
-            headerAvatar.src = result.avatar
-                ? avatarBaseUrl + result.avatar
-                : avatarBaseUrl + "avatar_1.png";
-        }
 
     } catch (err) {
         console.error("Ошибка загрузки профиля:", err);

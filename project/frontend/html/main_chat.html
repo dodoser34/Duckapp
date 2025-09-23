@@ -1,160 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
-	<title>Чат DuckApp</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
+    <title>DuckApp Chat</title>
 
-	<link rel="stylesheet" href="../styles/base/chat.css">
-	<link rel="stylesheet" href="../styles/chat_styles/add_friend.css">
-	<link rel="stylesheet" href="../styles/chat_styles/header.css">
-	<link rel="stylesheet" href="../styles/chat_styles/input.css">
-	<link rel="stylesheet" href="../styles/chat_styles/menu_header.css">
-	<link rel="stylesheet" href="../styles/chat_styles/friends.css">
-	<link rel="stylesheet" href="../styles/chat_styles/profile.css">
-	<link rel="stylesheet" href="../styles/chat_styles/messages.css">
+    <link rel="stylesheet" href="../styles/base/chat.css">
+    <link rel="stylesheet" href="../styles/chat_styles/add_friend.css">
+    <link rel="stylesheet" href="../styles/chat_styles/header.css">
+    <link rel="stylesheet" href="../styles/chat_styles/input.css">
+    <link rel="stylesheet" href="../styles/chat_styles/menu_header.css">
+    <link rel="stylesheet" href="../styles/chat_styles/friends.css">
+    <link rel="stylesheet" href="../styles/chat_styles/profile.css">
+    <link rel="stylesheet" href="../styles/chat_styles/messages.css">
 
-	<script type="module" src="../js/chat/chat_header.js" defer></script>
-	<script type="module" src="../js/chat/addFriend.js" defer></script>
-	<script type="module" src="../js/chat/changeStats.js" defer></script>
-	<script type="module" src="../js/chat/profile.js" defer></script>
-	<script type="module" src="../js/chat/logoutProfile.js" defer></script>
-	<script type="module" src="../js/chat/chat_logic.js" defer></script>
-	<script type="module" src="../js/chat/gifHandler.js" defer></script>
+    <script type="module" src="../js/chat/chat_header.js" defer></script>
+    <script type="module" src="../js/chat/addFriend.js" defer></script>
+    <script type="module" src="../js/chat/changeStats.js" defer></script>
+    <script type="module" src="../js/chat/profile.js" defer></script>
+    <script type="module" src="../js/chat/logoutProfile.js" defer></script>
+    <script type="module" src="../js/chat/chat_logic.js" defer></script>
+    <script type="module" src="../js/chat/gifHandler.js" defer></script>
 
-	<script type="module" src="../js/checkSession.js" defer></script>
+    <script type="module" src="../js/checkSession.js" defer></script>
 </head>
-
 <body>
-	<!-- ====== Плавающие уточки ====== -->
     <div id="ducks"></div>
 
-	<div class="chat-wrapper">
-		<div class="chat-box">
-			<!--! Шапка -->
-			<div class="chat-header">
-				<div class="chat-header-left">
-					<img class="avatar" id="header-avatar">
-					<div class="chat-header-text">
-						<div id="chat-title" class="chat-title">Ты</div>
-						<div class="chat-subtitle">Нет подключения к чатам</div>
-					</div>
-				</div>
-				<div class="chat-header-actions">
-					<button class="header-icon-btn" id="menu-toggle">⋮</button>
-					<div class="chat-menu" id="chat-menu">
-						<button class="menu-item" id="rename-chat">📝 Переименовать</button>
-						<button class="menu-item" id="delete-chat">🗑️ Удалить чат</button>
-					</div>
-				</div>
-			</div>
+    <div class="chat-wrapper">
+        <div class="chat-box">
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <!-- <img class="avatar" id="header-avatar"> -->
+                    <div class="chat-header-text">
+                        <div id="chat-title" class="chat-title"></div>
+                        <div class="chat-subtitle"></div>
+                    </div>
+                </div>
+                <div class="chat-header-actions">
+                    <button class="header-icon-btn" id="menu-toggle">⋮</button>
+                    <div class="chat-menu" id="chat-menu">
+                        <button class="menu-item" id="rename-chat">📝 Rename</button>
+                        <button class="menu-item" id="delete-chat">🗑️ Delete Chat</button>
+                    </div>
+                </div>
+            </div>
 
-			<!--! Сообщения -->
-			<div class="chat-messages" id="chat-body">
-				<div class="empty-chat muted">Выберите чат справа 👉</div>
-			</div>
+            <div class="chat-messages" id="chat-body">
+                <div class="empty-chat muted">Select a chat on the right 👉</div>
+            </div>
 
-			<!--! Ввод -->
-			<div class="chat-input">
-			<textarea id="message-input" placeholder="Напишите сообщение..." rows="1" maxlength="3000"></textarea>
+            <div class="chat-input">
+                <textarea id="message-input" placeholder="Write a message..." rows="1" maxlength="3000"></textarea>
 
-			<div class="gif-wrapper">
-				<button id="sendgif-btn">GIF</button>
-				<div id="gif-panel" class="gif-panel">
-				<input type="text" id="gifSearchInput" placeholder="Поиск GIF...">
-				<button id="gifSearchBtn">🔍</button>
-				<div id="gif-results"></div>
-				</div>
-			</div>
+                <div class="gif-wrapper">
+                    <button id="sendgif-btn">GIF</button>
+                    <div id="gif-panel" class="gif-panel">
+                        <input type="text" id="gifSearchInput" placeholder="Search GIF...">
+                        <button id="gifSearchBtn">🔍</button>
+                        <div id="gif-results"></div>
+                    </div>
+                </div>
 
-			<button id="sendsmale-btn">😄</button>
-			<button id="send-btn">🦆</button>
-			</div>
-		</div>
+                <button id="sendsmale-btn">😄</button>
+                <button id="send-btn">🦆</button>
+            </div>
+        </div>
 
-		<!--! Правая колонка -->
-		<aside class="chat-list">
-			<div class="chat-list-item profile" id="profile-toggle">
-				<div class="avatar-wrapper">
-					<img class="avatar" id="profile-avatar">
-					<span class="status-indicator" id="status-indicator"></span>
-				</div>
-				<div>
-					<div class="name" id="profile-name"> </div>
-					<div class="status muted" id="profile-status"> </div>
-				</div>
-			</div>
+        <aside class="chat-list">
+            <div class="chat-list-item profile" id="profile-toggle">
+                <div class="avatar-wrapper">
+                    <img class="avatar" id="profile-avatar">
+                    <span class="status-indicator" id="status-indicator"></span>
+                </div>
+                <div>
+                    <div class="name" id="profile-name"></div>
+                    <div class="status muted" id="profile-status"></div>
+                </div>
+            </div>
 
-			<div id="profile-panel" class="profile-panel">
-				<button class="sub-btn toggle-status">Изменить статус</button>
-				<div class="sub-panel" id="status-panel">
-					<button class="status-btn" data-status="online">🟢 В сети</button>
-					<button class="status-btn" data-status="invisible">👻 Невидимка</button>
-					<button class="status-btn" data-status="dnd">⛔ Не беспокоить</button>
-				</div>
-				<button class="sub-btn" id="open-avatar-modal">Изменить аватарку</button>
-				<button class="sub-btn logout-btn" id="logout-btn">Выйти из аккаунта</button>
-			</div>
-			
-			<div class="friends-panel-wrapper">
-				<div id="profile-panel-friends" class="profile-panel-friends">
-					<button id="profile-add-friend-btn">Add Friend</button>
-				</div>
-				<div class="chat-list-items"></div>
-			</div>
-			
-			<footer class="footer">LLC UTYAPUTYA © 2025 <br> All rights reserved</footer>
-		</aside>
-	</div>
+            <div id="profile-panel" class="profile-panel">
+                <button class="sub-btn toggle-status">Change Status</button>
+                <div class="sub-panel" id="status-panel">
+                    <button class="status-btn" data-status="online">🟢 Online</button>
+                    <button class="status-btn" data-status="invisible">👻 Invisible</button>
+                    <button class="status-btn" data-status="dnd">⛔ Do Not Disturb</button>
+                </div>
+                <button class="sub-btn" id="open-avatar-modal">Change Avatar</button>
+                <button class="sub-btn logout-btn" id="logout-btn">Log Out</button>
+            </div>
+            
+            <div class="friends-panel-wrapper">
+                <div id="profile-panel-friends" class="profile-panel-friends">
+                    <button id="profile-add-friend-btn">Add Friend</button>
+                </div>
+                <div class="chat-list-items"></div>
+            </div>
+            
+            <footer class="footer">LLC UTYAPUTYA © 2025 <br> All rights reserved</footer>
+        </aside>
+    </div>
 
-	<!--! Модалка Add Friend -->
-	<div id="add-friend-modal" class="modal">
-		<div class="add-friend-content">
-			<h2>Добавить друга</h2>
-			<input type="text" id="friend-search" placeholder="Введите ник друга" maxlength="18" required/>
-			<div class="add-friend-buttons">
-				<button id="search-friend-btn">Найти</button>
-				<button id="close-add-friend">Отмена</button>
-			</div>
-			<div id="friend-result"></div>
-			<div id="error-message"></div>
-		</div>
-	</div>
+    <div id="add-friend-modal" class="modal">
+        <div class="add-friend-content">
+            <h2>Add Friend</h2>
+            <input type="text" id="friend-search" placeholder="Enter friend's nickname" maxlength="18" required/>
+            <div class="add-friend-buttons">
+                <button id="search-friend-btn">Search</button>
+            </div>
+            <div id="friend-result"></div>
+            <div id="error-message"></div>
+        </div>
+    </div>
 
-	<!--! Модалка переименования -->
-	<div id="rename-modal" class="modal rename-modal">
-		<div class="modal-content rename-content">
-			<h3>Введите новое имя</h3>
-			<input type="text" id="rename-input" placeholder="Новое имя" maxlength="18"/>
-			<div class="modal-buttons">
-				<button id="rename-confirm">Сохранить</button>
-				<button id="rename-cancel">Отмена</button>
-			</div>
-		</div>
-	</div>
+    <div id="rename-modal" class="modal rename-modal">
+        <div class="modal-content rename-content">
+            <h3>Enter a new name</h3>
+            <input type="text" id="rename-input" placeholder="New name" maxlength="18"/>
+            <div class="modal-buttons">
+                <button id="rename-confirm">Save</button>
+                <button id="rename-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
 
-	<!--! Модалка выбора аватара -->
-	<div class="modal" id="avatar-modal">
-		<div class="modal-content">
-			<h2>Выбери аватар</h2>
-			<div class="avatar-options">
-				<img src="../html/assets/avatar_1.png" class="avatar-choice">
-				<img src="../html/assets/avatar_2.png" class="avatar-choice">
-				<img src="../html/assets/avatar_3.png" class="avatar-choice">
-				<img src="../html/assets/avatar_4.png" class="avatar-choice">
-				<img src="../html/assets/avatar_5.png" class="avatar-choice">
-				<img src="../html/assets/avatar_6.png" class="avatar-choice">
-				<img src="../html/assets/avatar_7.png" class="avatar-choice">
-				<img src="../html/assets/avatar_8.png" class="avatar-choice">
-				<img src="../html/assets/avatar_9.png" class="avatar-choice">
-				<img src="../html/assets/avatar_10.png" class="avatar-choice">
-			</div>
-			<label class="upload-btn">
-				Upload your avatar
-				<input type="file" id="avatar-input" accept="image/*">
-			</label>
-		</div>
-	</div>
+    <div class="modal" id="avatar-modal">
+        <div class="modal-content">
+            <h2>Select an Avatar</h2>
+            <div class="avatar-options">
+                <img src="../html/assets/avatar_1.png" class="avatar-choice">
+                <img src="../html/assets/avatar_2.png" class="avatar-choice">
+                <img src="../html/assets/avatar_3.png" class="avatar-choice">
+                <img src="../html/assets/avatar_4.png" class="avatar-choice">
+                <img src="../html/assets/avatar_5.png" class="avatar-choice">
+                <img src="../html/assets/avatar_6.png" class="avatar-choice">
+                <img src="../html/assets/avatar_7.png" class="avatar-choice">
+                <img src="../html/assets/avatar_8.png" class="avatar-choice">
+                <img src="../html/assets/avatar_9.png" class="avatar-choice">
+                <img src="../html/assets/avatar_10.png" class="avatar-choice">
+            </div>
+            <label class="upload-btn">
+                Upload your avatar
+                <input type="file" id="avatar-input" accept="image/*">
+            </label>
+        </div>
+    </div>
 </body>
 </html>

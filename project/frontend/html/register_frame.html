@@ -2,67 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Регистрация в DuckApp</title>
+    <title>Registration in DuckApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="stylesheet" href="../styles/base/register.css">
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
 
     <script type="module" src="../js/register.js"></script>
-
 </head>
 
 <body>
-    <!-- ====== Плавающие уточки ====== -->
     <div id="ducks"></div>
 
-    <!-- Основной контейнер формы регистрации -->
     <div class="register-container">
-
-        <!-- Логотип (эмодзи-уточка) -->
         <div class="logo" aria-hidden="true">🦆</div>
-
-        <!-- Заголовок формы -->
         <h2>Registration in DuckApp</h2>
 
-        <!-- Форма регистрации -->
         <form id="registerForm" autocomplete="on">
-            
-            <!-- Поле ввода имени пользователя -->
             <div class="input-group">
                 <input type="text" id="username" name="username" placeholder=" " maxlength="21" required>
                 <label for="username">Username</label>
             </div>
 
-            <!-- Поле ввода email -->
             <div class="input-group">
                 <input type="email" id="email" name="email" placeholder=" " required>
                 <label for="email">Email</label>
             </div>
 
-            <!-- Поле ввода пароля -->
             <div class="input-group">
                 <input type="password" id="password" name="password" placeholder=" " minlength="3" required>
                 <label for="password">Password</label>
             </div>
 
-            <!-- Поле подтверждения пароля -->
             <div class="input-group">
                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " minlength="3" required>
                 <label for="confirmPassword">Confirm Password</label>
             </div>
 
-            <!-- Кнопка регистрации и ссылка на вход -->
             <div class="form-buttons">
-                <!-- Основная кнопка -->
                 <button type="submit" id="submit">Register</button>
-                <!-- Ссылка для тех, у кого уже есть аккаунт -->
                 <span class="haveAnAccountLogin">
-                    Have an account? <a href="authorization_frame.html">Log in</a>
+                    Already have an account? <a href="authorization_frame.html">Log in</a>
                 </span>
             </div>
 
-            <!-- Блок для вывода ошибок (например: пароли не совпадают) -->
             <div class="error" id="errorMsg" aria-live="polite"></div>
         </form>
     </div>

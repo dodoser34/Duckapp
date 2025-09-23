@@ -1,99 +1,89 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="../styles/base/main.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
+    <title>Duck App – Online Messenger</title>
 
-  <script type="module" src="../js/main.js" defer></script>
-  <title>Duck App – Онлайн мессенджер</title>
+    <link rel="stylesheet" href="../styles/base/main.css">
+    <script type="module" src="../js/main.js" defer></script>
 </head>
 <body>
-  <!-- ====== Плавающие уточки ====== -->
-  <div id="ducks"></div>
+    <div id="ducks"></div>
 
-  <!-- ====== ХЕДЕР ====== -->
-  <header>
-    <div class="logo">🦆 Duck App</div>
-    <nav>
-      <a id="aboutSiteBtn">О сайте</a>
-      <a id="aboutUsBtn">О нас</a>
-    </nav>
-  </header>
+    <header>
+        <div class="logo">🦆 Duck App</div>
+        <nav>
+            <a id="aboutSiteBtn">About</a>
+            <a id="aboutUsBtn">Team</a>
+        </nav>
+    </header>
 
-  <!-- ====== HERO ====== -->
-  <section class="hero">
-    <div class="hero-text">
-      <h1>Простой и удобный онлайн мессенджер</h1>
-      <p>Duck App — это быстрый, современный и красивый способ общения прямо в браузере. Минимализм, скорость и стиль в одном месте.</p>
-      <button onclick="location.href='authorization_frame.html'">Начать общение сейчас</button>
-
-      <!-- ====== ФУТЕР ПОД КНОПКОЙ ====== -->
-      <footer>
-        © 2025 Duck App. Все права защищены.
-      </footer>
-    </div>
-
-    <!-- Слайдер -->
-    <div>
-      <div class="slider">
-        <div class="slides">
-          <img src="assets/avatar_1.png" alt="Duck 1">
-          <img src="assets/avatar_2.png" alt="Duck 2">
-          <img src="assets/avatar_3.png" alt="Duck 3">
-          <img src="assets/avatar_4.png" alt="Duck 4">
-          <img src="assets/avatar_5.png" alt="Duck 5">
-          <img src="assets/qr-code.png" alt="QR">
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Simple and convenient online messenger</h1>
+            <p>Duck App is a fast and beautiful way to chat directly in your browser. Minimalism and speed in one place.<br> “Quack-quack and no problems”</p>
+            <button onclick="location.href='authorization_frame.html'">Start chatting now</button>
         </div>
-      </div>
-      <div class="dots"></div>
-    </div>
-  </section>
 
-  <!-- ====== МОДАЛКА О САЙТЕ ====== -->
-  <div id="aboutSiteModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>О сайте</h2>
-      <div class="modal-block">
-        <h3>Суть</h3>
-        <p>Duck App — это лёгкий и весёлый мессенджер, созданный для общения с друзьями в непринуждённой атмосфере. Его главная цель — подарить радость и простоту, объединяя людей с помощью дружелюбного интерфейса и позитивного стиля.</p>
-      </div>
-      <div class="modal-block">
-        <h3>Стиль</h3>
-        <p>Основной акцент сделан на яркой цветовой палитре, минимализме и милых деталях вроде уточек. Такой дизайн создаёт ощущение лёгкости и уюта.</p>
-      </div>
-      <div class="modal-block">
-        <h3>Тема</h3>
-        <p>Duck App отличается от обычных мессенджеров своей игривой и дружелюбной атмосферой. Здесь всё строится на позитиве и идее «простого общения без лишнего».</p>
-      </div>
-    </div>
-  </div>
+        <div>
+            <div class="slider">
+                <div class="slides">
+                    <img src="assets/avatar_1.png" alt="Duck 1">
+                    <img src="assets/avatar_2.png" alt="Duck 2">
+                    <img src="assets/avatar_3.png" alt="Duck 3">
+                    <img src="assets/avatar_4.png" alt="Duck 4">
+                    <img src="assets/avatar_5.png" alt="Duck 5">
+                    <img src="assets/qr-code.png" alt="QR">
+                </div>
+            </div>
+            <div class="dots"></div>
+        </div>
+    </section>
 
-  <!-- ====== МОДАЛКА О НАС ====== -->
-  <div id="aboutUsModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>О нас</h2>
-      <div class="team-member">
-        <h3>Игорь</h3>
-        <p><b>Роль:</b> разработчик фронтенда</p>
-        <p>Создал дизайн главной страницы, реализовал слайдер и анимации.</p>
-        <a href="https://github.com/igor" target="_blank">GitHub</a>
-      </div>
-      <div class="team-member">
-        <h3>Алексей</h3>
-        <p><b>Роль:</b> бэкенд-разработчик</p>
-        <p>Разработал серверную часть и систему авторизации.</p>
-        <a href="https://github.com/alex" target="_blank">GitHub</a>
-      </div>
-      <div class="team-member">
-        <h3>Мария</h3>
-        <p><b>Роль:</b> дизайнер</p>
-        <p>Придумала стиль приложения, выбрала цветовую палитру и идею с уточками.</p>
-        <a href="https://github.com/maria" target="_blank">GitHub</a>
-      </div>
+    <footer>
+        © 2025 Duck App. All rights reserved.
+    </footer>
+
+    <div id="aboutSiteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>About Duck App</h2>
+            <div class="modal-block">
+                <h3>Concept</h3>
+                <p>Duck App is a light and fun messenger created for friendly communication in a relaxed atmosphere. Its main goal is to bring joy and simplicity, uniting people through a friendly interface and positive style.</p>
+            </div>
+            <div class="modal-block">
+                <h3>Style</h3>
+                <p>The focus is on a bright color palette, minimalism, and cute duck details. This design creates a feeling of lightness and comfort.</p>
+            </div>
+            <div class="modal-block">
+                <h3>Theme</h3>
+                <p>Unlike standard messengers, Duck App is built on positivity and a playful atmosphere. No heavy interface or clutter—just simple communication, emotions, and a little “quack-quack.”</p>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <div id="aboutUsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Our Team</h2>
+            <div class="team-member">
+                <h3>Dodoser34</h3>
+                <p><b>Role:</b> Frontend Developer</p>
+                <p>Created the application architecture, designed and implemented the site layout. Added interactive slider and animations to make the interface more lively and friendly.</p>
+                <a href="https://github.com/dodoser34" target="_blank" style="color: blueviolet;">GitHub</a>
+                <a href="https://t.me/Dodoser34" target="_blank">Telegram</a>
+            </div>
+            <div class="team-member">
+                <h3>Teych-Man</h3>
+                <p><b>Role:</b> Backend Developer</p>
+                <p>He is the author of the Duck App idea. Designed and implemented the site’s business logic, developed the server side, and contributed to UX design.</p>
+                <a href="https://github.com/Teych-Man" target="_blank" style="color: blueviolet;">GitHub</a>
+                <a href="https://t.me/Teych_Man" target="_blank">Telegram</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
