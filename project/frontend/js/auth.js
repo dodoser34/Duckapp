@@ -16,7 +16,7 @@ form.addEventListener("submit", async (e) => {
         if (check.ok) {
             window.location = "main_chat.html";
         } else {
-            msg.textContent = "❌ Ошибка при проверке сессии: " + (check.result.detail || "");
+            msg.textContent = "❌ Session check error: " + (check.result.detail || "");
         }
     } else {
         msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
@@ -24,13 +24,12 @@ form.addEventListener("submit", async (e) => {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
-
     const userLang = (navigator.language || "en").substring(0, 2);
 
     const check = await checkToken();
-        if (check.ok) {
-            window.location = "main_chat.html";
-        }
+    if (check.ok) {
+        window.location = "main_chat.html";
+    }
 
     const translations = {
     en: {
@@ -75,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelector("footer").textContent = t.footer;
 });
 
-/* ====== УТОЧКИ ====== */
+/* ====== DUCKS ====== */
 const duckCount = 8;
 const ducksContainer = document.getElementById("ducks");
 
@@ -84,18 +83,18 @@ function spawnDuck() {
     duck.classList.add("duck");
     duck.textContent = "🦆";
 
-    // размер
+    // size
     const size = Math.random() * 20 + 30;
     duck.style.fontSize = size + "px";
 
-    // высота
+    // height
     const top = Math.random() * 90;
     duck.style.top = top + "vh";
 
-    // скорость
+    // speed
     const speed = Math.random() * 6 + 6;
 
-    // направление
+    // direction
     const direction = Math.random() < 0.5 ? "right" : "left";
 
     if (direction === "right") {

@@ -11,20 +11,20 @@ export async function loadFriends() {
         const friends = await res.json();
 
         if (!res.ok) {
-            console.error("Ошибка при загрузке друзей:", friends.detail);
+            console.error("Error while loading friends:", friends.detail);
             return;
         }
 
         friendsContainer.innerHTML = "";
 
-        // базовый путь для аватарок
+        // base path for avatars
         const avatarBaseUrl = "http://127.0.0.1:8000/assets/";
 
         const statuses = {
-            online: "В сети",
-            invisible: "Не в сети",
-            dnd: "Не беспокоить",
-            offline: "Не в сети",
+            online: "Online",
+            invisible: "Offline",
+            dnd: "Do Not Disturb",
+            offline: "Offline",
         };
 
         const colors = {
@@ -34,14 +34,14 @@ export async function loadFriends() {
             offline: "#888",
         };
 
-        // добавляем друзей
+        // add friends
         friends.forEach(friend => {
             const avatarSrc = friend.avatar
                 ? avatarBaseUrl + friend.avatar
                 : avatarBaseUrl + "avatar_2.png";
 
             const status = friend.status || "offline";
-            const statusText = statuses[status] || "Неизвестно";
+            const statusText = statuses[status] || "Unknown";
             const statusColor = colors[status] || "gray";
 
             const friendEl = document.createElement("div");
@@ -65,6 +65,6 @@ export async function loadFriends() {
             friendsContainer.appendChild(friendEl);
         });
     } catch (err) {
-        console.error("Ошибка загрузки друзей:", err);
+        console.error("Failed to load friends:", err);
     }
 }

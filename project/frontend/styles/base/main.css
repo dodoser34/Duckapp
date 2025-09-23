@@ -192,6 +192,55 @@ footer {
   margin: 0px auto 10px auto;
 }
 
+/* ===== ТОНКИЙ DACAP-СКРОЛЛ — скрыт по умолчанию, появляется с html.show-scroll ===== */
+:root{
+  --scroll-width: 6px;
+  --scroll-thumb-bg: linear-gradient(180deg,#ffb703,#fb8500);
+  --scroll-transition: 200ms;
+}
+
+/* WebKit (Chrome/Edge/Safari) — по умолчанию скрыт */
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb-bg);
+  border-radius: 6px;
+  border: none;
+  opacity: 0;
+  transition: opacity var(--scroll-transition) ease, box-shadow var(--scroll-transition);
+}
+
+/* Показываем — когда есть класс */
+html.show-scroll::-webkit-scrollbar {
+  width: var(--scroll-width);
+  height: var(--scroll-width);
+}
+html.show-scroll::-webkit-scrollbar-thumb {
+  opacity: 1;
+  box-shadow: 0 0 8px rgba(251,133,0,0.28);
+}
+
+/* Hover для аккуратного свечения */
+html.show-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,#fb8500,#ffb703);
+  box-shadow: 0 0 12px rgba(251,133,0,0.45);
+}
+
+/* Firefox */
+html {
+  scrollbar-width: none;               /* hide by default in Firefox */
+  scrollbar-color: transparent transparent;
+}
+html.show-scroll {
+  scrollbar-width: thin;               /* покажем тонкий */
+  scrollbar-color: #fb8500 transparent;/* thumb + track */
+}
+
 /* ====== МОДАЛКИ ====== */
 .modal {
   display: none;
@@ -353,32 +402,4 @@ footer {
     width: 95%;
     height: auto;
   }
-}
-
-
-/* ===== Chrome, Edge, Safari ===== */
-::-webkit-scrollbar {
-  width: 2px;          /* ширина вертикального скролла */
-  height: 2px;         /* высота горизонтального скролла */
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;  /* фон под скроллом */
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: orange;  /* цвет ползунка */
-  border-radius: 4px;        /* скругление */
-  border: 2px solid transparent; /* чтобы не прилипал */
-}
-
-/* При наведении */
-::-webkit-scrollbar-thumb:hover {
-  background-color: #ff9900;
-}
-
-/* ===== Firefox ===== */
-* {
-  scrollbar-width: thin;              /* тонкий */
-  scrollbar-color: orange transparent; /* цвет ползунка и трека */
 }

@@ -12,82 +12,81 @@ const renameInput = document.getElementById('rename-input');
 const renameConfirm = document.getElementById('rename-confirm');
 const renameCancel = document.getElementById('rename-cancel');
 
-
 let currentChatId = null;
 let localNames = {};
 
 menuToggle.addEventListener('click', () => {
-  chatMenu.classList.toggle('open');
+    chatMenu.classList.toggle('open');
 });
 
 document.addEventListener('click', (e) => {
-  if (!chatMenu.contains(e.target) && !menuToggle.contains(e.target)) {
-    chatMenu.classList.remove('open');
-  }
+    if (!chatMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        chatMenu.classList.remove('open');
+    }
 });
 
 chatItems.forEach(item => {
-  item.addEventListener('click', () => {
-    const id = item.dataset.id;
-    currentChatId = id;
+    item.addEventListener('click', () => {
+        const id = item.dataset.id;
+        currentChatId = id;
 
-    const defaultName = item.dataset.name || 'Без имени';
-    const name = localNames[id] || defaultName;
-    const avatar = item.dataset.avatar || 'none';
-    const status = item.dataset.status || '—';
+        const defaultName = item.dataset.name || 'No name';
+        const name = localNames[id] || defaultName;
+        const avatar = item.dataset.avatar || 'none';
+        const status = item.dataset.status || '—';
 
-    chatTitle.textContent = name;
-    chatSubtitle.textContent = status;
-    chatAvatar.src = avatar;
+        chatTitle.textContent = name;
+        chatSubtitle.textContent = status;
+        chatAvatar.src = avatar;
 
-    chatMessages.innerHTML = `<div class="message-bubble">Привет, ${name}!</div>`;
-  });
+        chatMessages.innerHTML = `<div class="message-bubble">Hello, ${name}!</div>`;
+    });
 });
 
 deleteBtn.addEventListener('click', () => {
-  if (!currentChatId) return alert('Чат не выбран');
+    if (!currentChatId) return alert('Chat not selected');
 
-  const chatToDelete = document.querySelector(`.chat-list-item[data-id="${currentChatId}"]`);
-  if (chatToDelete) chatToDelete.remove();
+    const chatToDelete = document.querySelector(`.chat-list-item[data-id="${currentChatId}"]`);
+    if (chatToDelete) chatToDelete.remove();
 
-  chatTitle.textContent = 'Чат';
-  chatSubtitle.textContent = 'Выберите чат справа';
-  chatAvatar.src = 'none';
-  chatMessages.innerHTML = '<div class="empty-chat muted">Чат удалён</div>';
+    chatTitle.textContent = 'Chat';
+    chatSubtitle.textContent = 'Select a chat on the right';
+    chatAvatar.src = 'none';
+    chatMessages.innerHTML = '<div class="empty-chat muted">Chat deleted</div>';
 
-  delete localNames[currentChatId];
-  currentChatId = null;
-  chatMenu.classList.remove('open');
+    delete localNames[currentChatId];
+    currentChatId = null;
+    chatMenu.classList.remove('open');
 });
 
-// === Переименование чата ===
+// === Chat renaming ===
 
-// открыть модалку
+// open modal
 renameBtn.addEventListener('click', () => {
-  if (!currentChatId) return alert('Чат не выбран');
-  renameInput.value = localNames[currentChatId] || chatTitle.textContent;
-  renameModal.classList.add('open');
+    if (!currentChatId) return alert('Chat not selected');
+    renameInput.value = localNames[currentChatId] || chatTitle.textContent;
+    renameModal.classList.add('open');
 });
 
-// закрыть по кнопке "Отмена"
+// close by "Cancel" button
 renameCancel.addEventListener('click', () => {
-  renameModal.classList.remove('open');
+    renameModal.classList.remove('open');
 });
 
-// сохранить новое имя
+// save new name
 renameConfirm.addEventListener('click', () => {
-  const newName = renameInput.value.trim();
-  if (newName === "") return alert("Введите имя");
+    const newName = renameInput.value.trim();
+    if (newName === "") return alert("Enter a name");
 
-  // сохраняем локально
-  localNames[currentChatId] = newName;
+    // save locally
+    localNames[currentChatId] = newName;
 
-  // меняем в шапке
-  chatTitle.textContent = newName;
+    // update header
+    chatTitle.textContent = newName;
 
-  // меняем в списке чатов справа
-  const chatItem = document.querySelector(`.chat-list-item[data-id="${currentChatId}"] .name`);
-  if (chatItem) chatItem.textContent = newName;
+    // update in chat list
+    const chatItem = document.querySelector(`.chat-list-item[data-id="${currentChatId}"] .name`);
+    if (chatItem) chatItem.textContent = newName;
 
-  renameModal.classList.remove('open');
+    renameModal.classList.remove('open');
 });

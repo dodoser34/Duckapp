@@ -20,16 +20,16 @@ export function setupAvatarChange() {
                     body: JSON.stringify({ avatar: avatarFileName })
                 });
 
-                if (!res.ok) throw new Error("Ошибка сохранения аватарки");
+                if (!res.ok) throw new Error("Failed to save avatar");
                 const data = await res.json();
 
-                // обновляем UI
+                // update UI
                 profileAvatar.src = avatarBaseUrl + data.avatar;
                 if (headerAvatar) headerAvatar.src = avatarBaseUrl + data.avatar;
 
                 avatarModal.classList.remove("open");
             } catch (err) {
-                console.error("Не удалось обновить аватар:", err);
+                console.error("Failed to update avatar:", err);
             }
         });
     });

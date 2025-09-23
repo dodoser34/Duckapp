@@ -90,7 +90,7 @@ async def logout(response: Response):
     response.delete_cookie("access_token")
     return {"message": "Logged out"}
 
-#! ---------- Проверка токена ----------
+#! ---------- Token verification ----------
 def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -113,9 +113,9 @@ def get_me(token: str = Depends(get_token_from_cookie)):
     username: str = payload.get("sub")
 
     conn = db.get_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)  # чтобы сразу dict приходил
+    cursor = conn.cursor(pymysql.cursors.DictCursor)  # return dicts directly
 
-    # JOIN для профиля
+    # JOIN for profile
     cursor.execute("""
         SELECT 
             ru.id, 
@@ -142,8 +142,8 @@ def get_me(token: str = Depends(get_token_from_cookie)):
         "username": user["username"],
         "email": user["email"],
         "created_at": user["created_at"],
-        "names": user.get("names") or user["username"],  # если профиля нет → username
-        "avatar": user.get("avatar") or "../assets/avatar_1.png",  # дефолтная аватарка
+        "names": user.get("names") or user["username"],  # if no profile → use username
+        "avatar": user.get("avatar") or "../assets/avatar_1.png",  # default avatar
         "status": user.get("status") or "online"
     }
 

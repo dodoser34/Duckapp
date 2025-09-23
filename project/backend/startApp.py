@@ -18,7 +18,8 @@ app.add_middleware(
     allow_origin_regex=r"http://(127\.0\.0\.1|localhost)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"])
+    allow_headers=["*"]
+)
 
 app.include_router(auth.router, prefix="/api/auth")
 app.include_router(profile.router, prefix="/api")

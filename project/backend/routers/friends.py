@@ -10,7 +10,7 @@ class FriendAddRequest(BaseModel):
     friend_id: int
 
 
-# поиск пользователя по нику
+# Search user by nickname
 @router.get("/search")
 async def search_friend(names: str, current_user=Depends(get_current_user)):
     def query():
@@ -28,7 +28,7 @@ async def search_friend(names: str, current_user=Depends(get_current_user)):
     result = await asyncio.to_thread(query)
 
     if not result:
-        raise HTTPException(status_code=404, detail="Пользователь не найден")
+        raise HTTPException(status_code=404, detail="User not found")
 
     return {
         "id": result["id"],
@@ -37,22 +37,19 @@ async def search_friend(names: str, current_user=Depends(get_current_user)):
         "status": result["status"]
     }
 
-
-
-
 @router.post("/add")
 async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_user)):
     user_id = current_user["id"]
     friend_id = req.friend_id
 
     if user_id == friend_id:
-        raise HTTPException(status_code=400, detail="Нельзя добавить себя")
+        raise HTTPException(status_code=400, detail="You cannot add yourself")
 
     def insert_friend():
         conn = get_connection()
         try:
             with conn.cursor() as cursor:
-                # Проверка на существующую запись
+                # Check if record already exists
                 cursor.execute(
                     "SELECT 1 FROM friends WHERE user_id=%s AND friend_id=%s",
                     (user_id, friend_id)
@@ -72,12 +69,11 @@ async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_use
     result = await asyncio.to_thread(insert_friend)
 
     if result == "exists":
-        raise HTTPException(status_code=400, detail="Уже в друзьях")
+        raise HTTPException(status_code=400, detail="Already in friends")
 
-    return {"ok": True, "message": "Друг добавлен"}
+    return {"ok": True, "message": "Friend added"}
 
-#!Получание списка друзей из БД --------------------
-
+#! Get friends list from DB --------------------
 @router.get("/list")
 async def get_friends(current_user=Depends(get_current_user)):
     user_id = current_user.get("id") or current_user.get("user_id")

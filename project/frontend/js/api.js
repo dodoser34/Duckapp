@@ -1,50 +1,51 @@
 export const API_URL = "http://127.0.0.1:8000/api/auth";
 
 export async function registerUser(username, email, password) {
-  const formData = new URLSearchParams();
-  formData.append("username", username);
-  formData.append("email", email);
-  formData.append("password", password);
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("email", email);
+    formData.append("password", password);
 
-  const res = await fetch(`${API_URL}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formData,
-    credentials: "include" 
-  });
+    const res = await fetch(`${API_URL}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData,
+        credentials: "include"
+    });
 
-  return res.json().then((result) => ({ ok: res.ok, result }));
+    return res.json().then((result) => ({ ok: res.ok, result }));
 }
 
 export async function loginUser(username, password) {
-  const formData = new URLSearchParams();
-  formData.append("username", username);
-  formData.append("password", password);
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
 
-  const res = await fetch(`${API_URL}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formData,
-    credentials: "include" 
-  });
-  return res.json().then((result) => ({ ok: res.ok, result }));
-}
-
-//! ---------- Проверка токена ----------
-
-export async function checkToken() {
-  try {
-    const res = await fetch(`${API_URL}/me`, {
-      credentials: "include",
-      cache: "no-store"
+    const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData,
+        credentials: "include"
     });
 
-    if (!res.ok) {
-      return { ok: false, result: { detail: res.statusText || "Unauthorized" } };
-    }
+    return res.json().then((result) => ({ ok: res.ok, result }));
+}
 
-    return { ok: true, result: await res.json() };
-  } catch (err) {
-    return { ok: false, result: { detail: err.message } };
-  }
+//! ---------- Token verification ----------
+
+export async function checkToken() {
+    try {
+        const res = await fetch(`${API_URL}/me`, {
+            credentials: "include",
+            cache: "no-store"
+        });
+
+        if (!res.ok) {
+            return { ok: false, result: { detail: res.statusText || "Unauthorized" } };
+        }
+
+        return { ok: true, result: await res.json() };
+    } catch (err) {
+        return { ok: false, result: { detail: err.message } };
+    }
 }

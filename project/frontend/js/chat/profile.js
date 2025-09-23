@@ -1,22 +1,21 @@
 import { setupAvatarChange } from "./changeAvatar.js";
 import { loadFriends } from "./loadFriend.js";
 setupAvatarChange();
-loadFriends()
+loadFriends();
 
 export async function getProfile(ok, result) {
-
     const profileName = document.getElementById("profile-name");
-    const profileAvatar = document.getElementById("profile-avatar"); 
+    const profileAvatar = document.getElementById("profile-avatar");
     const statusIndicator = document.getElementById("status-indicator");
 
     try {
-        if (!ok) throw new Error(result.detail || "Ошибка авторизации");
+        if (!ok) throw new Error(result.detail || "Authorization error");
 
-        // result = данные из /me
+        // result = data from /me
         profileName.textContent = result.names;
         profileAvatar.src = result.avatar || "/assets/avatar_.png";
 
-        // статус
+        // status
         updateStatus(result.status);
 
         const avatarBaseUrl = "http://127.0.0.1:8000/assets/";
@@ -24,20 +23,19 @@ export async function getProfile(ok, result) {
         profileAvatar.src = result.avatar
             ? avatarBaseUrl + result.avatar
             : avatarBaseUrl + "avatar_1.png";
-
     } catch (err) {
-        console.error("Ошибка загрузки профиля:", err);
-        profileName.textContent = "Гость";
+        console.error("Profile loading error:", err);
+        profileName.textContent = "Guest";
         profileAvatar.src = "/assets/avatar_.png";
         updateStatus("offline");
     }
 
     function updateStatus(status) {
         const statuses = {
-            online: "В сети",
-            invisible: "Не в сети",
-            dnd: "Не беспокоить",
-            offline: "Не в сети",
+            online: "Online",
+            invisible: "Invisible",
+            dnd: "Do Not Disturb",
+            offline: "Offline",
         };
 
         const colors = {
@@ -48,12 +46,12 @@ export async function getProfile(ok, result) {
         };
 
         document.getElementById("profile-status").textContent =
-            statuses[status] || "Неизвестно";
+            statuses[status] || "Unknown";
         statusIndicator.style.background = colors[status] || "gray";
     }
 }
 
-/* ====== УТОЧКИ ====== */
+/* ====== DUCKS ====== */
 const duckCount = 8;
 const ducksContainer = document.getElementById("ducks");
 
@@ -62,18 +60,18 @@ function spawnDuck() {
     duck.classList.add("duck");
     duck.textContent = "🦆";
 
-    // размер
+    // size
     const size = Math.random() * 20 + 30;
     duck.style.fontSize = size + "px";
 
-    // высота
+    // height
     const top = Math.random() * 90;
     duck.style.top = top + "vh";
 
-    // скорость
+    // speed
     const speed = Math.random() * 6 + 6;
 
-    // направление
+    // direction
     const direction = Math.random() < 0.5 ? "right" : "left";
 
     if (direction === "right") {

@@ -10,7 +10,6 @@ class ProfileUpdate(BaseModel):
     status: str | None = None
     avatar: str | None = None
 
-
 @router.patch("/users/profile")
 def update_profile(
     data: ProfileUpdate,
@@ -31,7 +30,7 @@ def update_profile(
 
     id = user["id"]
 
-    # если нет строки в user_profiles — создаём
+    # if there is no row in user_profiles — create one
     cursor.execute("SELECT id FROM user_profiles WHERE id = %s", (id,))
     exists = cursor.fetchone()
 
@@ -41,8 +40,10 @@ def update_profile(
         if data.avatar:
             cursor.execute("UPDATE user_profiles SET avatar = %s WHERE id = %s", (data.avatar, id))
     else:
-        cursor.execute("INSERT INTO user_profiles (id, status, avatar) VALUES (%s, %s, %s)",
-                    (id, data.status or "online", data.avatar or "avatar_1.png"))
+        cursor.execute(
+            "INSERT INTO user_profiles (id, status, avatar) VALUES (%s, %s, %s)",
+            (id, data.status or "online", data.avatar or "avatar_1.png")
+        )
 
     conn.commit()
     cursor.close()

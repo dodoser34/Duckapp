@@ -10,7 +10,7 @@ const errorMessage = document.getElementById("error-message");
 
 const friendsContainer = document.querySelector(".chat-list-items");
 
-// Open modal
+
 profileAddFriendBtn.addEventListener("click", () => {
     addFriendModal.classList.add("open");
 });
@@ -56,7 +56,7 @@ addFriendBtn.addEventListener("click", async () => {
         friendResult.innerHTML = `
             <div class="friend-card">
                 <div class="avatar-wrapper">
-                    <img src="${avatarBaseUrl + (data.avatar || "avatar_2.png")}" class="avatar">
+                    <img src="${avatarBaseUrl + (data.avatar || "assets/avatar_2.png")}" class="avatar">
                     <span class="status-indicator ${data.status || "offline"}"></span>
                 </div>
                 <div class="friend-info">
