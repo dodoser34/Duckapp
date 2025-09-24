@@ -7,9 +7,9 @@ const chatSubtitle = document.querySelector(".chat-subtitle");
 const headerAvatar = document.getElementById("header-avatar");
 const chatListItems = document.querySelectorAll(".chat-list-item:not(.profile)");
 
-const gifWrapper = document.querySelector(".gif-wrapper");
 const gifPanel = document.getElementById("gif-panel");
 const gifBtn = document.getElementById("sendgif-btn");
+const gifCloseBtn = document.getElementById("gifCloseBtn");
 const gifSearchBtn = document.getElementById("gifSearchBtn");
 const gifSearchInput = document.getElementById("gifSearchInput");
 const gifResults = document.getElementById("gif-results");
@@ -82,7 +82,8 @@ function sendGif(url, type = "user") {
     msgTime.classList.add("msg-meta");
     const now = new Date();
     msgTime.textContent =
-        now.getHours().toString().padStart(2, "0") + ":" +
+        now.getHours().toString().padStart(2, "0") +
+        ":" +
         now.getMinutes().toString().padStart(2, "0");
     bubble.appendChild(msgTime);
 
@@ -90,7 +91,7 @@ function sendGif(url, type = "user") {
     chatBody.appendChild(messageRow);
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    // Close popup
+    // Закрыть GIF панель
     gifPanel.classList.remove("open");
     gifResults.innerHTML = "";
     gifSearchInput.value = "";
@@ -98,7 +99,11 @@ function sendGif(url, type = "user") {
     // Bot auto-reply
     if (type === "user" && currentFriend) {
         setTimeout(() => {
-            const botMsg = createMessage(`Hello! I am ${currentFriendName}`, "bot", currentFriendAvatar);
+            const botMsg = createMessage(
+                `Hello! I am ${currentFriendName}`,
+                "bot",
+                currentFriendAvatar
+            );
             chatBody.appendChild(botMsg);
             chatBody.scrollTop = chatBody.scrollHeight;
         }, 800);
@@ -119,13 +124,17 @@ function openChat(friendElement) {
 
     chatBody.innerHTML = "";
 
-    const welcomeMsg = createMessage(`Hello! I am ${currentFriendName}`, "bot", currentFriendAvatar);
+    const welcomeMsg = createMessage(
+        `Hello! I am ${currentFriendName}`,
+        "bot",
+        currentFriendAvatar
+    );
     chatBody.appendChild(welcomeMsg);
     chatBody.scrollTop = chatBody.scrollHeight;
 }
 
 // === Click on friends ===
-chatListItems.forEach(item => item.addEventListener("click", () => openChat(item)));
+chatListItems.forEach((item) => item.addEventListener("click", () => openChat(item)));
 
 // === Send text ===
 function sendMessage() {
@@ -139,7 +148,11 @@ function sendMessage() {
 
     if (currentFriend) {
         setTimeout(() => {
-            const botMsg = createMessage(`Hello! I am ${currentFriendName}`, "bot", currentFriendAvatar);
+            const botMsg = createMessage(
+                `Hello! I am ${currentFriendName}`,
+                "bot",
+                currentFriendAvatar
+            );
             chatBody.appendChild(botMsg);
             chatBody.scrollTop = chatBody.scrollHeight;
         }, 800);
@@ -147,50 +160,66 @@ function sendMessage() {
 }
 
 sendBtn.addEventListener("click", sendMessage);
-messageInput.addEventListener("keydown", e => {
+messageInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
     }
 });
 
-// === Open / close GIF popup ===
-gifBtn.addEventListener("click", e => {
+// === Open / close GIF panel ===
+gifBtn.addEventListener("click", () => {
     gifPanel.classList.toggle("open");
 });
 
+gifCloseBtn.addEventListener("click", () => {
+    gifPanel.classList.remove("open");
+});
+
 // === Search GIF ===
-gifSearchBtn.addEventListener("click", async () => {
+async function searchGif() {
     const query = gifSearchInput.value.trim();
     if (!query) return;
 
-    const url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(query)}&limit=12&rating=g`;
-    const res = await fetch(url);
-    const data = await res.json();
+    try {
+        const url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(
+            query
+        )}&limit=12&rating=g`;
+        const res = await fetch(url);
+        const data = await res.json();
 
-    gifResults.innerHTML = "";
+        gifResults.innerHTML = "";
 
-    if (data.data.length === 0) {
-        gifResults.innerHTML = "<p>No results found 😢</p>";
-        return;
-    }
+        if (!data.data || data.data.length === 0) {
+            gifResults.innerHTML = "<p>No results found 😢</p>";
+            return;
+        }
 
-    data.data.forEach(gif => {
-        const img = document.createElement("img");
-        img.src = gif.images.fixed_height_small.url;
-        img.title = "Send to chat";
+        data.data.forEach((gif) => {
+            const img = document.createElement("img");
+            img.src = gif.images.fixed_height_small.url;
+            img.title = "Send to chat";
 
-        img.addEventListener("click", () => {
-            sendGif(gif.images.original.url, "user");
+            // клик по гифке → вставляем в чат
+            img.addEventListener("click", () => {
+                sendGif(gif.images.original.url, "user");
+            });
+
+            gifResults.appendChild(img);
         });
+    } catch (err) {
+        console.error("GIF search error:", err);
+        gifResults.innerHTML = "<p>⚠️ Error loading GIFs</p>";
+    }
+}
 
-        gifResults.appendChild(img);
-    });
-});
+// запуск по кнопке 🔍
+gifSearchBtn.addEventListener("click", searchGif);
 
-// === Close popup on outside click ===
-document.addEventListener("click", e => {
-    if (!gifWrapper.contains(e.target)) {
-        gifPanel.classList.remove("open");
+// запуск по Enter
+gifSearchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        searchGif();
     }
 });

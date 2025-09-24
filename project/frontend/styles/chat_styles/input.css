@@ -2,62 +2,55 @@
 .chat-input {
   display: flex;
   align-items: center;
-  /* выравниваем ВСЕ элементы по центру */
   gap: 8px;
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0 0 0px 12px;
+  border-radius: 0 0 12px 12px; /* фикс */
 }
 
 /* Поле ввода */
 .chat-input textarea {
-  height: 40px;
   flex: 1;
+  min-height: 40px;
+  max-height: 120px;
   resize: none;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: none;
   border-radius: 12px;
   font-size: 15px;
   line-height: 1.4;
   background: rgba(255, 255, 255, 0.9);
-  transition: border 0.3s ease, box-shadow 0.2s ease;
-  display: flex;
-  align-items: center;
-  /* выравнивание текста по центру */
+  transition: box-shadow 0.2s ease;
   overflow-y: auto;
-  /* скролл, если друзей много */
-}
-
-/* Стили для тонкого скролла */
-.chat-input textarea::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chat-input textarea::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-}
-
-.chat-input textarea::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Firefox */
-.chat-input textarea {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
 .chat-input textarea:focus {
   outline: none;
+  box-shadow: 0 0 6px rgba(255, 183, 3, 0.6);
+}
+
+/* Тонкий скролл */
+.chat-input textarea::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-input textarea::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+.chat-input textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* Firefox */
+.chat-input textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
 /* Общий стиль кнопок */
 .chat-input button {
   min-width: 48px;
   height: 48px;
-  /* одинаковая высота с textarea */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,7 +68,6 @@
 #send-btn {
   background: linear-gradient(135deg, #ffb703, #fb8500);
 }
-
 #send-btn:hover {
   background: linear-gradient(135deg, #fb8500, #ffb703);
   transform: scale(1.05);
@@ -85,7 +77,6 @@
 #sendgif-btn {
   background: linear-gradient(135deg, #8338ec, #3a86ff);
 }
-
 #sendgif-btn:hover {
   background: linear-gradient(135deg, #3a86ff, #8338ec);
   transform: scale(1.05);
@@ -95,88 +86,101 @@
 #sendsmale-btn {
   background: linear-gradient(135deg, #06d6a0, #118ab2);
 }
-
 #sendsmale-btn:hover {
   background: linear-gradient(135deg, #118ab2, #06d6a0);
   transform: scale(1.05);
 }
 
-/* ====== Контейнер для GIF панели ====== */
-.gif-wrapper {
-  position: relative;
-}
-
-/* ====== GIF-панель (всплывающее окно возле кнопки) ====== */
-.gif-panel {
-  display: none; /* по умолчанию скрыта */
+/* Контейнер GIF панели (аналог стиля меню ⋮) */
+.gif-inline-panel {
   position: absolute;
-  bottom: 50px; /* чуть выше кнопки GIF */
-  left: 0;
-  width: 400px; /* увеличили ширину */
-  max-height: 500px; /* увеличили высоту */
-  background: #2f3136; /* темный фон DuckApp */
-  color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  padding: 16px;
+  bottom: 70px; /* над полем ввода */
+  left: 50%;
+  transform: translateX(-50%) translateY(20px); /* старт ниже */
+  width: 480px;
+  max-width: 90%;
+  background: rgba(255, 255, 255, 0.05); /* прозрачность как у меню */
+  backdrop-filter: blur(14px); /* blur */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 0;
+  overflow: visible; /* вместо auto или scroll */
+  z-index: 100;
+
+  /* Анимация скрытия */
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.3s ease, transform 0.3s ease, padding 0.3s ease;
+  pointer-events: none;
+  display: flex;
   flex-direction: column;
-  z-index: 1000;
-  overflow: hidden;
-  transition: all 0.25s ease;
 }
 
-/* Открытая GIF-панель */
-.gif-panel.open {
+/* Когда панель открыта */
+.gif-inline-panel.open {
+  max-height: 600px;
+  opacity: 1;
+  padding: 16px;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0); /* выдвигается вверх */
+}
+
+/* Поиск */
+.gif-inline-panel .gif-search-bar {
   display: flex;
-}
-
-/* Поле поиска */
-.gif-panel input {
-  width: calc(100% - 36px); /* оставляем место для маленькой кнопки */
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: none;
-  background: #40444b;
-  color: #fff;
-  margin-right: 4px;
-}
-
-/* Кнопка поиска */
-.gif-panel button {
-  padding: 6px 8px; /* меньше кнопка */
-  border-radius: 8px;
-  border: none;
-  background: #5865f2;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  font-size: 14px;
-}
-
-.gif-panel button:hover {
-  background: #4752c4;
-}
-
-/* Контейнер с GIF результатами */
-#gif-results {
-  display: flex;
-  flex-wrap: wrap;
   gap: 8px;
-  margin-top: 12px;
-  max-height: 400px; /* увеличенный блок для прокрутки */
-  overflow-y: auto;
+  margin-bottom: 12px;
 }
 
-/* Каждый GIF */
-#gif-results img {
-  width: 90px; /* увеличили размер */
-  height: 90px;
-  object-fit: cover;
-  cursor: pointer;
+.gif-inline-panel .gif-search-bar input {
+  flex: 1;
+  padding: 8px;
   border-radius: 8px;
-  transition: transform 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 14px;
+  backdrop-filter: blur(14px);
 }
 
-#gif-results img:hover {
-  transform: scale(1.1);
+.gif-inline-panel .gif-search-bar input:focus {
+  outline: none;
+  border-color: #ffee00;
+}
+
+.gif-inline-panel .gif-search-bar button {
+  border: none;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gif-inline-panel .gif-search-bar button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #fb8500, #ffb703);
+}
+
+.gif-inline-panel .gif-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 6px;
+  padding-right: 4px;
+  overflow: visible; /* убрали scroll */
+  max-height: none;  /* больше нет ограничения */
+}
+
+
+.gif-inline-panel .gif-results img {
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gif-inline-panel .gif-results img:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(255, 183, 3, 0.5);
 }

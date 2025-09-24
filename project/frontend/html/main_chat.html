@@ -42,7 +42,7 @@
                     <div class="chat-menu" id="chat-menu">
                         <button class="menu-item" id="delete-friend">🗑️ Delete Friend</button>
                         <button class="menu-item" id="rename-chat">📝 Rename</button>
-                        <button class="menu-item" id="delete-chat">🗑️ Delete Chat</button>
+                        <button class="menu-item" id="delete-chat">🗨️ Delete Chat</button>
                     </div>
                 </div>
             </div>
@@ -54,17 +54,19 @@
             <div class="chat-input">
                 <textarea id="message-input" placeholder="Write a message..." rows="1" maxlength="3000"></textarea>
 
-                <div class="gif-wrapper">
-                    <button id="sendgif-btn">GIF</button>
-                    <div id="gif-panel" class="gif-panel">
-                        <input type="text" id="gifSearchInput" placeholder="Search GIF...">
-                        <button id="gifSearchBtn">🔍</button>
-                        <div id="gif-results"></div>
-                    </div>
-                </div>
-
+                <button id="sendgif-btn">GIF</button>
                 <button id="sendsmale-btn">😄</button>
                 <button id="send-btn">🦆</button>
+            </div>
+
+            <!-- 🔹 Встроенная GIF панель -->
+            <div class="gif-inline-panel" id="gif-panel">
+                <div class="gif-search-bar">
+                    <input type="text" id="gifSearchInput" placeholder="Search GIF...">
+                    <button id="gifSearchBtn">🔍</button>
+                    <button class="gif-close-btn" id="gifCloseBtn">✖</button>
+                </div>
+                <div id="gif-results" class="gif-results"></div>
             </div>
         </div>
 
@@ -102,6 +104,7 @@
         </aside>
     </div>
 
+    <!-- Add Friend Modal -->
     <div id="add-friend-modal" class="modal">
         <div class="add-friend-content">
             <span class="close">&times;</span>
@@ -115,6 +118,7 @@
         </div>
     </div>
 
+    <!-- Rename Modal -->
     <div id="rename-modal" class="modal rename-modal">
         <div class="modal-content rename-content">
             <h3>Enter a new name</h3>
@@ -126,6 +130,7 @@
         </div>
     </div>
 
+    <!-- Avatar Modal -->
     <div class="modal" id="avatar-modal">
         <div class="modal-content">
             <span class="close">&times;</span>
