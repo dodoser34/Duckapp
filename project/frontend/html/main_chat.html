@@ -21,7 +21,6 @@
     <script type="module" src="../js/chat/profile.js" defer></script>
     <script type="module" src="../js/chat/logoutProfile.js" defer></script>
     <script type="module" src="../js/chat/chat_logic.js" defer></script>
-    <script type="module" src="../js/chat/gifHandler.js" defer></script>
 
     <script type="module" src="../js/checkSession.js" defer></script>
 </head>
@@ -41,9 +40,9 @@
                 <div class="chat-header-actions">
                     <button class="header-icon-btn" id="menu-toggle">⋮</button>
                     <div class="chat-menu" id="chat-menu">
-                        <button class="menu-item" id="delete-chat">🗑️ Delete Chat</button>
-                        <button class="menu-item" id="rename-chat">📝 Rename</button>
                         <button class="menu-item" id="delete-friend">🗑️ Delete Friend</button>
+                        <button class="menu-item" id="rename-chat">📝 Rename</button>
+                        <button class="menu-item" id="delete-chat">🗑️ Delete Chat</button>
                     </div>
                 </div>
             </div>
@@ -105,6 +104,7 @@
 
     <div id="add-friend-modal" class="modal">
         <div class="add-friend-content">
+            <span class="close">&times;</span>
             <h2>Add Friend</h2>
             <input type="text" id="friend-search" placeholder="Enter friend's nickname" maxlength="18" required/>
             <div class="add-friend-buttons">
@@ -128,6 +128,7 @@
 
     <div class="modal" id="avatar-modal">
         <div class="modal-content">
+            <span class="close">&times;</span>
             <h2>Select an Avatar</h2>
             <div class="avatar-options">
                 <img src="../html/assets/avatar_1.png" class="avatar-choice">

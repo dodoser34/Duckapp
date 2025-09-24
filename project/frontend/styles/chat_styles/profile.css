@@ -143,6 +143,20 @@
   transform: translateX(10px);
 }
 
+.close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  transition: 0.3s;
+}
+
+.close:hover {
+  color: #fb8500;
+}
+
 /* ===== Модальное окно ===== */
 .modal {
   position: fixed;

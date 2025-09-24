@@ -3,23 +3,31 @@ import { API_URL } from "../api.js";
 const profileAddFriendBtn = document.getElementById("profile-add-friend-btn");
 const addFriendModal = document.getElementById("add-friend-modal");
 const addFriendBtn = document.getElementById("search-friend-btn");
-const closeAddFriendBtn = document.getElementById("close-add-friend");
 const friendSearchInput = document.getElementById("friend-search");
 const friendResult = document.getElementById("friend-result");
 const errorMessage = document.getElementById("error-message");
 
 const friendsContainer = document.querySelector(".chat-list-items");
+const closeButtons = document.querySelectorAll('.close')
+
+// Закрытие по крестику
+closeButtons.forEach(btn => {
+	btn.addEventListener('click', () => {
+		addFriendModal.classList.remove('open')
+	})
+})
+
+// Закрытие по клику на фон
+addFriendModal.addEventListener('click', e => {
+	// Проверяем, что кликнули именно по фону, а не по внутреннему блоку .modal-content
+	if (e.target === addFriendModal) {
+		addFriendModal.classList.remove('open')
+	}
+})
 
 
 profileAddFriendBtn.addEventListener("click", () => {
     addFriendModal.classList.add("open");
-});
-
-// Close modal
-closeAddFriendBtn.addEventListener("click", () => {
-    addFriendModal.classList.remove("open");
-    friendSearchInput.value = "";
-    friendResult.innerHTML = "";
 });
 
 // Clear error on input
