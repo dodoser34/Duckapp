@@ -3,43 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login to DuckApp</title>
+
+    <title data-i18n="title">Login to DuckApp</title>
+
     <link rel="stylesheet" href="../styles/base/auth.css">
+
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
+
     <script type="module" src="../js/auth.js" defer></script>
+    <script type="module" src="../js/translatePage.js" defer></script>
+
 </head>
 
-<body>
+<body data-page="authorization">
     <div id="ducks"></div>
-
     <div class="authorization-container">
         <div class="logo">🦆</div>
 
-        <h2>Login to DuckApp</h2>
+        <h2 data-i18n="title">Login to DuckApp</h2>
 
         <form id="loginForm" autocomplete="on">
             <div class="input-group">
                 <input type="text" id="username" placeholder="Enter your username" maxlength="21" required>
-                <label for="username">Username</label>
+                <label for="username" data-i18n="username">Username</label>
             </div>
         
             <div class="input-group">
                 <input type="password" id="password" placeholder="Enter your password" minlength="3" required>
-                <label for="password">Password</label>
+                <label for="password" data-i18n="password">Password</label>
             </div>
         
-            <button type="submit">Login</button>
+            <button type="submit" data-i18n="button-text">Login</button>
         </form>
 
         <div class="error" id="errorMsg"></div>
 
-        <span class="noAccountToRegister">
-            Don't have an account? <a href="register_frame.html">Sign up</a>
-        </span>
+        <span class="noAccountToRegister" data-i18n="noAccount">Don't have an account? <a href="register_frame.html">Sign up</a></span>
+
     </div>
 
-    <footer>
-        LLC UTYAPUTYA © 2025 All rights reserved
-    </footer>
+    <footer data-i18n="footer">LLC UTYAPUTYA © 2025 All rights reserved</footer>
 </body>
 </html>

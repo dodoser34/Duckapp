@@ -21,6 +21,7 @@
     <script type="module" src="../js/chat/profile.js" defer></script>
     <script type="module" src="../js/chat/logoutProfile.js" defer></script>
     <script type="module" src="../js/chat/chat_logic.js" defer></script>
+    <script type="module" src="../js/chat/emoji.js" defer></script> 
 
     <script type="module" src="../js/checkSession.js" defer></script>
 </head>
@@ -54,19 +55,56 @@
             <div class="chat-input">
                 <textarea id="message-input" placeholder="Write a message..." rows="1" maxlength="3000"></textarea>
 
-                <button id="sendgif-btn">GIF</button>
-                <button id="sendsmale-btn">😄</button>
-                <button id="send-btn">🦆</button>
-            </div>
-
-            <!-- 🔹 Встроенная GIF панель -->
-            <div class="gif-inline-panel" id="gif-panel">
-                <div class="gif-search-bar">
-                    <input type="text" id="gifSearchInput" placeholder="Search GIF...">
-                    <button id="gifSearchBtn">🔍</button>
-                    <button class="gif-close-btn" id="gifCloseBtn">✖</button>
+                <!-- GIF обертка -->
+                <div class="gif-wrapper">
+                    <button id="sendgif-btn">GIF</button>
+                    <div class="gif-inline-panel" id="gif-panel">
+                        <div class="gif-search-bar">
+                            <input type="text" id="gifSearchInput" placeholder="Search GIF...">
+                            <button id="gifSearchBtn">🔍</button>
+                            <button class="gif-close-btn" id="gifCloseBtn">✖</button>
+                        </div>
+                        <div id="gif-results" class="gif-results"></div>
+                    </div>
                 </div>
-                <div id="gif-results" class="gif-results"></div>
+
+                <!-- Смайлы -->
+                <div class="emoji-wrapper">
+                    <button id="sendsmile-btn">😄</button>
+                    <div class="emoji-panel" id="emoji-panel">
+                        <div class="emoji-category">Ducks</div>
+                        <div class="emoji-grid">
+                            🦆 🪿 🐤 🐥 🐣
+                        </div>
+
+                        <div class="emoji-category">Animals</div>
+                        <div class="emoji-grid">
+                            🐶 🐱 🐭 🐹 🐰 🐻 🐼 🦁 🐯
+                        </div>
+
+                        <div class="emoji-category">Classic</div>
+                        <div class="emoji-grid">
+                            😀 😁 😂 🤣 😅 😎 🥳 😍 🤔 😡 😭
+                        </div>
+                        
+                        <div class="emoji-category">Food</div>
+                        <div class="emoji-grid">
+                            🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍒 🍑 🥭 🍍 🥝 🍅 🥥 🥑 🥦 🥕
+                        </div>
+
+                        <div class="emoji-category">Nature</div>
+                        <div class="emoji-grid">
+                            🌲 🌳 🌴 🌵 🌿 ☘️ 🍀 🍂 🍁 🌸 🌹 🌺 🌻 🌼 🌷 🪷 🌞 🌝 🌙 ⭐
+                        </div>
+
+                        <div class="emoji-category">Activities</div>
+                        <div class="emoji-grid">
+                            ⚽ 🏀 🏈 ⚾ 🎾 🏐 🏓 🏸 🥊 🎱 🏆 🎮 🎲 🎯 🎤 🎧 🎹 🎸 🥁 🎨
+                        </div>
+                    </div>
+                </div>
+
+                <button id="send-btn">🦆</button>
             </div>
         </div>
 

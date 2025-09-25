@@ -4,27 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
-    <title>Duck App – Online Messenger</title>
+    <title data-i18n="title">DuckApp - Online Messager</title>
 
     <link rel="stylesheet" href="../styles/base/main.css">
+
     <script type="module" src="../js/main.js" defer></script>
+    <script type="module" src="../js/translatePage.js" defer></script>
+
 </head>
-<body>
+<body data-page="main_page">
     <div id="ducks"></div>
 
     <header>
-        <div class="logo">🦆 Duck App</div>
+        <div class="logo" data-i18n="logo">🦆 DuckApp</div>
         <nav>
-            <a id="aboutSiteBtn">About</a>
-            <a id="aboutUsBtn">Team</a>
+            <a id="aboutSiteBtn" data-i18n="aboutSiteBtn">About</a>
+            <a id="aboutUsBtn" data-i18n="aboutUsBtn">Team</a>
         </nav>
     </header>
 
     <section class="hero">
         <div class="hero-text">
-            <h1>Simple and convenient online messenger</h1>
-            <p>Duck App is a fast and beautiful way to chat directly in your browser. Minimalism and speed in one place.<br> “Quack-quack and no problems”</p>
-            <button onclick="location.href='authorization_frame.html'">Start chatting now</button>
+            <h1 data-i18n="hero-text_h1">Simple and convenient online messenger</h1>
+            <p data-i18n="hero-text_p">Duck App is a fast and beautiful way to chat directly in your browser. Minimalism and speed in one place.<br> “Quack-quack and no problems”</p>
+            <button onclick="location.href='authorization_frame.html'" data-i18n="hero-text_button">Start chatting now</button>
         </div>
 
         <div>
@@ -42,25 +45,25 @@
         </div>
     </section>
 
-    <footer>
+    <footer data-i18n="footer">
         © 2025 Duck App. All rights reserved.
     </footer>
 
     <div id="aboutSiteModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>About Duck App</h2>
+            <h2 data-i18n="aboutSiteModal-title">About DuckApp</h2>
             <div class="modal-block">
-                <h3>Concept</h3>
-                <p>Duck App is a light and fun messenger created for friendly communication in a relaxed atmosphere. Its main goal is to bring joy and simplicity, uniting people through a friendly interface and positive style.</p>
+                <h3 data-i18n="aboutSiteModal-concept_title">Concept</h3>
+                <p data-i18n="aboutSiteModal-concept_text">Duck App is a light and fun messenger created for friendly communication in a relaxed atmosphere. Its main goal is to bring joy and simplicity, uniting people through a friendly interface and positive style.</p>
             </div>
             <div class="modal-block">
-                <h3>Style</h3>
-                <p>The focus is on a bright color palette, minimalism, and cute duck details. This design creates a feeling of lightness and comfort.</p>
+                <h3 data-i18n="aboutSiteModal-style_title">Style</h3>
+                <p data-i18n="aboutSiteModal-style_text">The focus is on a bright color palette, minimalism, and cute duck details. This design creates a feeling of lightness and comfort.</p>
             </div>
             <div class="modal-block">
-                <h3>Theme</h3>
-                <p>Unlike standard messengers, Duck App is built on positivity and a playful atmosphere. No heavy interface or clutter—just simple communication, emotions, and a little “quack-quack.”</p>
+                <h3 data-i18n="aboutSiteModal-theme_title">Theme</h3>
+                <p data-i18n="aboutSiteModal-theme_text">Unlike standard messengers, Duck App is built on positivity and a playful atmosphere. No heavy interface or clutter—just simple communication, emotions, and a little “quack-quack.”</p>
             </div>
         </div>
     </div>
@@ -68,18 +71,18 @@
     <div id="aboutUsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Our Team</h2>
+            <h2 data-i18n="aboutUsModal-title">Our Team</h2>
             <div class="team-member">
-                <h3>Dodoser34</h3>
-                <p><b>Role:</b> Frontend Developer</p>
-                <p>Developed the application architecture and UX/UI design, and implemented a website interface focused on ease of use and a modern user experience.</p>
+                <h3 data-i18n="aboutUsModal-member1_name">Dodoser34</h3>
+                <p data-i18n="aboutUsModal-member1_role"><b>Role:</b> Frontend Developer</p>
+                <p data-i18n="aboutUsModal-member1_text">Developed the application architecture and UX/UI design, and implemented a website interface focused on ease of use and a modern user experience.</p>
                 <a href="https://github.com/dodoser34" target="_blank" style="color: blueviolet;">GitHub</a>
                 <a href="https://t.me/Dodoser34" target="_blank">Telegram</a>
             </div>
             <div class="team-member">
-                <h3>Teych-Man</h3>
-                <p><b>Role:</b> Backend Developer</p>
-                <p>Author of the Duck App concept, developed and implemented the business logic and server side, and contributed to UX design.</p>
+                <h3 data-i18n="aboutUsModal-member2_name">Teych-Man</h3>
+                <p data-i18n="aboutUsModal-member2_role"><b>Role:</b> Backend Developer</p>
+                <p data-i18n="aboutUsModal-member2_text">Author of the DuckApp concept, developed and implemented the business logic and server side, and contributed to UX design.</p>
                 <a href="https://github.com/Teych-Man" target="_blank" style="color: blueviolet;">GitHub</a>
                 <a href="https://t.me/Teych_Man" target="_blank">Telegram</a>
             </div>

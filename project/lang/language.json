@@ -1,28 +1,120 @@
-        {
+{
     "ru": {
+        "main_page": {
+            "title": "DuckApp - Онлайн Мессенджер",
+            "logo": "🦆 DuckApp",
+            "aboutSiteBtn": "О сайте",
+            "aboutUsBtn": "Команда",
+            "hero-text_h1": "Простой и удобный онлайн-мессенджер",
+            "hero-text_p": "Duck App — это быстрый и красивый способ общаться прямо в браузере. Минимализм и скорость в одном месте. <br>«Кря-кря и никаких проблем»",
+            "hero-text_button": "Начните общаться прямо сейчас",
+            "footer": "© 2025 DuckApp. Все права защищены.",
+
+            "aboutSiteModal-title": "О DuckApp",
+            "aboutSiteModal-concept_title": "Концепт",
+            "aboutSiteModal-concept_text": "Duck App — это лёгкий и весёлый мессенджер, созданный для дружеского общения в непринуждённой атмосфере. Его главная цель — приносить радость и простоту, объединяя людей через дружелюбный интерфейс и позитивный стиль.",
+            "aboutSiteModal-style_title": "Стиль",
+            "aboutSiteModal-style_text": "Основной акцент сделан на яркой цветовой палитре, минимализме и милых деталях с утками. Такой дизайн создаёт ощущение лёгкости и уюта.",
+            "aboutSiteModal-theme_title": "Тематика",
+            "aboutSiteModal-theme_text": "В отличие от стандартных мессенджеров, Duck App построен на позитиве и игривой атмосфере. Никакого тяжёлого интерфейса или нагромождений — только простое общение, эмоции и немного «кря-кря».",
+
+            "aboutUsModal-title": "Наша команда",
+            "aboutUsModal-member1_name": "Dodoser34",
+            "aboutUsModal-member1_role": "<b>Роль:</b> Frontend-разработчик",
+            "aboutUsModal-member1_text": "Разработал архитектуру приложения и UX/UI-дизайн, а также реализовал интерфейс сайта, ориентированный на удобство и современный пользовательский опыт.",
+            "aboutUsModal-member2_name": "Teych-Man",
+            "aboutUsModal-member2_role": "<b>Роль:</b> Backend-разработчик",
+            "aboutUsModal-member2_text": "Автор концепции DuckApp, разработал и реализовал бизнес-логику и серверную часть, а также участвовал в UX-дизайне."
+        },
+
         "authorization": {
-            "title": "Авторизация в DuckApp",
-            "welcome_message": "",
-            "login": "Войти",
-            "signup": "Зарегистрироваться",
-            "noAccountToRegister": "Нет Аккаунта? Зарегистрируйтесь"
+            "title": "Вход в DuckApp",
+            "logo": "🦆 DuckApp",
+            "username": "Имя пользователя",
+            "password": "Пароль",
+            "button-text": "Войти",
+            "noAccount": "Нет аккаунта? <a href='register_frame.html'>Зарегистрируйтесь</a>",
+            "footer": "© 2025 DuckApp. Все права защищены."
         }
     },
 
     "en": {
-        "app_name": "DuckApp",
-        "welcome_message": "Welcome to DuckApp!",
-        "login": "Login",
-        "signup": "Sign Up",
-        "username": "Username"
+        "main_page": {
+            "title": "DuckApp - Online Messenger",
+            "logo": "🦆 DuckApp",
+            "aboutSiteBtn": "About",
+            "aboutUsBtn": "Team",
+            "hero-text_h1": "A simple and convenient online messenger",
+            "hero-text_p": "Duck App is a fast and beautiful way to chat right in your browser. Minimalism and speed in one place. <br>“Quack-quack and no problems”",
+            "hero-text_button": "Start chatting now",
+            "footer": "© 2025 DuckApp. All rights reserved.",
+
+            "aboutSiteModal-title": "About DuckApp",
+            "aboutSiteModal-concept_title": "Concept",
+            "aboutSiteModal-concept_text": "Duck App is a light and fun messenger created for friendly communication in a relaxed atmosphere. Its main goal is to bring joy and simplicity, connecting people through a friendly interface and positive style.",
+            "aboutSiteModal-style_title": "Style",
+            "aboutSiteModal-style_text": "The main focus is on a bright color palette, minimalism, and cute duck details. This design creates a sense of lightness and comfort.",
+            "aboutSiteModal-theme_title": "Theme",
+            "aboutSiteModal-theme_text": "Unlike standard messengers, Duck App is built on positivity and a playful atmosphere. No heavy interface or clutter — only simple communication, emotions, and a bit of “quack-quack”.",
+
+            "aboutUsModal-title": "Our Team",
+            "aboutUsModal-member1_name": "Dodoser34",
+            "aboutUsModal-member1_role": "<b>Role:</b> Frontend Developer",
+            "aboutUsModal-member1_text": "Developed the app architecture and UX/UI design, and implemented the site interface focused on usability and a modern user experience.",
+            "aboutUsModal-member2_name": "Teych-Man",
+            "aboutUsModal-member2_role": "<b>Role:</b> Backend Developer",
+            "aboutUsModal-member2_text": "Author of the DuckApp concept, developed and implemented the business logic and server side, and also contributed to UX design."
+        },
+
+        "authorization": {
+            "title": "Login to DuckApp",
+            "logo": "🦆 DuckApp",
+            "username": "Username",
+            "password": "Password",
+            "button-text": "Login",
+            "noAccount": "Don't have an account?",
+            "noAccount-registration": "Sign up",
+            "footer": "© 2025 DuckApp. All rights reserved."
+        }
     },
 
     "kz": {
-        "app_name": "DuckApp",
-        "welcome_message": "DuckApp-қа қош келдіңіз!",
-        "login": "Кіру",
-        "signup": "Тіркелу",
-        "username": "Пайдаланушы аты"
-    }
+        "main_page": {
+            "title": "DuckApp - Онлайн Хабарлама",
+            "logo": "🦆 DuckApp",
+            "aboutSiteBtn": "Сайт туралы",
+            "aboutUsBtn": "Топ",
+            "hero-text_h1": "Қарапайым әрі ыңғайлы онлайн мессенджер",
+            "hero-text_p": "Duck App — браузерде тікелей сөйлесудің жылдам әрі әдемі жолы. Минимализм мен жылдамдық бір жерде. <br>«Кря-кря, ешқандай мәселе жоқ»",
+            "hero-text_button": "Қазір сөйлесуді бастаңыз",
+            "footer": "© 2025 DuckApp. Барлық құқықтар қорғалған.",
 
+            "aboutSiteModal-title": "DuckApp туралы",
+            "aboutSiteModal-concept_title": "Концепция",
+            "aboutSiteModal-concept_text": "Duck App — достық атмосферада еркін әңгімелесу үшін жасалған жеңіл әрі көңілді мессенджер. Негізгі мақсаты — қуаныш пен қарапайымдылық сыйлау, адамдарды достық интерфейс пен позитивті стиль арқылы біріктіру.",
+            "aboutSiteModal-style_title": "Стиль",
+            "aboutSiteModal-style_text": "Негізгі назар ашық түстер палитрасына, минимализмге және сүйкімді үйрек элементтеріне аударылған. Мұндай дизайн жеңілдік пен жайлылық сезімін тудырады.",
+            "aboutSiteModal-theme_title": "Тақырып",
+            "aboutSiteModal-theme_text": "Стандартты мессенджерлерден айырмашылығы, Duck App позитив пен ойын-сауық атмосферасына негізделген. Ауыр интерфейс немесе артық жүктеме жоқ — тек қарапайым әңгіме, эмоциялар және аздап «кря-кря».",
+
+            "aboutUsModal-title": "Біздің топ",
+            "aboutUsModal-member1_name": "Dodoser34",
+            "aboutUsModal-member1_role": "<b>Рөлі:</b> Frontend-әзірлеуші",
+            "aboutUsModal-member1_text": "Қосымшаның архитектурасын және UX/UI-дизайнын жасады, сондай-ақ сайт интерфейсін ыңғайлылық пен заманауи тәжірибеге бағыттап жүзеге асырды.",
+            "aboutUsModal-member2_name": "Teych-Man",
+            "aboutUsModal-member2_role": "<b>Рөлі:</b> Backend-әзірлеуші",
+            "aboutUsModal-member2_text": "DuckApp концепциясының авторы, бизнес-логика мен серверлік бөлікті әзірледі және UX-дизайнға қатысып үлес қосты."
+        },
+
+        "authorization": {
+            "title": "DuckApp-қа кіру",
+            "logo": "🦆 DuckApp",
+            "username": "Пайдаланушы аты",
+            "password": "Құпиясөз",
+            "button-text": "Кіру",
+            "noAccount": "Тіркелгіңіз жоқ па?",
+            "noAccount-registration": "Тіркелу",
+            "footer": "© 2025 DuckApp. Барлық құқықтар қорғалған."
+        }
+    }
 }

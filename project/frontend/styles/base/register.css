@@ -96,26 +96,37 @@ body {
   box-shadow: 0 0 8px rgba(102, 166, 255, 0.95); /* Подсветка */
 }
 
-/*! ========== КНОПКА ========== */
+/*! ========== КНОПКА (Регистрация с анимацией градиента) ========== */
 .register-container button {
-  background: linear-gradient(135deg, #ffb703, #fb8500);  /* Оранжевый градиент */
-  border: none;        /* Без рамки */
-  padding: 14px;       /* Внутренние отступы */
-  width: 100%;         /* Кнопка на всю ширину */
-  border-radius: 14px; /* Закруглённые углы */
-  font-size: 16px;     /* Размер текста */
-  font-weight: bold;   /* Жирный текст */
-  color: white;        /* Белый текст */
-  cursor: pointer;     /* Курсор-рука */
-  transition: all 0.3s ease;  /* Плавная анимация */
-  margin-top: 10px;    /* Отступ сверху */
-  box-shadow: 0 4px 12px rgba(251,133,0,0.4); /* Тень кнопки */
+  background: linear-gradient(135deg, #ffb703, #fb8500);  /* Градиент */
+  background-size: 200% 200%; /* для анимации */
+  background-position: left center;
+
+  border: none;
+  padding: 14px;
+  width: 100%;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+
+  margin-top: 10px;
+
+  transition: background-position 0.8s ease,
+              transform 0.2s ease,
+              box-shadow 0.3s ease;
+
+  box-shadow: 0 4px 12px rgba(251,133,0,0.4);
 }
 
 .register-container button:hover {
-  background: linear-gradient(135deg, #fb8500, #ff6b00); /* Более яркий градиент */
-  transform: translateY(2px);  /* Лёгкий "нажим" вниз */
-  box-shadow: 0 6px 14px rgba(251,133,0,0.5); /* Более сильная тень */
+  background: linear-gradient(135deg, #fb8500, #ffb703); /* перелив */
+  background-size: 200% 200%;
+  background-position: right center;
+
+  transform: translateY(2px);
+  box-shadow: 0 6px 14px rgba(251,133,0,0.5);
 }
 
 /* Ошибки */

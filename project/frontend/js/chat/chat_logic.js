@@ -184,7 +184,7 @@ async function searchGif() {
     try {
         const url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(
             query
-        )}&limit=12&rating=g`;
+        )}&limit=50&rating=g`;
         const res = await fetch(url);
         const data = await res.json();
 

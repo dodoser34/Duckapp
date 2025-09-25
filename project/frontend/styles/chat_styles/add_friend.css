@@ -194,23 +194,6 @@
   color: #fff;
 }
 
-/* #add-friend-modal #friend-result button {
-  margin-left: 8px;
-  padding: 4px 10px;
-  font-size: 13px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #ffb703, #fb8500);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.3s;
-} */
-
-/* #add-friend-modal #friend-result button:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #fb8500, #ffb703);
-} */
-
 .input-error {
   border: 1px solid red !important;
 }

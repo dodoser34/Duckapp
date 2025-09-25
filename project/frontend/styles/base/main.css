@@ -115,6 +115,8 @@ nav a:hover {
 
 .hero-text button {
   background: linear-gradient(135deg, #ffb703, #fb8500);
+  background-size: 200% 200%; /* растягиваем */
+  background-position: left center;
   border: none;
   padding: 16px 32px;
   border-radius: 14px;
@@ -122,12 +124,14 @@ nav a:hover {
   font-weight: bold;
   color: white;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-position 0.8s ease, transform 0.2s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 12px rgba(251, 133, 0, 0.4);
 }
 
 .hero-text button:hover {
-  background: linear-gradient(135deg, #fb8500, #ffb703);
+  background: linear-gradient(135deg, #fb8500, #ffb703); /* меняем порядок */
+  background-size: 200% 200%;
+  background-position: right center; /* двигаем */
   transform: translateY(2px);
   box-shadow: 0 6px 14px rgba(251, 133, 0, 0.5);
 }
@@ -135,7 +139,7 @@ nav a:hover {
 /* ====== СЛАЙЕР ====== */
 .slider {
   position: relative;
-  width: 800px;
+  width: 650px;
   max-width: 100%;
   aspect-ratio: 4/3;
   overflow: hidden;
