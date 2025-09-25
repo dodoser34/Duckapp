@@ -6,6 +6,7 @@
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
     <title>DuckApp Chat</title>
 
+    <!-- Styles -->
     <link rel="stylesheet" href="../styles/base/chat.css">
     <link rel="stylesheet" href="../styles/chat_styles/add_friend.css">
     <link rel="stylesheet" href="../styles/chat_styles/header.css">
@@ -15,21 +16,24 @@
     <link rel="stylesheet" href="../styles/chat_styles/profile.css">
     <link rel="stylesheet" href="../styles/chat_styles/messages.css">
 
+    <!-- Scripts -->
+    <script type="module" src="../js/checkSession.js" defer></script>
+
     <script type="module" src="../js/chat/chat_header.js" defer></script>
     <script type="module" src="../js/chat/addFriend.js" defer></script>
     <script type="module" src="../js/chat/changeStats.js" defer></script>
     <script type="module" src="../js/chat/profile.js" defer></script>
     <script type="module" src="../js/chat/logoutProfile.js" defer></script>
     <script type="module" src="../js/chat/chat_logic.js" defer></script>
-    <script type="module" src="../js/chat/emoji.js" defer></script> 
 
-    <script type="module" src="../js/checkSession.js" defer></script>
 </head>
 <body>
     <div id="ducks"></div>
 
     <div class="chat-wrapper">
+        <!-- Chat Box -->
         <div class="chat-box">
+            <!-- Header -->
             <div class="chat-header">
                 <div class="chat-header-left">
                     <!-- <img class="avatar" id="header-avatar"> -->
@@ -48,14 +52,16 @@
                 </div>
             </div>
 
+            <!-- Messages -->
             <div class="chat-messages" id="chat-body">
                 <div class="empty-chat muted">Select a chat on the right 👉</div>
             </div>
 
+            <!-- Input Area -->
             <div class="chat-input">
                 <textarea id="message-input" placeholder="Write a message..." rows="1" maxlength="3000"></textarea>
 
-                <!-- GIF обертка -->
+                <!-- GIF Button & Panel -->
                 <div class="gif-wrapper">
                     <button id="sendgif-btn">GIF</button>
                     <div class="gif-inline-panel" id="gif-panel">
@@ -68,38 +74,16 @@
                     </div>
                 </div>
 
-                <!-- Смайлы -->
+                <!-- Emoji Button & Panel -->
                 <div class="emoji-wrapper">
                     <button id="sendsmile-btn">😄</button>
                     <div class="emoji-panel" id="emoji-panel">
-                        <div class="emoji-category">Ducks</div>
-                        <div class="emoji-grid">
-                            🦆 🪿 🐤 🐥 🐣
-                        </div>
-
-                        <div class="emoji-category">Animals</div>
-                        <div class="emoji-grid">
-                            🐶 🐱 🐭 🐹 🐰 🐻 🐼 🦁 🐯
-                        </div>
-
-                        <div class="emoji-category">Classic</div>
-                        <div class="emoji-grid">
-                            😀 😁 😂 🤣 😅 😎 🥳 😍 🤔 😡 😭
-                        </div>
-                        
-                        <div class="emoji-category">Food</div>
-                        <div class="emoji-grid">
-                            🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍒 🍑 🥭 🍍 🥝 🍅 🥥 🥑 🥦 🥕
-                        </div>
-
-                        <div class="emoji-category">Nature</div>
-                        <div class="emoji-grid">
-                            🌲 🌳 🌴 🌵 🌿 ☘️ 🍀 🍂 🍁 🌸 🌹 🌺 🌻 🌼 🌷 🪷 🌞 🌝 🌙 ⭐
-                        </div>
-
-                        <div class="emoji-category">Activities</div>
-                        <div class="emoji-grid">
-                            ⚽ 🏀 🏈 ⚾ 🎾 🏐 🏓 🏸 🥊 🎱 🏆 🎮 🎲 🎯 🎤 🎧 🎹 🎸 🥁 🎨
+                        <span class="close" id="emojiCloseBtn">✖</span>
+                        <div class="emoji-category">Smiles</div>
+                        <div class="emoji-scroll">
+                            <div class="emoji-grid">
+                                🦆 😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,7 +92,9 @@
             </div>
         </div>
 
+        <!-- Chat List / Sidebar -->
         <aside class="chat-list">
+            <!-- Profile -->
             <div class="chat-list-item profile" id="profile-toggle">
                 <div class="avatar-wrapper">
                     <img class="avatar" id="profile-avatar">
@@ -130,14 +116,15 @@
                 <button class="sub-btn" id="open-avatar-modal">Change Avatar</button>
                 <button class="sub-btn logout-btn" id="logout-btn">Log Out</button>
             </div>
-            
+
+            <!-- Friends Panel -->
             <div class="friends-panel-wrapper">
                 <div id="profile-panel-friends" class="profile-panel-friends">
                     <button id="profile-add-friend-btn">Add Friend</button>
                 </div>
                 <div class="chat-list-items"></div>
             </div>
-            
+
             <footer class="footer">LLC UTYAPUTYA © 2025 <br> All rights reserved</footer>
         </aside>
     </div>

@@ -1,3 +1,7 @@
+/* ======================= */
+/* ===== CHAT INPUT ====== */
+/* ======================= */
+
 /* Контейнер ввода */
 .chat-input {
   display: flex;
@@ -6,7 +10,7 @@
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0 0 0px 12px;
+  border-radius: 0 0 12px 12px;
 }
 
 /* Поле ввода */
@@ -41,7 +45,6 @@
 .chat-input textarea::-webkit-scrollbar-track {
   background: transparent;
 }
-/* Firefox */
 .chat-input textarea {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
@@ -66,10 +69,10 @@
 
 /* Кнопка отправки 🦆 */
 #send-btn {
-  background: linear-gradient(135deg, #ffb703, #fb8500);
+  background: linear-gradient(135deg, #fb8500, #ffb703);
 }
 #send-btn:hover {
-  background: linear-gradient(135deg, #fb8500, #ffb703);
+  background: linear-gradient(135deg, #ffb703, #fb8500);
   transform: scale(1.05);
 }
 
@@ -83,234 +86,238 @@
 }
 
 /* Кнопка смайлов */
-#sendsmale-btn {
-  background: linear-gradient(135deg, #06d6a0, #118ab2);
-}
-#sendsmale-btn:hover {
+#sendsmile-btn {
   background: linear-gradient(135deg, #118ab2, #06d6a0);
+}
+#sendsmile-btn:hover {
+  background: linear-gradient(135deg, #06d6a0, #118ab2);
   transform: scale(1.05);
 }
 
-/* === Обертка кнопки и панели === */
+/* ======================= */
+/* ===== GIF PANEL ======= */
+/* ======================= */
+
+/* Обертка GIF */
 .gif-wrapper {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
-/* === Панель GIF (светлая, стеклянная) === */
+/* Панель GIF */
 .gif-inline-panel {
-    position: absolute;
-    bottom: 74px;
-    left: 50%;
-    transform: translateX(-50%) scaleY(0);
-    margin-left: -200px; /* сдвиг влево */
-    transform-origin: bottom center;
-
-    width: 650px;
-    max-width: 95vw;
-    min-width: 400px;
-
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 16px;
-
-    padding: 0;
-    z-index: 100;
-    opacity: 0;
-    overflow: hidden;
-
-    transition: transform 0.3s ease, opacity 0.3s ease, padding 0.2s ease;
-    pointer-events: none;
+  position: absolute;
+  bottom: 74px;
+  left: -345%;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: bottom center;
+  width: 650px;
+  max-width: 95vw;
+  min-width: 400px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 0;
+  z-index: 100;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.3s ease, padding 0.2s ease;
 }
 
-/* Когда открыта */
+/* Открытая панель */
 .gif-inline-panel.open {
-    transform: translateX(-50%) scaleY(1);
-    opacity: 1;
-    padding: 16px;
-    pointer-events: all;
+  transform: translateX(-50%) scaleY(1);
+  opacity: 1;
+  padding: 16px;
+  pointer-events: all;
 }
 
-/* === Поиск === */
+/* GIF поиск */
 .gif-inline-panel .gif-search-bar {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .gif-inline-panel .gif-search-bar input {
-    flex: 1;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-    font-size: 14px;
-    transition: border 0.2s ease;
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 14px;
+  transition: border 0.2s ease;
 }
 
 .gif-inline-panel .gif-search-bar input:focus {
-    outline: none;
-    border-color: #ffee00;
+  outline: none;
+  border-color: #ffee00;
 }
 
 .gif-inline-panel .gif-search-bar button {
-    border: none;
-    border-radius: 8px;
-    padding: 0 12px;
-    background: linear-gradient(135deg, #ffb703, #fb8500);
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  border: none;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .gif-inline-panel .gif-search-bar button:hover {
-    transform: scale(1.05);
-    background: linear-gradient(135deg, #fb8500, #ffb703);
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #fb8500, #ffb703);
 }
 
-/* === Сетка GIF === */
+/* GIF сетка */
 .gif-inline-panel .gif-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* 3-5 колонок */
-    gap: 10px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding-right: 6px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
-/* === Стили для тонкого скролла (как у друзей) === */
+/* Тонкий скролл */
 .gif-inline-panel .gif-results::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
-
 .gif-inline-panel .gif-results::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
 }
-
 .gif-inline-panel .gif-results::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
-
-/* Firefox */
 .gif-inline-panel .gif-results {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
-/* Каждая GIF */
+/* GIF элементы */
 .gif-inline-panel .gif-results img {
-    width: 100%;
-    border-radius: 10px;
-    cursor: pointer;
-    opacity: 0;
-    transform: scale(0.9);
-    animation: gifFadeIn 0.35s forwards;
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.9);
+  animation: gifFadeIn 0.35s forwards;
 }
 
-/* Ховер эффект */
 .gif-inline-panel .gif-results img:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 10px rgba(255, 183, 3, 0.5);
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(255, 183, 3, 0.5);
 }
 
-/* Анимация появления */
+/* GIF анимация */
 @keyframes gifFadeIn {
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+  to { opacity: 1; transform: scale(1); }
 }
 
-/* === stagger-анимация (задержка для каждой GIF) === */
-.gif-inline-panel.open .gif-results img:nth-child(1) { animation-delay: 0.05s; }
-.gif-inline-panel.open .gif-results img:nth-child(2) { animation-delay: 0.1s; }
-.gif-inline-panel.open .gif-results img:nth-child(3) { animation-delay: 0.15s; }
-.gif-inline-panel.open .gif-results img:nth-child(4) { animation-delay: 0.2s; }
-.gif-inline-panel.open .gif-results img:nth-child(5) { animation-delay: 0.25s; }
-.gif-inline-panel.open .gif-results img:nth-child(6) { animation-delay: 0.3s; }
-.gif-inline-panel.open .gif-results img:nth-child(7) { animation-delay: 0.35s; }
-.gif-inline-panel.open .gif-results img:nth-child(8) { animation-delay: 0.4s; }
-.gif-inline-panel.open .gif-results img:nth-child(9) { animation-delay: 0.45s; }
-.gif-inline-panel.open .gif-results img:nth-child(10) { animation-delay: 0.5s; }
+/* GIF stagger */
+.gif-inline-panel.open .gif-results img:nth-child(n) {
+  animation-delay: calc(0.05s * var(--n));
+}
 
-/* === Обертка для кнопки смайлов === */
+/* ======================= */
+/* ===== EMOJI PANEL ===== */
+/* ======================= */
+
 .emoji-wrapper {
   position: relative;
   display: inline-block;
 }
 
-/* === Кнопка смайлов === */
-#sendsmile-btn {
-  background: linear-gradient(135deg, #06d6a0, #118ab2);
-}
-#sendsmile-btn:hover {
-  background: linear-gradient(135deg, #118ab2, #06d6a0);
-  transform: scale(1.05);
-}
-
-/* === Панель смайлов === */
 .emoji-panel {
   position: absolute;
   bottom: 74px;
-  left: 50%;
+  left: -92%;
   transform: translateX(-50%) scaleY(0);
   transform-origin: bottom center;
-
-  width: 320px;
-  max-width: 95vw;
-
+  width: 280px;
+  max-width: 90vw;
+  max-height: 300px;
   background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   padding: 0;
-  z-index: 101;
   opacity: 0;
   overflow: hidden;
-
-  transition: transform 0.3s ease, opacity 0.3s ease, padding 0.2s ease;
   pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.3s ease, padding 0.2s ease;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Когда открыта */
 .emoji-panel.open {
   transform: translateX(-50%) scaleY(1);
   opacity: 1;
-  padding: 12px;
+  padding: 8px 12px;
   pointer-events: all;
 }
 
-/* Категории */
 .emoji-category {
   font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
   color: #eee;
-  margin: 8px 0 4px;
+  margin: 4px 0 2px;
   opacity: 0.8;
 }
 
-/* Сетка */
+.emoji-scroll {
+  overflow-y: auto;
+  max-height: 240px;
+  margin-top: 24px;
+  padding-right: 4px;
+}
+
 .emoji-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
-/* Смайлы */
 .emoji-grid span {
   font-size: 22px;
   cursor: pointer;
   transition: transform 0.2s, filter 0.2s;
   user-select: none;
 }
-
 .emoji-grid span:hover {
   transform: scale(1.3);
   filter: drop-shadow(0 0 6px rgba(255, 183, 3, 0.7));
+}
+
+/* Тонкий скролл */
+.emoji-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.emoji-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+.emoji-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.emoji-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Emoji анимация */
+@keyframes emojiFadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+.emoji-panel.open .emoji-grid span:nth-child(n) {
+  animation: emojiFadeIn 0.3s forwards;
+  animation-delay: calc(0.03s * var(--n));
 }

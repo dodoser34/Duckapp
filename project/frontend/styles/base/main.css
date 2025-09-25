@@ -242,7 +242,7 @@ html {
 }
 html.show-scroll {
   scrollbar-width: thin;               /* покажем тонкий */
-  scrollbar-color: #fb8500 transparent;/* thumb + track */
+  scrollbar-color: #ffb703 transparent;/* thumb + track */
 }
 
 /* ====== МОДАЛКИ ====== */
