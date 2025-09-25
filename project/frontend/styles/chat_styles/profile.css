@@ -246,7 +246,6 @@
 }
 
 /* скрываем input */
-
 .upload-btn:hover {
   transform: scale(1.05);
   /* увеличивается на 5% */
