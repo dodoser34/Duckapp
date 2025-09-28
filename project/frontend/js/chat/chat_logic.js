@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!query) return;
 
         try {
-            const url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(query)}&limit=50&rating=g`;
+            const url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(query)}&limit=500&rating=g`;
             const res = await fetch(url);
             const data = await res.json();
 
