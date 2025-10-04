@@ -6,15 +6,27 @@ const chatTitle = document.querySelector('.chat-title');
 const chatSubtitle = document.querySelector('.chat-subtitle');
 const chatAvatar = document.querySelector('.chat-header-left .avatar');
 const chatMessages = document.getElementById('chat-body');
+
 const renameBtn = document.getElementById('rename-chat');
 const renameModal = document.getElementById('rename-modal');
 const renameInput = document.getElementById('rename-input');
 const renameConfirm = document.getElementById('rename-confirm');
 const renameCancel = document.getElementById('rename-cancel');
 
+const deleteModal = document.getElementById('delete-modal');
+const deleteConfirm = document.getElementById('delete-confirm');
+const deleteCancel = document.getElementById('delete-cancel');
+
+// === NEW: delete friend modal ===
+const deleteFriendBtn = document.getElementById('delete-friend'); 
+const deleteFriendModal = document.getElementById('delete-friend-modal');
+const deleteFriendCancel = document.getElementById('delete-friend-cancel');
+const deleteFriendConfirm = document.getElementById('delete-friend-confirm');
+
 let currentChatId = null;
 let localNames = {};
 
+// === menu toggle ===
 menuToggle.addEventListener('click', () => {
     chatMenu.classList.toggle('open');
 });
@@ -25,6 +37,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// === open chat ===
 chatItems.forEach(item => {
     item.addEventListener('click', () => {
         const id = item.dataset.id;
@@ -43,50 +56,92 @@ chatItems.forEach(item => {
     });
 });
 
+// === Delete chat ===
 deleteBtn.addEventListener('click', () => {
-    if (!currentChatId) return alert('Chat not selected');
+    deleteModal.classList.add('open'); // всегда открываем подтверждение
+});
 
-    const chatToDelete = document.querySelector(`.chat-list-item[data-id="${currentChatId}"]`);
-    if (chatToDelete) chatToDelete.remove();
+deleteCancel.addEventListener('click', () => {
+    deleteModal.classList.remove('open');
+});
 
-    chatTitle.textContent = 'Chat';
-    chatSubtitle.textContent = 'Select a chat on the right';
-    chatAvatar.src = 'none';
-    chatMessages.innerHTML = '<div class="empty-chat muted">Chat deleted</div>';
+deleteConfirm.addEventListener('click', () => {
+    if (currentChatId) {
+        const chatToDelete = document.querySelector(`.chat-list-item[data-id="${currentChatId}"]`);
+        if (chatToDelete) chatToDelete.remove();
 
-    delete localNames[currentChatId];
-    currentChatId = null;
+        delete localNames[currentChatId];
+        currentChatId = null;
+
+        chatTitle.textContent = 'Chat';
+        chatSubtitle.textContent = 'Select a chat on the right';
+        chatAvatar.src = 'none';
+        chatMessages.innerHTML = '<div class="empty-chat muted">Chat deleted</div>';
+    }
+    deleteModal.classList.remove('open');
     chatMenu.classList.remove('open');
 });
 
-// === Chat renaming ===
+// === Rename chat ===
 
 // open modal
+// renameBtn.addEventListener('click', () => {
+//     if (!currentChatId) return alert('Chat not selected');
+//     renameInput.value = localNames[currentChatId] || chatTitle.textContent;
+//     renameModal.classList.add('open');
+// });
+
 renameBtn.addEventListener('click', () => {
-    if (!currentChatId) return alert('Chat not selected');
-    renameInput.value = localNames[currentChatId] || chatTitle.textContent;
+    renameInput.value = localNames[currentChatId] || chatTitle.textContent || "";
     renameModal.classList.add('open');
 });
 
-// close by "Cancel" button
 renameCancel.addEventListener('click', () => {
     renameModal.classList.remove('open');
 });
 
-// save new name
 renameConfirm.addEventListener('click', () => {
     const newName = renameInput.value.trim();
     if (newName === "") return alert("Enter a name");
 
-    // save locally
-    localNames[currentChatId] = newName;
+    if (currentChatId) {
+        localNames[currentChatId] = newName;
+        chatTitle.textContent = newName;
 
-    // update header
-    chatTitle.textContent = newName;
-
-    // update in chat list
-    const chatItem = document.querySelector(`.chat-list-item[data-id="${currentChatId}"] .name`);
-    if (chatItem) chatItem.textContent = newName;
+        const chatItem = document.querySelector(`.chat-list-item[data-id="${currentChatId}"] .name`);
+        if (chatItem) chatItem.textContent = newName;
+    } else {
+        chatTitle.textContent = newName;
+    }
 
     renameModal.classList.remove('open');
 });
+
+// === Delete friend ===
+if (deleteFriendBtn) {
+    deleteFriendBtn.addEventListener('click', () => {
+        deleteFriendModal.classList.add('open');
+    });
+
+    deleteFriendCancel.addEventListener('click', () => {
+        deleteFriendModal.classList.remove('open');
+    });
+
+    deleteFriendConfirm.addEventListener('click', () => {
+        // ⚡️ Здесь логика удаления друга
+        alert("Friend removed!"); 
+        deleteFriendModal.classList.remove('open');
+        chatMenu.classList.remove('open');
+    });
+
+    // === Универсальное закрытие модалок по клику на фон ===
+    document.querySelectorAll(
+    '#rename-modal, #delete-modal, #delete-friend-modal, #add-friend-modal, #avatar-modal'
+    ).forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('open');
+            }
+        });
+    });
+}

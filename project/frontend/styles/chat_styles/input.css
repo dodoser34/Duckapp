@@ -10,7 +10,6 @@
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0 0 12px 12px;
 }
 
 /* Поле ввода */
@@ -108,7 +107,7 @@
 .gif-inline-panel {
   position: absolute;
   bottom: 74px;
-  left: -345%;
+  left: -375%;
   transform: translateX(-50%) scaleY(0);
   transform-origin: bottom center;
   width: 650px;
@@ -235,7 +234,7 @@
 .emoji-panel {
   position: absolute;
   bottom: 74px;
-  left: -92%;
+  left: -123%;
   transform: translateX(-50%) scaleY(0);
   transform-origin: bottom center;
   width: 280px;

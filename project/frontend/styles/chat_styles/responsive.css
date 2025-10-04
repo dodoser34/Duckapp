@@ -1,0 +1,204 @@
+/* ======================= */
+/* 📱 Планшеты (макс. ширина 1024px) */
+/* ======================= */
+@media (max-width: 1024px) {
+  .chat-wrapper {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .chat-box {
+    flex: 2.5;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-list {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* профиль фикс сверху */
+  .chat-list-item.profile,
+  #profile-panel {
+    flex-shrink: 0;
+  }
+
+  /* друзья сразу под профилем, скролл если много */
+  .friends-panel-wrapper {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .friends-panel-wrapper::-webkit-scrollbar {
+    width: 6px;
+  }
+  .friends-panel-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+  .friends-panel-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .chat-header {
+    padding: 12px 16px;
+  }
+
+  .chat-title {
+    font-size: 18px;
+  }
+
+  .chat-list .footer {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 8px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* ======================= */
+/* 📱 Мобильные (макс. ширина 768px) */
+/* ======================= */
+@media (max-width: 768px) {
+  .chat-wrapper {
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .chat-box {
+    flex: 1;
+    border-right: none;
+    border-bottom: 1px solid rgb(251, 255, 0);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-list {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: hidden;
+  }
+
+  .chat-list-item.profile,
+  #profile-panel {
+    flex-shrink: 0;
+  }
+
+  .friends-panel-wrapper {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .chat-input {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .chat-input textarea {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .chat-input button {
+    min-width: 42px;
+    height: 42px;
+    font-size: 14px;
+  }
+}
+
+/* ======================= */
+/* 📱 Очень маленькие экраны (макс. ширина 480px) */
+/* ======================= */
+@media (max-width: 480px) {
+  .chat-header {
+    padding: 8px 12px;
+  }
+
+  .chat-title {
+    font-size: 16px;
+  }
+
+  .chat-subtitle {
+    font-size: 12px;
+  }
+
+  .chat-header .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .chat-list {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: hidden;
+  }
+
+  .chat-list-item.profile,
+  #profile-panel {
+    flex-shrink: 0;
+  }
+
+  .friends-panel-wrapper {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .friends-panel-wrapper::-webkit-scrollbar {
+    width: 5px;
+  }
+  .friends-panel-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+  .friends-panel-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .chat-list-item {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .avatar-wrapper,
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .chat-input {
+    gap: 4px;
+  }
+
+  .chat-input textarea {
+    font-size: 13px;
+  }
+
+  .chat-input button {
+    font-size: 12px;
+    min-width: 36px;
+    height: 36px;
+  }
+
+  .chat-list .footer {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 6px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}

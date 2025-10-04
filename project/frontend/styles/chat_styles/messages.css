@@ -9,6 +9,8 @@
   flex-direction: column;
   gap: 10px; /* расстояние между сообщениями */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative; /* обязательно, чтобы работал z-index */
+  z-index: 1; /* ниже меню */
 }
 
 /* Пустое состояние */
@@ -52,6 +54,8 @@
   transform: translateY(0);
   opacity: 1;
   transition: background 0.2s, color 0.2s;
+  position: relative;
+  z-index: 1; /* тоже ниже меню */
 }
 
 /* Стили для пользователя (правый пузырёк) */
