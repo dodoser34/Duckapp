@@ -29,7 +29,6 @@
 
         "authorization": {
             "title": "Вход в DuckApp",
-            "logo": "🦆 DuckApp",
             "username": "Имя пользователя",
             "password": "Пароль",
             "button-text": "Войти",
@@ -39,12 +38,56 @@
 
         "register": {
             "title": "Регистрация в DuckApp",
-            "logo": "🦆 DuckApp",
             "username": "Имя пользователя",
             "password": "Пароль",
-            "button-text": "Войти",
-            "noAccount": "Нет аккаунта? <a href='register_frame.html'>Зарегистрируйтесь</a>",
+            "confirm_password": "Повторите пароль",
+            "registrationBtn": "Зарегистрироваться",
+            "haveAnAccountLogin": "Есть аккаунт? <a href='authorization_frame.html'>Войти</a>",
             "footer": "© 2025 DuckApp. Все права защищены."
+        },
+
+        "main_chat": {
+            "title": "Чат DuckApp",
+            "profile_status": "Имя пользователя",
+
+            "profile_btn_change_status": "Сменить Статус",
+            "profile_btn_change_status_online": "🟢 В сети",
+            "profile_btn_change_status_invisible": "👻 Невидимка",
+            "profile_btn_change_status_dnd": "⛔ Не беспокоить",
+
+            "profile_btn_change_avatar": "Сменить Аватар",
+            "profile_btn_change_avatar_title": "Выберите доступный аватар",
+            "profile_btn_change_avatar_btn_upload_avatar": "Выберите свой аватар",
+            "profile_btn_logout": "Выйти из аккаунта",
+
+            "btn_add_friend": "Добавить друга",
+            "btn_add_friend_modal_title": "Добавьте друга",
+            "btn_add_friend_modal_search_button": "Поиск",
+            "btn_add_friend_modal_title_input": "Введите имя пользователя",
+            "btn_add_friend_modal_error_empty_input": "Поле ввода не может быть пустым",
+            "btn_add_friend_modal_add_friend": "Добавить в друзья",
+
+            "header_button_rename": "📝 Переименовать",
+            "header_button_delete_chat": "🗨️ Удалить чат",
+            "header_button_delete_friend": "🗑️ Удалить друга",
+
+            "header_menu_renameBtn_modal_title": "Установите новое имя чата",
+            "header_menu_renameBtn_modal_imput": "Введите новое имя",
+            "header_menu_renameBtn_modal_saveBtn": "Сохранить",
+            "header_menu_renameBtn_modal_cancelBtn": "Отменить",
+
+
+            "header_menu_deleteChatBtn_modal_title": "Удалить чат?",
+            "header_menu_deleteChatBtn_modal_text": "Вы уверены, что хотите удалить этот чат? Это действие нельзя будет отменить.",
+            "header_menu_deleteChatBtn_modal_deleteBtn": "Удалить",
+            "header_menu_deleteChatBtn_modal_cancelBtn": "Отменить",
+
+            "header_menu_deleteFriendBtn_modal_title": "Удалить друга?",
+            "header_menu_deleteFriendBtn_modal_text": "Вы уверены, что хотите удалить этого друга? Это действие нельзя будет отменить.",
+            "header_menu_deleteFriendBtn_modal_deleteBtn": "Удалить",
+            "header_menu_deleteFriendBtn_modal_cancelBtn": "Отменить",
+
+            "footer": "© 2025 DuckApp.<br> Все права защищены."
         }
     },
 
@@ -85,6 +128,16 @@
             "noAccount": "Don't have an account?",
             "noAccount-registration": "Sign up",
             "footer": "© 2025 DuckApp. All rights reserved."
+        },
+
+        "register": {
+            "title": "Sign up to DuckApp",
+            "username": "Username",
+            "password": "Password",
+            "confirm_password": "Confirm password",
+            "registrationBtn": "Sign up",
+            "haveAnAccountLogin": "Already have an account? <a href='authorization_frame.html'>Login</a>",
+            "footer": "© 2025 DuckApp. All rights reserved."
         }
     },
 
@@ -124,6 +177,16 @@
             "button-text": "Кіру",
             "noAccount": "Тіркелгіңіз жоқ па?",
             "noAccount-registration": "Тіркелу",
+            "footer": "© 2025 DuckApp. Барлық құқықтар қорғалған."
+        },
+
+        "register": {
+            "title": "DuckApp-та тіркелу",
+            "username": "Пайдаланушы аты",
+            "password": "Құпиясөз",
+            "confirm_password": "Құпиясөзді қайталаңыз",
+            "registrationBtn": "Тіркелу",
+            "haveAnAccountLogin": "Тіркелгіңіз бар ма? <a href='authorization_frame.html'>Кіру</a>",
             "footer": "© 2025 DuckApp. Барлық құқықтар қорғалған."
         }
     }

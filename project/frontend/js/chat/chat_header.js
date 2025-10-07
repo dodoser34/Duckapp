@@ -133,15 +133,4 @@ if (deleteFriendBtn) {
         deleteFriendModal.classList.remove('open');
         chatMenu.classList.remove('open');
     });
-
-    // === Универсальное закрытие модалок по клику на фон ===
-    document.querySelectorAll(
-    '#rename-modal, #delete-modal, #delete-friend-modal, #add-friend-modal, #avatar-modal'
-    ).forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('open');
-            }
-        });
-    });
 }

@@ -10,7 +10,6 @@ closeButtons.forEach(btn => {
 
 // Закрытие по клику на фон
 avatarModal.addEventListener('click', e => {
-	// Проверяем, что кликнули именно по фону, а не по внутреннему блоку .modal-content
 	if (e.target === avatarModal) {
 		avatarModal.classList.remove('open')
 	}

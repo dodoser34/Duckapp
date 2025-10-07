@@ -17,15 +17,6 @@ closeButtons.forEach(btn => {
 	})
 })
 
-// Закрытие по клику на фон
-addFriendModal.addEventListener('click', e => {
-	// Проверяем, что кликнули именно по фону, а не по внутреннему блоку .modal-content
-	if (e.target === addFriendModal) {
-		addFriendModal.classList.remove('open')
-	}
-})
-
-
 profileAddFriendBtn.addEventListener("click", () => {
     addFriendModal.classList.add("open");
 });
@@ -62,19 +53,29 @@ addFriendBtn.addEventListener("click", async () => {
 
         // Render found user
         friendResult.innerHTML = `
-            <div class="friend-card">
-                <div class="avatar-wrapper">
-                    <img src="${avatarBaseUrl + (data.avatar || "assets/avatar_2.png")}" class="avatar">
-                    <span class="status-indicator ${data.status || "offline"}"></span>
-                </div>
-                <div class="friend-info">
-                    <div class="name">${data.names}</div>
-                    <div class="status muted">${data.status === "online" ? "Online" : "Offline"}</div>
-                </div>
+        <div class="friend-card">
+            <div class="avatar-wrapper">
+                <img src="${avatarBaseUrl + (data.avatar || "assets/avatar_2.png")}" class="avatar">
+                <span class="status-indicator ${
+                    (data.status === "invisible" || data.status === "offline")
+                        ? "offline"
+                        : (data.status === "dnd" ? "dnd" : "online")
+                }"></span>
             </div>
-            <div class="add_button">
-                <button id="add-friend-final">Add Friend</button>
+            <div class="friend-info">
+                <div class="name">${data.names}</div>
+                <div class="status muted">${
+                    (data.status === "online")
+                        ? "Online"
+                        : (data.status === "dnd")
+                            ? "Do Not Disturb"
+                            : "Offline"
+                }</div>
             </div>
+        </div>
+        <div class="add_button">
+            <button id="add-friend-final" data-i18n="btn_add_friend_modal_add_friend">Add Friend</button>
+        </div>
         `;
 
         // Handle add friend button
@@ -105,14 +106,24 @@ addFriendBtn.addEventListener("click", async () => {
             newFriend.dataset.status = data.status || "offline";
 
             newFriend.innerHTML = `
-                <div class="avatar-wrapper">
-                    <img src="${data.avatar || "../html/assets/avatar_2.png"}" class="avatar">
-                    <span class="status-indicator-2 ${data.status || "offline"}"></span>
-                </div>
-                <div>
-                    <div class="name">${data.names}</div>
-                    <div class="status muted">${data.status === "online" ? "Online" : "Offline"}</div>
-                </div>
+            <div class="avatar-wrapper">
+                <img src="${data.avatar || "../html/assets/avatar_2.png"}" class="avatar">
+                <span class="status-indicator-2 ${
+                    (data.status === "invisible" || data.status === "offline")
+                        ? "offline"
+                        : (data.status === "dnd" ? "dnd" : "online")
+                }"></span>
+            </div>
+            <div>
+                <div class="name">${data.names}</div>
+                <div class="status muted">${
+                    (data.status === "online")
+                        ? "Online"
+                        : (data.status === "dnd")
+                            ? "Do Not Disturb"
+                            : "Offline"
+                }</div>
+            </div>
             `;
 
             friendsContainer.appendChild(newFriend);

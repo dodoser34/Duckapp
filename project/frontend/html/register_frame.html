@@ -2,46 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Registration in DuckApp</title>
+    <title data-i18n="title">Registration in DuckApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="stylesheet" href="../styles/base/register.css">
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
 
     <script type="module" src="../js/register.js"></script>
+    <script type="module" src="../js/translatePage.js"></script>
 </head>
 
-<body>
+<body data-page="register">
     <div id="ducks"></div>
 
     <div class="register-container">
         <div class="logo" aria-hidden="true">🦆</div>
-        <h2>Registration in DuckApp</h2>
+        <h2 data-i18n="title">Registration in DuckApp</h2>
 
         <form id="registerForm" autocomplete="on">
             <div class="input-group">
                 <input type="text" id="username" name="username" placeholder=" " maxlength="21" required>
-                <label for="username">Username</label>
+                <label for="username" data-i18n="username">Username</label>
             </div>
 
             <div class="input-group">
                 <input type="email" id="email" name="email" placeholder=" " required>
-                <label for="email">Email</label>
+                <label for="email" data-i18n="email">Email</label>
             </div>
 
             <div class="input-group">
                 <input type="password" id="password" name="password" placeholder=" " minlength="3" required>
-                <label for="password">Password</label>
+                <label for="password" data-i18n="password">Password</label>
             </div>
 
             <div class="input-group">
                 <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " minlength="3" required>
-                <label for="confirmPassword">Confirm Password</label>
+                <label for="confirmPassword" data-i18n="confirm_password">Confirm Password</label>
             </div>
 
             <div class="form-buttons">
-                <button type="submit" id="submit">Register</button>
-                <span class="haveAnAccountLogin">
+                <button type="submit" id="submit" data-i18n="registrationBtn">Register</button>
+                <span class="haveAnAccountLogin" data-i18n="haveAnAccountLogin">
                     Already have an account? <a href="authorization_frame.html">Log in</a>
                 </span>
             </div>
@@ -50,7 +51,7 @@
         </form>
     </div>
 
-    <footer>
+    <footer data-i18n="footer">
         LLC UTYAPUTYA © 2025 All rights reserved
     </footer>
 </body>
