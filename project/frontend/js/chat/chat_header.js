@@ -134,3 +134,13 @@ if (deleteFriendBtn) {
         chatMenu.classList.remove('open');
     });
 }
+
+    document.querySelectorAll(
+    '#rename-modal, #delete-modal, #delete-friend-modal'
+    ).forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('open');
+            }
+        });
+});
