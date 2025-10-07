@@ -4,13 +4,36 @@
   flex: 1;
   padding: 15px;
   overflow-y: auto;
-  background: rgba(0, 0, 0, 0.7); /* тёмный фон */
+  background: rgba(0, 0, 0, 0.7); /* тёмный фон сообщений */
   display: flex;
   flex-direction: column;
-  gap: 10px; /* расстояние между сообщениями */
+  gap: 10px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  position: relative; /* обязательно, чтобы работал z-index */
-  z-index: 1; /* ниже меню */
+  position: relative;
+  z-index: 1;
+
+  /* Firefox */
+  scrollbar-width: thin; 
+  scrollbar-color: #0b84ff transparent; /* прозрачный фон, синий ползунок */
+}
+
+/* Webkit-браузеры (Chrome, Edge, Opera) */
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent; /* убрали чёрный фон */
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0b84ff, #066bdb);
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #2196f3, #0b84ff);
 }
 
 /* Пустое состояние */
