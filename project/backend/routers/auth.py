@@ -19,11 +19,22 @@ async def register(response: Response, username: str = Form(...), email: str = F
     hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
     try:
+        # Добавляем пользователя
         cursor.execute(
             "INSERT INTO registered_users (username, email, hashed_password, created_at) VALUES (%s, %s, %s, %s)",
             (username, email, hashed, datetime.datetime.utcnow())
         )
         conn.commit()
+
+        user_id = cursor.lastrowid  # получаем ID нового пользователя
+
+        # 👇 Автоматически создаём профиль с полем `names`
+        cursor.execute(
+            "INSERT INTO user_profiles (user_id, names, status, avatar) VALUES (%s, %s, %s, %s)",
+            (user_id, username, 'Hey there! I am using DuckApp.', '../assets/avatar_1.png')
+        )
+        conn.commit()
+
     except pymysql.err.IntegrityError as e:
         cursor.close()
         conn.close()
@@ -36,13 +47,14 @@ async def register(response: Response, username: str = Form(...), email: str = F
 
     cursor.close()
     conn.close()
-    
+
+    # JWT токен
     payload = {
         "sub": username,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2),
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-    
+
     response.set_cookie(
         key="access_token",
         value=token,
