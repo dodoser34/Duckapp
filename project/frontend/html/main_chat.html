@@ -20,6 +20,7 @@
     <script type="module" src="../js/chat/addFriend.js" defer></script>
     <script type="module" src="../js/chat/changeStats.js" defer></script>
     <script type="module" src="../js/chat/logoutProfile.js" defer></script>
+    <script type="module" src="../js/chat/emoji_and_GIF.js" defer></script>
     <script type="module" src="../js/chat/chat_logic.js" defer></script>
 
     <script type="module" src="../js/translatePage.js" defer></script>
@@ -52,8 +53,6 @@
             </div>
         </div>
 
-
-            <!-- Messages -->
             <div class="chat-messages" id="chat-body">
                 <div class="empty-chat muted" data-i18n="chat_main_window_text"></div>
             </div>
@@ -61,7 +60,6 @@
             <div class="chat-input">
                 <textarea id="message-input" data-i18n="chat_write_textarea" rows="1" maxlength="3000"></textarea>
 
-                <!-- GIF Button & Panel -->
                 <div class="gif-wrapper">
                     <button id="sendgif-btn">GIF</button>
                     <div class="gif-inline-panel" id="gif-panel">
@@ -78,12 +76,8 @@
                     <button id="sendsmile-btn">😄</button>
                     <div class="emoji-panel" id="emoji-panel">
                         <span class="close" id="emojiCloseBtn">✖</span>
-                        <div class="emoji-category">Smiles</div>
-                        <div class="emoji-scroll">
-                            <div class="emoji-grid">
-                                🦆 😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃
-                            </div>
-                        </div>
+                        <div class="emoji-category" id="emoji-categories"></div>
+                        <div class="emoji-scroll" id="emoji-scroll"></div>
                     </div>
                 </div>
 
@@ -125,7 +119,6 @@
         </aside>
     </div>
 
-    <!--! Модалка для поиска и добавление новых друзей -->
     <div id="add-friend-modal" class="modal">
         <div class="add-friend-content">
             <span class="close">&times;</span>
@@ -136,7 +129,6 @@
         </div>
     </div>
 
-    <!--! Модалка для переименования чата -->
     <div id="rename-modal" class="modal rename-modal">
         <div class="modal-content rename-content">
             <h3 data-i18n="header_menu_renameBtn_modal_title"></h3>
@@ -148,7 +140,6 @@
         </div>
     </div>
 
-    <!--! Модалка с подтверждением удаления чата -->
     <div class="delete-modal" id="delete-modal">
         <div class="delete-content">
             <h3 data-i18n="header_menu_deleteChatBtn_modal_title"></h3>
@@ -160,7 +151,6 @@
         </div>
     </div>
 
-    <!--! Модалка с подтверждением удаления друга -->
     <div class="delete-friend-modal" id="delete-friend-modal">
         <div class="delete-friend-content">
             <h3 data-i18n="header_menu_deleteFriendBtn_modal_title"></h3>
@@ -172,7 +162,6 @@
         </div>
     </div>
 
-    <!--! Модалка для выбора и установки аватарки -->
     <div class="modal" id="avatar-modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -195,4 +184,3 @@
         </div>
     </div>
 </body>
-

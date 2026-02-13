@@ -205,12 +205,12 @@
 .emoji-panel {
   position: absolute;
   bottom: 74px;
-  left: -123%;
+  left: -225%;
   transform: translateX(-50%) scaleY(0);
   transform-origin: bottom center;
-  width: 280px;
+  width: 380px;
   max-width: 90vw;
-  max-height: 300px;
+  max-height: 400px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
@@ -241,6 +241,34 @@
   opacity: 0.8;
 }
 
+.emoji-tabs-horizontal {
+  display: flex;
+  overflow-x: auto;
+  gap: 4px; 
+  padding: 16px 4px; 
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+.emoji-tab-btn {
+  flex: 0 0 auto;
+  background: rgba(255,255,255,0.03);
+  color: rgb(238, 238, 238);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.emoji-tab-btn:hover {
+  background: rgba(255,255,255,0.12);
+  transform: scale(1.05);
+}
+
 .emoji-scroll {
   overflow-y: auto;
   max-height: 240px;
@@ -261,7 +289,6 @@
   transition: transform 0.2s, filter 0.2s;
   user-select: none;
 }
-
 
 .emoji-scroll::-webkit-scrollbar {
   width: 6px;

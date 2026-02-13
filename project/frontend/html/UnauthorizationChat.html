@@ -21,9 +21,7 @@
     <div id="ducks"></div>
 
     <div class="chat-wrapper">
-        <!-- Chat Box -->
         <div class="chat-box">
-            <!-- Header -->
             <div class="chat-header">
                 <div class="chat-header-left">
                     <div class="avatar-wrapper">
@@ -38,16 +36,13 @@
                 </div>
             </div>
 
-            <!-- Messages -->
             <div class="chat-messages" id="chat-body">
                 <div class="empty-chat muted">Select a chat on the right 👉</div>
             </div>
 
-            <!-- Input Area -->
             <div class="chat-input">
                 <textarea id="message-input" placeholder="Write a message..." rows="1" maxlength="3000"></textarea>
 
-                <!-- GIF Button & Panel -->
                 <div class="gif-wrapper">
                     <button id="sendgif-btn">GIF</button>
                     <div class="gif-inline-panel" id="gif-panel">
@@ -60,22 +55,18 @@
                     </div>
                 </div>
 
-                <!-- Emoji Button & Panel -->
                 <div class="emoji-wrapper">
                     <button id="sendsmile-btn">😄</button>
                     <div class="emoji-panel" id="emoji-panel">
                         <span class="close" id="emojiCloseBtn">✖</span>
-                        <div class="emoji-category">Smiles</div>
-                        <div class="emoji-scroll">
+                        <div class="emoji-category" id="emoji-categories"></div>
                         <div class="emoji-scroll" id="emoji-scroll"></div>
-                        </div>
                     </div>
                 </div>
 
                 <button id="send-btn">🦆</button>
             </div>
         </div>
-
 
         <aside class="chat-list">
             <div class="chat-list-item profile" id="profile-toggle">
@@ -93,7 +84,6 @@
                 <button class="sub-btn logout-btn" id="logout-btn" data-i18n="profile_btn_logout"></button>
             </div>
 
-            <!-- SEARCH PANEL -->
     <div class="Human-panel-wrapper">
         <div id="profile-panel-Human" class="profile-panel-Human">
             <div class="chat-input-id">
@@ -106,10 +96,7 @@
             </div>
         </div>
 
-
-        <!-- RESULTS -->
         <div id="Human-search-results">
-            <!-- ПРИМЕР КАРТОЧКИ (JS будет создавать такие же) -->
             <!--
             <div class="human-user-item">
                 <img src="../assets/default.png" class="avatar">
