@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let emojiData = {};
     try {
-        const res = await fetch("../emoji/emoji.json");
+        const res = await fetch("/project/emoji/emoji.json");
         emojiData = await res.json();
     } catch (err) {
         console.error("Error loading emoji.json:", err);

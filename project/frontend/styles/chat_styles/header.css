@@ -342,3 +342,47 @@
 .delete-friend-content .modal-buttons .danger:hover {
   background: linear-gradient(135deg, #d90429, #ff4d4d);
 }
+
+.header-auth-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-left: auto;
+}
+
+.auth-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #fff;
+    background-size: 300% 300%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: gradientShift 4s ease infinite;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.register-btn {
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7873f5, #42f5e9);
+  transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+  background: linear-gradient(135deg, #42f5e9, #7873f5);
+  transform: scale(1.05);
+}
+
+.login-btn {
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffcf33, #ff6f61);
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background: linear-gradient(135deg, #ff6f61, #ffcf33);
+  transform: scale(1.05);
+}
