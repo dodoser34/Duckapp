@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
     <title data-i18n="title">DuckApp - Online Messager</title>
@@ -10,44 +9,104 @@
 
     <script type="module" src="../js/main.js" defer></script>
     <script type="module" src="../js/translatePage.js" defer></script>
-
 </head>
+
 <body data-page="main_page">
-    <div id="ducks"></div>
+<div id="ducks"></div>
 
-    <header>
-        <div class="logo" data-i18n="logo">🦆 DuckApp</div>
-        <nav>
-            <a id="aboutSiteBtn" data-i18n="aboutSiteBtn">About</a>
-            <a id="aboutUsBtn" data-i18n="aboutUsBtn">Team</a>
-        </nav>
-    </header>
+<header>
+    <div class="logo" data-i18n="logo">🦆 DuckApp</div>
+    <nav>
+        <a id="aboutSiteBtn" data-i18n="aboutSiteBtn">About</a>
+        <a id="aboutUsBtn" data-i18n="aboutUsBtn">Team</a>
+    </nav>
+</header>
 
-    <section class="hero">
-        <div class="hero-text">
-            <h1 data-i18n="hero-text_h1">Simple and convenient online messenger</h1>
-            <p data-i18n="hero-text_p">Duck App is a fast and beautiful way to chat directly in your browser. Minimalism and speed in one place.<br> “Quack-quack and no problems”</p>
-            <button onclick="location.href='authorization_frame.html'" data-i18n="hero-text_button">Start chatting now</button>
-        </div>
+<section class="hero">
+    <div class="hero-text">
+        <h1 data-i18n="hero-text_h1">Simple and convenient online messenger</h1>
+        <p data-i18n="hero-text_p">
+            Duck App is a fast and beautiful way to chat directly in your browser.
+            Minimalism and speed in one place.<br>
+            “Quack-quack and no problems”
+        </p>
+        <button onclick="location.href='authorization_frame.html'" data-i18n="hero-text_button">
+            Start chatting now
+        </button>
+    </div>
 
-        <div>
-            <div class="slider">
-                <div class="slides">
-                    <img src="assets/avatar_1.png" alt="Duck 1">
-                    <img src="assets/avatar_2.png" alt="Duck 2">
-                    <img src="assets/avatar_3.png" alt="Duck 3">
-                    <img src="assets/avatar_4.png" alt="Duck 4">
-                    <img src="assets/avatar_5.png" alt="Duck 5">
-                    <img src="assets/qr-code.png" alt="QR">
-                </div>
+    <div>
+        <div class="slider">
+            <div class="slides">
+                <img src="assets/logo_main_window.png" alt="Duck">
             </div>
-            <div class="dots"></div>
         </div>
-    </section>
+        <div class="dots"></div>
+    </div>
+</section>
 
-    <footer data-i18n="footer">
-        © 2025 Duck App. All rights reserved.
-    </footer>
+<section class="features">
+    <div class="feature-card">
+        <span>⚡</span>
+        <h3 data-i18n="1hero-text_h3">Fast. Simple. Real.</h3>
+        <p data-i18n="1hero-text_p">
+            The Duck App is designed for those moments when you don't want to wait. 
+            Messages are delivered instantly—no loading or delays, just communication at the speed of thought.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <span>🔒</span>
+        <h3 data-i18n="2hero-text_h3">Privacy comes first</h3>
+        <p data-i18n="2hero-text_p">
+            We believe conversations should stay between people who
+            actually talk. No ads, no tracking, no noise.
+            Your chats belong only to you.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <span>🦆</span>
+        <h3 data-i18n="3hero-text_h3">Made with a smile</h3>
+        <p data-i18n="3hero-text_p">
+            Duck App isn't about cold calling. 
+            Duck App is about easy, friendly communication. 
+            Sometimes with a little quack-quack.
+        </p>
+    </div>
+</section>
+
+<section class="hero">
+    <div class="qhero-text">
+        <p data-i18n="qhero-text_p">
+            Scan our QR code <br>to learn more about DuckApp features.
+        </p>
+    </div>
+
+    <div>
+        <div class="sliderq">
+            <div class="slidesq">
+                <img src="assets/qr-code.png" alt="QR code">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats" id="stats">
+    <div class="stat">
+        <h3 data-counter="17362">0</h3>
+        <p data-i18n="Auhero-text">Active users</p>
+    </div>
+
+    <div class="stat">
+        <h3 data-counter="93.7" data-decimal="true">0</h3>
+        <p data-i18n="Uphero-text">Uptime (%)</p>
+    </div>
+</section>
+
+<footer data-i18n="footer">
+    © 2025 Duck App. All rights reserved.
+</footer>
 
     <div id="aboutSiteModal" class="modal">
         <div class="modal-content">
@@ -89,4 +148,3 @@
         </div>
     </div>
 </body>
-</html>

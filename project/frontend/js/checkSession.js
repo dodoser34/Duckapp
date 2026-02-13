@@ -1,16 +1,21 @@
-import { checkToken } from "./api.js";
-import { getProfile } from "./chat/profile.js";
+import { API_URL } from "./api.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+export async function getSession() {
     try {
-        const startCheck = await checkToken();
-        if (!startCheck.ok) {
-            window.location = "authorization_frame.html";
-            return;
-        } else {
-            await getProfile(startCheck.ok, startCheck.result);
+        const checkToken = await fetch(`${API_URL}/api/auth/check`, {
+            credentials: "include"
+        });
+
+        if (checkToken.ok) {
+            const data = await checkToken.json().catch(() => ({}));
+            return { ok: true, result: data };
         }
+
+        return { ok: false, result: {} };
+        
+
     } catch (e) {
-        console.warn("checkToken on page load failed:", e);
+        console.error("Ошибка проверки токена:", e);
+        return { ok: false, result: {} };
     }
-});
+}

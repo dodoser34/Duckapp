@@ -1,4 +1,3 @@
-/* ====== ОБЩИЙ СТИЛЬ ====== */
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   margin: 0;
@@ -6,7 +5,6 @@ body {
   color: #333;
 }
 
-/* ====== ХЕДЕР ====== */
 header {
   display: flex;
   justify-content: space-between;
@@ -20,15 +18,12 @@ header {
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-
-  /* анимация появления сверху вниз */
   transform: translateY(-100%);
   opacity: 0;
   animation: slideDown 0.6s ease forwards;
   animation-delay: 0.2s;
 }
 
-/* ====== Анимация для шапки ====== */
 @keyframes slideDown {
   to {
     transform: translateY(0);
@@ -62,31 +57,28 @@ nav a:hover {
   color: #ffb703;
 }
 
-/* ====== HERO ====== */
 .hero {
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 60px 80px;
-  min-height: 80vh;
+  min-height: 20vh;
   gap: 40px;
   position: relative;
   z-index: 1;
 }
 
-/* ====== Анимация появления всех элементов кроме кнопки ====== */
 .hero > *:not(.hero-text button) {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInAll 0.8s ease forwards;
 }
 
-/* Задержка появления по очереди */
 .hero > *:not(.hero-text button):nth-child(1) { animation-delay: 0.2s; }
 .hero > *:not(.hero-text button):nth-child(2) { animation-delay: 0.4s; }
 .hero > *:not(.hero-text button):nth-child(3) { animation-delay: 0.6s; }
 
-/* Анимация */
 @keyframes fadeInAll {
   to {
     opacity: 1;
@@ -94,10 +86,9 @@ nav a:hover {
   }
 }
 
-/* ====== HERO TEXT ====== */
 .hero-text {
-  max-width: 520px;
-  animation: fadeIn 1s ease; /* анимация для текста */
+  max-width: 900px;
+  animation: fadeIn 1s ease;
 }
 
 .hero-text h1 {
@@ -115,7 +106,7 @@ nav a:hover {
 
 .hero-text button {
   background: linear-gradient(135deg, #ffb703, #fb8500);
-  background-size: 200% 200%; /* растягиваем */
+  background-size: 200% 200%;
   background-position: left center;
   border: none;
   padding: 16px 32px;
@@ -129,28 +120,19 @@ nav a:hover {
 }
 
 .hero-text button:hover {
-  background: linear-gradient(135deg, #fb8500, #ffb703); /* меняем порядок */
+  background: linear-gradient(135deg, #fb8500, #ffb703);
   background-size: 200% 200%;
-  background-position: right center; /* двигаем */
+  background-position: right center;
   transform: translateY(2px);
   box-shadow: 0 6px 14px rgba(251, 133, 0, 0.5);
 }
 
-/* ====== СЛАЙЕР ====== */
 .slider {
   position: relative;
-  width: 650px;
+  width: 700px;
   max-width: 100%;
   aspect-ratio: 4/3;
   overflow: hidden;
-  border-radius: 24px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-  border: 6px solid #ffb703;
-}
-
-.slider {
-  margin-left: auto;  /* авто-отступ слева */
-  margin-right: auto; /* авто-отступ справа */
 }
 
 .slides {
@@ -167,29 +149,122 @@ nav a:hover {
   flex-shrink: 0;
 }
 
-/* Индикаторы */
-.dots {
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 25px 0px;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  width: 260px;
+  padding: 30px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 22px;
   text-align: center;
-  margin-top: 15px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.15);
+  opacity: 0;
+  transform: translateY(60px) scale(0.95);
+  animation: cardIn 0.8s cubic-bezier(.22,1.2,.36,1) forwards;
 }
 
-.dot {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin: 0 5px;
-  background: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: 0.3s;
+.feature-card:nth-child(1) { animation-delay: 0.1s; }
+.feature-card:nth-child(2) { animation-delay: 0.25s; }
+.feature-card:nth-child(3) { animation-delay: 0.4s; }
+
+.feature-card span {
+  font-size: 40px;
 }
 
-.dot.active {
-  background: #fb8500;
-  transform: scale(1.2);
+.feature-card h3 {
+  margin: 12px 0;
+  color: #ffb703;
 }
 
-/* ====== ФУТЕР ====== */
+.feature-card p {
+  color: #f1f1f1;
+  font-size: 15px;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+@keyframes cardIn {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.95);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.sliderq {
+  position: relative;
+  width: 400px;
+  max-width: 100%;
+  
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  border: 6px solid #ffb703;
+}
+
+.slidesq {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slidesq img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.qhero-text {
+  max-width: 700px;
+  align-items: center;
+  animation: fadeIn 1s ease;
+}
+
+.qhero-text p {
+  font-size: 18px;
+  color: #f1f1f1;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.stat h3 {
+  font-size: 42px;
+  font-weight: bold;
+  color: #ffb703;
+}
+
+.stat p {
+  margin-top: 6px;
+  color: #fff;
+  opacity: 0.9;
+}
+
 footer {
   max-width: 370px;
   padding: 14px 20px;
@@ -201,14 +276,12 @@ footer {
   margin: 0px auto 10px auto;
 }
 
-/* ===== ТОНКИЙ DACAP-СКРОЛЛ — скрыт по умолчанию, появляется с html.show-scroll ===== */
 :root{
   --scroll-width: 6px;
   --scroll-thumb-bg: linear-gradient(180deg,#ffb703,#fb8500);
   --scroll-transition: 200ms;
 }
 
-/* WebKit (Chrome/Edge/Safari) — по умолчанию скрыт */
 html::-webkit-scrollbar {
   width: 0;
   height: 0;
@@ -224,7 +297,6 @@ html::-webkit-scrollbar-thumb {
   transition: opacity var(--scroll-transition) ease, box-shadow var(--scroll-transition);
 }
 
-/* Показываем — когда есть класс */
 html.show-scroll::-webkit-scrollbar {
   width: var(--scroll-width);
   height: var(--scroll-width);
@@ -234,23 +306,20 @@ html.show-scroll::-webkit-scrollbar-thumb {
   box-shadow: 0 0 8px rgba(251,133,0,0.28);
 }
 
-/* Hover для аккуратного свечения */
 html.show-scroll::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg,#fb8500,#ffb703);
   box-shadow: 0 0 12px rgba(251,133,0,0.45);
 }
 
-/* Firefox */
 html {
-  scrollbar-width: none;               /* hide by default in Firefox */
+  scrollbar-width: none;
   scrollbar-color: transparent transparent;
 }
 html.show-scroll {
-  scrollbar-width: thin;               /* покажем тонкий */
-  scrollbar-color: #ffb703 transparent;/* thumb + track */
+  scrollbar-width: thin;
+  scrollbar-color: #ffb703 transparent;
 }
 
-/* ====== МОДАЛКИ ====== */
 .modal {
   display: none;
   position: fixed;
@@ -302,7 +371,6 @@ html.show-scroll {
   color: #fb8500;
 }
 
-/* Блоки в модалках */
 .modal-block {
   margin: 15px 0;
   padding: 15px;
@@ -334,7 +402,6 @@ html.show-scroll {
   text-decoration: underline;
 }
 
-/* Состояние закрытия */
 .modal.closing {
   animation: fadeOut 0.4s forwards;
 }
@@ -343,7 +410,6 @@ html.show-scroll {
   animation: scaleDown 0.4s ease forwards;
 }
 
-/* ====== АНИМАЦИИ ====== */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -364,7 +430,6 @@ html.show-scroll {
   to { transform: scale(0.8); opacity: 0; }
 }
 
-/* ====== УТОЧКИ ====== */
 #ducks {
   position: fixed;
   top: 0; left: 0;
@@ -382,123 +447,96 @@ html.show-scroll {
   transition: transform 0.3s;
 }
 
-/* ====== АДАПТИВ ====== */
-
-/* Планшеты (до 1100px) */
 @media (max-width: 1100px) {
   header {
     padding: 15px 30px;
   }
-
   nav a {
     margin: 0 10px;
     font-size: 16px;
   }
-
   .hero {
     flex-direction: column;
     text-align: center;
     padding: 40px 20px;
     gap: 30px;
   }
-
   .hero-text {
     max-width: 90%;
   }
-
   .hero-text h1 {
     font-size: 32px;
   }
-
   .hero-text p {
     font-size: 16px;
   }
-
   .hero-text button {
     width: 100%;
     max-width: 360px;
     font-size: 16px;
     padding: 14px 20px;
   }
-
   .slider {
     width: 95%;
     max-width: 500px;
     border-radius: 20px;
-    margin: 0 auto; /* центрируем */
+    margin: 0 auto;
   }
-
-  /* Модалка — центрированный блок, но выше максимум */
   .modal .modal-content {
     max-height: calc(100vh - 100px);
     padding: 26px;
   }
 }
 
-/* Малые планшеты / крупные телефоны (до 768px) */
 @media (max-width: 768px) {
   header {
     padding: 12px 18px;
   }
-
   header .logo {
     font-size: 22px;
   }
-
   nav a {
     font-size: 14px;
     margin: 0 8px;
   }
-
   .hero {
     padding: 30px 14px;
   }
-
   .hero-text h1 {
     font-size: 26px;
   }
-
   .hero-text p {
     font-size: 15px;
     line-height: 1.45;
   }
-
   .hero-text button {
     font-size: 15px;
     padding: 12px 18px;
   }
-
   .slider {
     max-width: 100%;
     border-width: 4px;
   }
-
   footer {
     font-size: 12px;
     padding: 10px;
     margin-top: 50px;
   }
-
   .modal-content {
     padding: 22px;
     max-width: 680px;
   }
-
-  /* Mobile UX: модалка как bottom-sheet (якорится к низу экрана) */
   .modal {
-    align-items: flex-end; /* нижняя позиция */
-    padding: 0;            /* без боковых отступов у overlay */
+    align-items: flex-end;
+    padding: 0;
   }
-
   .modal .modal-content {
     width: 100%;
-    border-radius: 16px 16px 0 0; /* закругл. сверху — тип bottom sheet */
-    max-height: 85vh;             /* не полностью закрывает экран */
+    border-radius: 16px 16px 0 0;
+    max-height: 85vh;
     margin: 0;
     padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 18px);
   }
-
-  /* Кнопка закрытия — чуть побольше и внутри (на фоне) */
   .modal .close {
     top: 8px;
     right: 10px;
@@ -506,70 +544,55 @@ html.show-scroll {
     width: 44px;
     height: 44px;
   }
-
-  /* Команда: столбиком для компактности */
   .team-member {
     display: block;
     padding: 10px;
     background: #f5f5f5;
   }
-
   .team-member h3 { margin-bottom: 6px; }
   .team-member p { font-size: 14px; }
 }
 
-/* Смартфоны (до 480px) */
 @media (max-width: 480px) {
   header {
     flex-direction: column;
     text-align: center;
     padding: 10px 12px;
   }
-
   nav {
     margin-top: 8px;
   }
-
   nav a {
     display: inline-block;
     margin: 5px 8px;
     font-size: 13px;
   }
-
   .hero-text h1 {
     font-size: 22px;
   }
-
   .hero-text p {
     font-size: 14px;
   }
-
   .hero-text button {
     font-size: 14px;
     padding: 10px 16px;
   }
-
   .slider {
     border-width: 3px;
     border-radius: 14px;
   }
-
   .dot {
     width: 10px;
     height: 10px;
   }
-
   footer {
     font-size: 11px;
     padding: 8px;
   }
-
-  /* На очень маленьких экранах — модалка может быть полноэкранной */
   .modal {
     align-items: stretch;
     padding: 0;
   }
-
   .modal .modal-content {
     width: 100%;
     height: 100%;
@@ -580,7 +603,6 @@ html.show-scroll {
     padding-right: 12px;
     padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 12px);
   }
-
   .modal .close {
     position: absolute;
     top: calc(env(safe-area-inset-top, 12px) + 6px);

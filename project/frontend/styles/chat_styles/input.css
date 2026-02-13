@@ -1,8 +1,3 @@
-/* ======================= */
-/* ===== CHAT INPUT ====== */
-/* ======================= */
-
-/* Контейнер ввода */
 .chat-input {
   display: flex;
   align-items: center;
@@ -12,7 +7,6 @@
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* Поле ввода */
 .chat-input textarea {
   flex: 1;
   min-height: 40px;
@@ -33,7 +27,6 @@
   box-shadow: 0 0 6px rgba(255, 183, 3, 0.6);
 }
 
-/* Тонкий скролл */
 .chat-input textarea::-webkit-scrollbar {
   width: 6px;
 }
@@ -49,7 +42,6 @@
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
-/* Общий стиль кнопок */
 .chat-input button {
   min-width: 48px;
   height: 48px;
@@ -57,7 +49,6 @@
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 12px;
   padding: 0 12px;
   cursor: pointer;
   font-size: 16px;
@@ -66,8 +57,10 @@
   transition: background 0.3s ease, transform 0.15s ease;
 }
 
-/* Кнопка отправки 🦆 */
+
 #send-btn {
+  margin-left: 8px;
+  border-radius: 12px 12px 12px 12px;
   background: linear-gradient(135deg, #fb8500, #ffb703);
 }
 #send-btn:hover {
@@ -75,8 +68,8 @@
   transform: scale(1.05);
 }
 
-/* Кнопка GIF */
 #sendgif-btn {
+  border-radius: 12px 0 0 12px;
   background: linear-gradient(135deg, #8338ec, #3a86ff);
 }
 #sendgif-btn:hover {
@@ -84,8 +77,8 @@
   transform: scale(1.05);
 }
 
-/* Кнопка смайлов */
 #sendsmile-btn {
+  border-radius: 0 12px 12px 0;
   background: linear-gradient(135deg, #118ab2, #06d6a0);
 }
 #sendsmile-btn:hover {
@@ -93,17 +86,11 @@
   transform: scale(1.05);
 }
 
-/* ======================= */
-/* ===== GIF PANEL ======= */
-/* ======================= */
-
-/* Обертка GIF */
 .gif-wrapper {
   position: relative;
   display: inline-block;
 }
 
-/* Панель GIF */
 .gif-inline-panel {
   position: absolute;
   bottom: 74px;
@@ -125,7 +112,6 @@
   transition: transform 0.3s ease, opacity 0.3s ease, padding 0.2s ease;
 }
 
-/* Открытая панель */
 .gif-inline-panel.open {
   transform: translateX(-50%) scaleY(1);
   opacity: 1;
@@ -133,7 +119,6 @@
   pointer-events: all;
 }
 
-/* GIF поиск */
 .gif-inline-panel .gif-search-bar {
   display: flex;
   gap: 8px;
@@ -171,7 +156,6 @@
   background: linear-gradient(135deg, #fb8500, #ffb703);
 }
 
-/* GIF сетка */
 .gif-inline-panel .gif-results {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -181,7 +165,6 @@
   padding-right: 6px;
 }
 
-/* Тонкий скролл */
 .gif-inline-panel .gif-results::-webkit-scrollbar {
   width: 6px;
 }
@@ -197,7 +180,6 @@
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
-/* GIF элементы */
 .gif-inline-panel .gif-results img {
   width: 100%;
   border-radius: 10px;
@@ -207,24 +189,13 @@
   animation: gifFadeIn 0.35s forwards;
 }
 
-.gif-inline-panel .gif-results img:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 10px rgba(255, 183, 3, 0.5);
-}
-
-/* GIF анимация */
 @keyframes gifFadeIn {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* GIF stagger */
 .gif-inline-panel.open .gif-results img:nth-child(n) {
   animation-delay: calc(0.05s * var(--n));
 }
-
-/* ======================= */
-/* ===== EMOJI PANEL ===== */
-/* ======================= */
 
 .emoji-wrapper {
   position: relative;
@@ -291,12 +262,7 @@
   user-select: none;
 }
 
-.emoji-grid span:hover {
-  transform: scale(1.3);
-  filter: drop-shadow(0 0 6px #ffee00);
-}
 
-/* Тонкий скролл */
 .emoji-scroll::-webkit-scrollbar {
   width: 6px;
 }
@@ -312,7 +278,6 @@
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
-/* Emoji анимация */
 @keyframes emojiFadeIn {
   from { opacity: 0; transform: scale(0.8); }
   to { opacity: 1; transform: scale(1); }

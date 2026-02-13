@@ -1,67 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
     <title data-i18n="title">DuckApp Chat</title>
 
-    <!-- Styles -->
     <link rel="stylesheet" href="../styles/base/chat.css">
     <link rel="stylesheet" href="../styles/chat_styles/header.css">
     <link rel="stylesheet" href="../styles/chat_styles/input.css">
     <link rel="stylesheet" href="../styles/chat_styles/friends.css">
     <link rel="stylesheet" href="../styles/chat_styles/profile.css">
     <link rel="stylesheet" href="../styles/chat_styles/messages.css">
-    <link rel="stylesheet" href="../styles/chat_styles/responsive.css">
-    <script src="../js/modals-close.js"></script>
 
 
-    <!-- Scripts -->
-    <script type="module" src="../js/checkSession.js" defer></script>
+    <script type="module" src="../js/chat/MainChat.js" defer></script>
+
+    <script type="module" src="../js/chat/Profile.js" defer></script>
     <script type="module" src="../js/chat/chat_header.js" defer></script>
     <script type="module" src="../js/chat/addFriend.js" defer></script>
     <script type="module" src="../js/chat/changeStats.js" defer></script>
-    <script type="module" src="../js/chat/profile.js" defer></script>
     <script type="module" src="../js/chat/logoutProfile.js" defer></script>
     <script type="module" src="../js/chat/chat_logic.js" defer></script>
 
     <script type="module" src="../js/translatePage.js" defer></script>
-
 </head>
+
 <body data-page="main_chat">
     <div id="ducks"></div>
 
-    <div class="chat-wrapper">
-        <!-- Chat Box -->
-        <div class="chat-box">
-            <!-- Header -->
-            <div class="chat-header">
-                <div class="chat-header-left">
-                    <!-- <img class="avatar" id="header-avatar"> -->
-                    <div class="chat-header-text">
-                        <div id="chat-title" class="chat-title"></div>
-                        <div class="chat-subtitle"></div>
-                    </div>
+<div class="chat-wrapper">
+    <div class="chat-box">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <div class="avatar-wrapper">
+                    <img class="avatar" id="header-avatar">
+                    <span id="header-status-indicator" class="status-indicator-header"></span>
                 </div>
-                <div class="chat-header-actions">
-                    <button class="header-icon-btn" id="menu-toggle">⋮</button>
-                    <div class="chat-menu" id="chat-menu">
-                        <button class="menu-item" id="rename-chat" data-i18n="header_button_rename">📝 Rename</button>
-                        <button class="menu-item" id="delete-chat" data-i18n="header_button_delete_chat">🗨️ Delete Chat</button>
-                        <button class="menu-item" id="delete-friend" data-i18n="header_button_delete_friend">🗑️ Delete Friend</button>
-                    </div>
+                <div class="chat-header-text">
+                    <div id="chat-title" class="chat-title"></div>
+                    <div id="chat-id" class="chat-id"></div>
+                    <div id="chat-status" class="chat-subtitle"></div>
                 </div>
             </div>
+            <div class="chat-header-actions">
+                <button class="header-icon-btn" id="menu-toggle">⋮</button>
+                <div class="chat-menu" id="chat-menu">
+                    <button class="menu-item" id="rename-chat" data-i18n="header_button_rename">📝 Rename</button>
+                    <button class="menu-item" id="delete-chat" data-i18n="header_button_delete_chat">🗨️ Delete Chat</button>
+                    <button class="menu-item" id="delete-friend" data-i18n="header_button_delete_friend">🗑️ Delete Friend</button>
+                </div>
+            </div>
+        </div>
+
 
             <!-- Messages -->
             <div class="chat-messages" id="chat-body">
-                <div class="empty-chat muted">Select a chat on the right 👉</div>
+                <div class="empty-chat muted" data-i18n="chat_main_window_text"></div>
             </div>
 
-            <!-- Input Area -->
             <div class="chat-input">
-                <textarea id="message-input" placeholder="Write a message..." rows="1" maxlength="3000"></textarea>
+                <textarea id="message-input" data-i18n="chat_write_textarea" rows="1" maxlength="3000"></textarea>
 
                 <!-- GIF Button & Panel -->
                 <div class="gif-wrapper">
@@ -76,7 +74,6 @@
                     </div>
                 </div>
 
-                <!-- Emoji Button & Panel -->
                 <div class="emoji-wrapper">
                     <button id="sendsmile-btn">😄</button>
                     <div class="emoji-panel" id="emoji-panel">
@@ -94,9 +91,7 @@
             </div>
         </div>
 
-        <!-- Chat List / Sidebar -->
         <aside class="chat-list">
-            <!-- Profile -->
             <div class="chat-list-item profile" id="profile-toggle">
                 <div class="avatar-wrapper">
                     <img class="avatar" id="profile-avatar">
@@ -119,7 +114,6 @@
                 <button class="sub-btn logout-btn" id="logout-btn" data-i18n="profile_btn_logout"></button>
             </div>
 
-            <!-- Friends Panel -->
             <div class="friends-panel-wrapper">
                 <div id="profile-panel-friends" class="profile-panel-friends">
                     <button id="profile-add-friend-btn" data-i18n="btn_add_friend"></button>
@@ -136,10 +130,7 @@
         <div class="add-friend-content">
             <span class="close">&times;</span>
             <h2 data-i18n="btn_add_friend_modal_title"></h2>
-            <input type="text" id="friend-search" placeholder="Enter friend's nickname" maxlength="18" required/>
-            <div class="add-friend-buttons">
-                <button id="search-friend-btn" data-i18n="btn_add_friend_modal_search_button"></button>
-            </div>
+            <input type="text" id="friend-search" data-i18n="btn_add_friend_modal_title_input"  maxlength="18" required/>
             <div id="friend-result"></div>
             <div id="error-message"></div>
         </div>
@@ -204,4 +195,4 @@
         </div>
     </div>
 </body>
-</html>
+

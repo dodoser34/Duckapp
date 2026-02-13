@@ -1,16 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 from DataBases import db_manager as db
 import jwt, datetime, bcrypt, pymysql, os
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
 
 router = APIRouter()
 
-SECRET_KEY = os.getenv("JWT_KEY")
+SECRET_KEY: str = str(os.getenv("JWT_KEY"))
 ALGORITHM = "HS256"
 
-#! ---------- REGISTER ----------
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = BASE_DIR / "static"
+
 @router.post("/register")
 async def register(response: Response, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
     conn = db.get_connection()
@@ -19,16 +23,14 @@ async def register(response: Response, username: str = Form(...), email: str = F
     hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
     try:
-        # Добавляем пользователя
         cursor.execute(
             "INSERT INTO registered_users (username, email, hashed_password, created_at) VALUES (%s, %s, %s, %s)",
             (username, email, hashed, datetime.datetime.utcnow())
         )
         conn.commit()
 
-        user_id = cursor.lastrowid  # получаем ID нового пользователя
+        user_id = cursor.lastrowid
 
-        # 👇 Автоматически создаём профиль с полем `names`
         cursor.execute(
             "INSERT INTO user_profiles (user_id, names, status, avatar) VALUES (%s, %s, %s, %s)",
             (user_id, username, 'Hey there! I am using DuckApp.', '../assets/avatar_1.png')
@@ -66,36 +68,6 @@ async def register(response: Response, username: str = Form(...), email: str = F
 
     return {"message": "User registered successfully"}
 
-#! ---------- LOGIN ----------
-@router.post("/login")
-async def login(response: Response, username: str = Form(...), password: str = Form(...)):
-    conn = db.get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM registered_users WHERE username = %s", (username,))
-    user = cursor.fetchone()
-    cursor.close()
-    conn.close()
-
-    if not user or not bcrypt.checkpw(password.encode("utf-8"), user["hashed_password"].encode("utf-8")):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect login or password")
-
-    payload = {
-        "sub": user["username"],
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2),
-    }
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-
-    response.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,
-        max_age=10800,
-        samesite="lax",
-        secure=False
-    )
-
-    return {"message": "Logged in successfully"}
-
 #! ---------- LOGOUT ----------
 @router.post("/logout")
 async def logout(response: Response):
@@ -125,9 +97,7 @@ def get_me(token: str = Depends(get_token_from_cookie)):
     username: str = payload.get("sub")
 
     conn = db.get_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)  # return dicts directly
-
-    # JOIN for profile
+    cursor = conn.cursor(pymysql.cursors.DictCursor)  
     cursor.execute("""
         SELECT 
             ru.id, 
@@ -154,8 +124,8 @@ def get_me(token: str = Depends(get_token_from_cookie)):
         "username": user["username"],
         "email": user["email"],
         "created_at": user["created_at"],
-        "names": user.get("names") or user["username"],  # if no profile → use username
-        "avatar": user.get("avatar") or "../assets/avatar_1.png",  # default avatar
+        "names": user.get("names") or user["username"],
+        "avatar": user.get("avatar") or "avatar_1.png",
         "status": user.get("status") or "online"
     }
 
@@ -175,3 +145,91 @@ def get_current_user(request: Request):
         raise HTTPException(status_code=404, detail="User not found")
 
     return user
+
+
+
+
+
+#! ---------- LOGIN PAGE ----------
+@router.get("/login", response_class=HTMLResponse)
+async def login_page():
+    return HTMLResponse(
+        open("static/login.html", encoding="utf-8").read()
+    )
+
+
+#! ---------- LOGIN API ----------
+@router.post("/login")
+async def login_api(
+    response: Response,
+    username: str = Form(...),
+    password: str = Form(...)
+):
+    
+    conn = db.get_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+    cursor.execute(
+        "SELECT username, hashed_password FROM registered_users WHERE username = %s",
+        (username,)
+    )
+    user = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+
+    if not bcrypt.checkpw(password.encode(), user["hashed_password"].encode()):
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+    
+    payload = {
+        "sub": user["username"],
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2),
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        max_age=7200,
+        samesite="lax",
+        secure=False
+    )
+
+    return {"status": "ok"}
+
+    
+
+#! ---------- TOKEN CHECK ----------
+@router.get("/check")
+async def check_token(request: Request):
+    token = request.cookies.get("access_token")
+    
+    if not token:
+        raise HTTPException(status_code=401)
+
+    try:
+        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return {"status": "ok"}
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401)
+
+    
+#! ---------- CHAT PAGE ----------
+@router.get("/chat", response_class=HTMLResponse)
+async def chat_page(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse("/api/auth/login", 302)
+
+    try:
+        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.PyJWTError:
+        return RedirectResponse("/api/auth/login", 302)
+
+    return HTMLResponse(
+        open("static/main_chat.html", encoding="utf-8").read()
+    )  

@@ -8,6 +8,16 @@
             "hero-text_h1": "Простой и удобный онлайн-мессенджер",
             "hero-text_p": "Duck App — это быстрый и красивый способ общаться прямо в браузере. Минимализм и скорость в одном месте. <br>«Кря-кря и никаких проблем»",
             "hero-text_button": "Начните общаться прямо сейчас",
+            "1hero-text_h3": "Быстро. Просто. По-настоящему.",
+            "1hero-text_p": "Приложение Duck App создано для тех моментов, когда не хочется ждать. Сообщения доставляются мгновенно — без загрузок и задержек, просто общение со скоростью мысли.",
+            "2hero-text_h3": "Конфиденциальность превыше всего.",
+            "2hero-text_p": "Мы считаем, что общение должно оставаться между людьми, с которыми они хотят общаться. Никакой рекламы, никакого отслеживания, никакого контроля. Ваши чаты принадлежат только вам.",
+            "3hero-text_h3": "Сделано с улыбкой",
+            "3hero-text_p": "Duck App — не про холодные звонки. Duck App — про лёгкое, дружелюбное общение. Иногда с «кря-кря».",
+            "qhero-text":"",
+            "qhero-text_p": "Отсканируйте наш QR-код, <br>чтобы узнать больше о функциях DuckApp.",
+            "Auhero-text": "Активные пользователи",
+            "Uphero-text": "Время безотказной работы (%)",
             "footer": "© 2025 DuckApp. Все права защищены.",
 
             "aboutSiteModal-title": "О DuckApp",
@@ -87,57 +97,10 @@
             "header_menu_deleteFriendBtn_modal_deleteBtn": "Удалить",
             "header_menu_deleteFriendBtn_modal_cancelBtn": "Отменить",
 
+            "chat_write_textarea": "Введите сообщение ...",
+            "chat_main_window_text": "Выберите чат справа 👉",
+
             "footer": "© 2025 DuckApp.<br> Все права защищены."
-        }
-    },
-
-    "en": {
-        "main_page": {
-            "title": "DuckApp - Online Messenger",
-            "logo": "🦆 DuckApp",
-            "aboutSiteBtn": "About",
-            "aboutUsBtn": "Team",
-            "hero-text_h1": "A simple and convenient online messenger",
-            "hero-text_p": "Duck App is a fast and beautiful way to chat right in your browser. Minimalism and speed in one place. <br>“Quack-quack and no problems”",
-            "hero-text_button": "Start chatting now",
-            "footer": "© 2025 DuckApp. All rights reserved.",
-
-            "aboutSiteModal-title": "About DuckApp",
-            "aboutSiteModal-concept_title": "Concept",
-            "aboutSiteModal-concept_text": "Duck App is a light and fun messenger created for friendly communication in a relaxed atmosphere. Its main goal is to bring joy and simplicity, connecting people through a friendly interface and positive style.",
-            "aboutSiteModal-style_title": "Style",
-            "aboutSiteModal-style_text": "The main focus is on a bright color palette, minimalism, and cute duck details. This design creates a sense of lightness and comfort.",
-            "aboutSiteModal-theme_title": "Theme",
-            "aboutSiteModal-theme_text": "Unlike standard messengers, Duck App is built on positivity and a playful atmosphere. No heavy interface or clutter — only simple communication, emotions, and a bit of “quack-quack”.",
-
-            "aboutUsModal-title": "Our Team",
-            "aboutUsModal-member1_name": "Dodoser34",
-            "aboutUsModal-member1_role": "<b>Role:</b> Frontend Developer",
-            "aboutUsModal-member1_text": "Developed the app architecture and UX/UI design, and implemented the site interface focused on usability and a modern user experience.",
-            "aboutUsModal-member2_name": "Teych-Man",
-            "aboutUsModal-member2_role": "<b>Role:</b> Backend Developer",
-            "aboutUsModal-member2_text": "Author of the DuckApp concept, developed and implemented the business logic and server side, and also contributed to UX design."
-        },
-
-        "authorization": {
-            "title": "Login to DuckApp",
-            "logo": "🦆 DuckApp",
-            "username": "Username",
-            "password": "Password",
-            "button-text": "Login",
-            "noAccount": "Don't have an account?",
-            "noAccount-registration": "Sign up",
-            "footer": "© 2025 DuckApp. All rights reserved."
-        },
-
-        "register": {
-            "title": "Sign up to DuckApp",
-            "username": "Username",
-            "password": "Password",
-            "confirm_password": "Confirm password",
-            "registrationBtn": "Sign up",
-            "haveAnAccountLogin": "Already have an account? <a href='authorization_frame.html'>Login</a>",
-            "footer": "© 2025 DuckApp. All rights reserved."
         }
     }
 }

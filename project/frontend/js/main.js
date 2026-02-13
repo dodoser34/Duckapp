@@ -4,6 +4,8 @@ const aboutUsBtn = document.getElementById("aboutUsBtn");
 const aboutSiteModal = document.getElementById("aboutSiteModal");
 const aboutUsModal = document.getElementById("aboutUsModal");
 const closeButtons = document.querySelectorAll(".close");
+const statsSection = document.querySelector("#stats");
+const counters = document.querySelectorAll("[data-counter]");
 
 // Open modal
 function openModal(modal) {
@@ -158,3 +160,43 @@ window.addEventListener("keydown", (e) => {
 
 // Touch screen
 window.addEventListener("touchstart", () => showScroll(), { passive: true });
+
+
+let statsPlayed = false;
+
+function animateCounter(el) {
+    const target = parseFloat(el.dataset.counter);
+    const isDecimal = el.dataset.decimal === "true";
+    const duration = 1500;
+    const startTime = performance.now();
+
+    function update(time) {
+        const progress = Math.min((time - startTime) / duration, 1);
+        let value = target * progress;
+
+        el.textContent = isDecimal
+            ? value.toFixed(1)
+            : Math.floor(value);
+
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            el.textContent = isDecimal
+                ? target.toFixed(1)
+                : target.toLocaleString();
+        }
+    }
+
+    requestAnimationFrame(update);
+}
+
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && !statsPlayed) {
+            counters.forEach(animateCounter);
+            statsPlayed = true;
+        }
+    });
+}, { threshold: 0.5 });
+
+observer.observe(statsSection);

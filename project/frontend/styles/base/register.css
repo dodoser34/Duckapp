@@ -1,107 +1,99 @@
-/* Общий фон */
 body {
-  font-family: "Segoe UI", Arial, sans-serif;   /* Основной шрифт для текста: сначала Segoe UI, если нет — Arial, потом стандартный sans-serif */
-  background: linear-gradient(135deg, #4e98ff, #89f7fe);  /* Градиентный фон от голубого к синему под углом 135° */
-  display: flex;   /* Flexbox для выравнивания содержимого */
-  justify-content: center;   /* Горизонтальное центрирование */
-  align-items: center;       /* Вертикальное центрирование */
-  height: 100vh;   /* Высота на весь экран */
-  margin: 0;       /* Убираем стандартные отступы у body */
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #4e98ff, #89f7fe);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
-/*? Контейнер */
 .register-container {
-  background: #ffffff;   /* Белый фон */
-  padding: 40px;         /* Внутренние отступы */
-  border-radius: 24px;   /* Закруглённые углы */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);  /* Тень */
-  width: 360px;          /* Ширина контейнера */
-  text-align: center;    /* Центрируем текст внутри */
-  animation: fadeIn 0.8s ease-in-out;  /* Анимация появления */
-  z-index: 1000;          /* Поверх уток */
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  width: 360px;
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out;
+  z-index: 1000;
 }
 
-/*? Логотип утки */
 .logo {
-  font-size: 50px;        /* Размер эмодзи 🦆 */
-  margin-bottom: 15px;    /* Отступ снизу */
-  animation: bounceRubber 1.5s infinite;  /* Бесконечная анимация подпрыгивания */
+  font-size: 50px;
+  margin-bottom: 15px;
+  animation: bounceRubber 1.5s infinite;
 }
 
-/*? Заголовок */
 .register-container h2 {
-  margin-bottom: 20px;   /* Отступ снизу */
-  color: #333;           /* Тёмно-серый цвет */
-  font-size: 22px;       /* Размер текста */
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 22px;
 }
 
-/*? Текст "Уже есть аккаунт? Войти" */
 .register-container .haveAnAccountLogin {
-  color: #555;          /* Серый цвет текста */
-  display: block;       /* Чтобы span вёл себя как блочный элемент */
-  margin-top: 34px;     /* Отступ сверху */
-  text-align: center;   /* Центрируем */
+  color: #555;
+  display: block;
+  margin-top: 34px;
+  text-align: center;
 }
 
-/*! ========== ГРУППА ДЛЯ ПЛАВАЮЩЕГО PLACEHOLDER ========== */
 .input-group {
-  position: relative;  /* Чтобы label мог позиционироваться внутри */
-  margin: 18px 0px;    /* Отступы сверху и снизу */
-  width: 92%;          /* Ширина группы */
+  position: relative;
+  margin: 18px 0px;
+  width: 92%;
 }
 
 .input-group input {
-  width: 100%;         /* Поле на всю ширину контейнера */
-  padding: 14px;       /* Внутренние отступы */
-  border: none;        /* Без рамки */
-  border-radius: 14px; /* Закруглённые углы */
-  background: #f5f7fa; /* Светло-серый фон */
-  font-size: 15px;     /* Размер текста */
-  transition: all 0.25s ease;  /* Плавные анимации */
-  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.1),   /* Внутренняя тень */
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: #f5f7fa;
+  font-size: 15px;
+  transition: all 0.25s ease;
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.1),
               inset -2px -2px 6px rgba(255, 255, 255, 0.7);
 }
 
 .input-group input::placeholder {
-  color: transparent;  /* Скрываем стандартный placeholder */
+  color: transparent;
 }
 
 .input-group label {
-  position: absolute;   /* Позиционируем внутри input */
-  left: 14px;           /* Смещаем слева */
-  top: 50%;             /* Центрируем по вертикали */
-  transform: translateY(-50%); /* Выравнивание */
-  color: #888;          /* Серый цвет */
-  font-size: 15px;      /* Размер текста */
-  pointer-events: none; /* Клик не обрабатывается по label */
-  transition: 0.25s ease; /* Плавные переходы */
-  background: transparent; /* Без фона по умолчанию */
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 15px;
+  pointer-events: none;
+  transition: 0.25s ease;
+  background: transparent;
 }
 
 .input-group input:focus+label,
 .input-group input:not(:placeholder-shown)+label {
-  top: -1px;       /* Поднимаем label наверх */
-  left: 10px;      /* Немного смещаем влево */
-  font-size: 12px; /* Уменьшаем размер */
-  color: #0077cc;  /* Синий цвет */
-  background: #fff; /* Белый фон, чтобы текст не сливался с input */
-  padding: 0 4px;   /* Небольшие отступы по бокам */
-  border-radius: 6px; /* Закругление для белого фона */
+  top: -1px;
+  left: 10px;
+  font-size: 12px;
+  color: #0077cc;
+  background: #fff;
+  padding: 0 4px;
+  border-radius: 6px;
 }
 
 .input-group input:focus,
 .input-group input:focus-visible {
-  background: #fff;  /* Белый фон при фокусе */
-  outline: none;     /* Убираем синюю рамку браузера */
-  box-shadow: 0 0 8px rgba(102, 166, 255, 0.95); /* Подсветка */
+  background: #fff;
+  outline: none;
+  box-shadow: 0 0 8px rgba(102, 166, 255, 0.95);
 }
 
-/*! ========== КНОПКА (Регистрация с анимацией градиента) ========== */
 .register-container button {
-  background: linear-gradient(135deg, #ffb703, #fb8500);  /* Градиент */
-  background-size: 200% 200%; /* для анимации */
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  background-size: 200% 200%;
   background-position: left center;
-
   border: none;
   padding: 14px;
   width: 100%;
@@ -110,81 +102,65 @@ body {
   font-weight: bold;
   color: white;
   cursor: pointer;
-
   margin-top: 10px;
-
   transition: background-position 0.8s ease,
               transform 0.2s ease,
               box-shadow 0.3s ease;
-
   box-shadow: 0 4px 12px rgba(251,133,0,0.4);
 }
 
 .register-container button:hover {
-  background: linear-gradient(135deg, #fb8500, #ffb703); /* перелив */
+  background: linear-gradient(135deg, #fb8500, #ffb703);
   background-size: 200% 200%;
   background-position: right center;
-
   transform: translateY(2px);
   box-shadow: 0 6px 14px rgba(251,133,0,0.5);
 }
 
-/* Ошибки */
 .error {
-  color: #e63946;   /* Красный цвет */
-  font-size: 14px;  /* Размер текста */
-  margin-top: 12px; /* Отступ сверху */
+  color: #e63946;
+  font-size: 14px;
+  margin-top: 12px;
 }
 
-/* Ссылка */
 .register-container p {
-  margin-top: 18px;  /* Отступ сверху */
-  font-size: 14px;   /* Размер текста */
+  margin-top: 18px;
+  font-size: 14px;
 }
 
 .register-container a {
-  color: #0077cc;        /* Синий цвет */
-  text-decoration: none; /* Без подчёркивания */
-  transition: 0.3s;      /* Плавное появление подчёркивания */
+  color: #0077cc;
+  text-decoration: none;
+  transition: 0.3s;
 }
 
 .register-container a:hover {
-  text-decoration: underline; /* Подчёркивание при наведении */
+  text-decoration: underline;
 }
 
-/* Анимации */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px);} /* Начало: прозрачный, смещён вниз */
-  to { opacity: 1; transform: translateY(0);}      /* Конец: видно, в нормальном положении */
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: translateY(0);}
 }
 
 @keyframes bounceRubber {
-  0%, 100% {
-    transform: translateY(0) scale(1,1);   /* Старт/конец — обычный размер */
-  }
-  30% {
-    transform: translateY(-20px) scale(1.1, 0.9); /* Подпрыгивание */
-  }
-  50% {
-    transform: translateY(0) scale(1.0, 1.1); /* Сжатие */
-  }
-  70% {
-    transform: translateY(-10px) scale(1.05, 0.95); /* Маленький отскок */
-  }
+  0%, 100% { transform: translateY(0) scale(1,1); }
+  30% { transform: translateY(-20px) scale(1.1, 0.9); }
+  50% { transform: translateY(0) scale(1.0, 1.1); }
+  70% { transform: translateY(-10px) scale(1.05, 0.95); }
 }
 
 footer {
-  position: fixed;    /* Футер всегда закреплён снизу */
-  bottom: 0;          /* Прижат к нижнему краю */
-  left: 0;            /* Растянут по всей ширине */
+  position: fixed;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  font-size: 10px;    /* Маленький текст */
-  text-align: center; /* Центрируем */
-  color: #555;        /* Серый цвет */
-  padding: 10px;      /* Внутренние отступы */
+  font-size: 10px;
+  text-align: center;
+  color: #555;
+  padding: 10px;
 }
 
-/* ====== УТОЧКИ ====== */
 #ducks {
   position: fixed;
   top: 0; left: 0;
@@ -202,102 +178,83 @@ footer {
   transition: transform 0.3s;
 }
 
-/* ====== АДАПТИВ ====== */
-
-/* Планшеты (до 1024px) */
 @media (max-width: 1024px) {
   .register-container {
     width: 380px;
     padding: 32px;
     border-radius: 20px;
   }
-
   .register-container h2 {
     font-size: 22px;
   }
-
   .logo {
     font-size: 44px;
   }
 }
 
-/* Малые планшеты / крупные телефоны (до 768px) */
 @media (max-width: 768px) {
   .register-container {
     width: 340px;
     padding: 28px;
     border-radius: 18px;
   }
-
   .register-container h2 {
     font-size: 20px;
     margin-bottom: 16px;
   }
-
   .logo {
     font-size: 38px;
     margin-bottom: 12px;
   }
-
   .input-group input {
     font-size: 14px;
     padding: 12px;
     border-radius: 12px;
   }
-
   .register-container button {
     font-size: 15px;
     padding: 12px;
     border-radius: 12px;
   }
-
   .haveAnAccountLogin {
     font-size: 13px;
     margin-top: 28px;
   }
-
   footer {
     font-size: 9px;
     padding: 8px;
   }
 }
 
-/* Смартфоны (до 480px) */
 @media (max-width: 480px) {
   .register-container {
     width: 92%;
-    max-width: 300px;   /* ограничиваем, чтобы не растягивалась */
+    max-width: 300px;
     padding: 22px;
     border-radius: 16px;
   }
-
   .register-container h2 {
     font-size: 18px;
     margin-bottom: 14px;
   }
-
   .logo {
     font-size: 32px;
     margin-bottom: 10px;
   }
-
   .input-group input {
     font-size: 13px;
     padding: 10px;
     border-radius: 10px;
   }
-
   .register-container button {
     font-size: 14px;
     padding: 11px;
     border-radius: 10px;
   }
-
   .haveAnAccountLogin {
     font-size: 12px;
     margin-top: 22px;
   }
-
   footer {
     font-size: 8px;
     padding: 6px;

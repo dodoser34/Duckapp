@@ -1,29 +1,25 @@
-/* === Контейнер сообщений === */
 .chat-messages {
   word-wrap: break-word;
   flex: 1;
   padding: 15px;
   overflow-y: auto;
-  background: rgba(0, 0, 0, 0.7); /* тёмный фон сообщений */
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   gap: 10px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   position: relative;
   z-index: 1;
-
-  /* Firefox */
   scrollbar-width: thin; 
-  scrollbar-color: #0b84ff transparent; /* прозрачный фон, синий ползунок */
+  scrollbar-color: #0b84ff transparent;
 }
 
-/* Webkit-браузеры (Chrome, Edge, Opera) */
 .chat-messages::-webkit-scrollbar {
   width: 8px;
 }
 
 .chat-messages::-webkit-scrollbar-track {
-  background: transparent; /* убрали чёрный фон */
+  background: transparent;
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
@@ -36,7 +32,6 @@
   background: linear-gradient(180deg, #2196f3, #0b84ff);
 }
 
-/* Пустое состояние */
 .empty-chat.muted {
   color: #8a8f98;
   padding: 16px;
@@ -45,18 +40,15 @@
   font-size: 14px;
 }
 
-/* Ряд сообщения (контейнер) */
 .message-row {
   display: flex;
   align-items: flex-end;
   width: 100%;
 }
 
-/* Выравнивание по правому/левому краю */
 .message-row.user { justify-content: flex-end; }
 .message-row.bot  { justify-content: flex-start; }
 
-/* Аватар (опционально для бота/других) */
 .msg-avatar {
   width: 36px;
   height: 36px;
@@ -66,7 +58,6 @@
   flex: 0 0 36px;
 }
 
-/* Пузырёк сообщения */
 .msg-bubble {
   max-width: 70%;
   padding: 10px 14px;
@@ -78,24 +69,21 @@
   opacity: 1;
   transition: background 0.2s, color 0.2s;
   position: relative;
-  z-index: 1; /* тоже ниже меню */
+  z-index: 1;
 }
 
-/* Стили для пользователя (правый пузырёк) */
 .message-row.user .msg-bubble {
   background: linear-gradient(180deg, #0b84ff, #066bdb);
   color: #fff;
   border-bottom-right-radius: 8px;
 }
 
-/* Стили для бота/других (левый пузырёк) */
 .message-row.bot .msg-bubble {
   background: #eef2f6; 
   color: #111;
   border-bottom-left-radius: 8px;
 }
 
-/* Текст и мета (время) */
 .msg-text { 
   white-space: pre-wrap;
   font-size: 14px;
@@ -109,7 +97,6 @@
   text-align: right;
 }
 
-/* Hover — лёгкая подсветка */
 .msg-bubble:hover {
   background: rgba(255, 255, 255, 0.05);
 }

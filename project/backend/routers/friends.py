@@ -49,7 +49,15 @@ async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_use
         conn = get_connection()
         try:
             with conn.cursor() as cursor:
-                # Check if record already exists
+                # Проверяем, что пользователь с friend_id существует
+                cursor.execute(
+                    "SELECT 1 FROM registered_users WHERE id=%s",
+                    (friend_id,)
+                )
+                if cursor.fetchone() is None:
+                    raise HTTPException(status_code=404, detail="User not found")
+
+                # Проверяем, что запись ещё не существует
                 cursor.execute(
                     "SELECT 1 FROM friends WHERE user_id=%s AND friend_id=%s",
                     (user_id, friend_id)
@@ -72,6 +80,7 @@ async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_use
         raise HTTPException(status_code=400, detail="Already in friends")
 
     return {"ok": True, "message": "Friend added"}
+
 
 #! Get friends list from DB --------------------
 @router.get("/list")

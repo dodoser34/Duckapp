@@ -4,7 +4,7 @@ const friendsContainer = document.querySelector(".chat-list-items");
 
 export async function loadFriends() {
     try {
-        const res = await fetch(`${API_URL.replace("/auth", "")}/friends/list`, {
+        const res = await fetch(`${API_URL}/api/friends/list`, {
             credentials: "include",
         });
 
@@ -17,7 +17,6 @@ export async function loadFriends() {
 
         friendsContainer.innerHTML = "";
 
-        // base path for avatars
         const avatarBaseUrl = "http://127.0.0.1:8000/assets/";
 
         const statuses = {
@@ -34,7 +33,7 @@ export async function loadFriends() {
             offline: "#888",
         };
 
-        // add friends
+
         friends.forEach(friend => {
             const avatarSrc = friend.avatar
                 ? avatarBaseUrl + friend.avatar

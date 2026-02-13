@@ -1,46 +1,50 @@
-/* Блок профиля */
 .chat-list-item.profile {
   display: flex;
-  /* элементы в строку */
   align-items: center;
-  /* выравнивание по центру */
   gap: 12px;
-  /* отступы между элементами */
   padding: 12px;
-  /* внутренние отступы */
   border-radius: 12px;
-  /* скруглённые углы */
   background: rgba(255, 255, 255, 0.6);
-  /* светлый фон */
   cursor: pointer;
-  /* курсор = палец */
   transition: background 0.2s, transform 0.2s;
-  /* анимация при наведении */
 }
 
 .chat-list-item.profile:hover {
   background: rgba(255, 255, 255, 0.8);
-  /* фон становится светлее */
   transform: translateY(-6px);
-  /* лёгкое поднятие */
 }
 
-/* Индикатор статуса */
 .status-indicator {
   position: absolute;
-  /* позиционируется относительно avatar-wrapper */
   bottom: 0;
-  /* снизу */
   right: 0;
-  /* справа */
   width: 16px;
   height: 16px;
-  border: 2px solid #fff;
+  border: 2px solid rgba(255, 255, 255, 0.7);
   border-radius: 50%;
-  /* круг */
 }
 
-/* Имя и статус */
+.status-indicator-header {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.chat-id {
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+
 .name {
   font-size: 16px;
   font-weight: bold;
@@ -52,16 +56,11 @@
   color: #555;
 }
 
-/* ==== Панель профиля ==== */
 .profile-panel {
   position: fixed;
-  /* фиксируем относительно окна */
   top: 112px;
-  /* можно подвинуть вниз от хедера */
   right: 16px;
-  /* справа */
   width: 268px;
-  /* фиксируем ширину */
   max-height: 0;
   opacity: 0;
   overflow: hidden;
@@ -74,7 +73,6 @@
   color: black;
   transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
   z-index: 9999;
-  /* поверх друзей */
 }
 
 .profile-panel.open {
@@ -83,8 +81,6 @@
   padding: 10px 12px;
 }
 
-
-/* Кнопки в панели */
 .sub-btn {
   margin-top: 8px;
   padding: 10px;
@@ -96,7 +92,6 @@
   cursor: pointer;
   transition: background 0.3s;
   text-align: left;
-  /* текст прижат к левому краю */
 }
 
 .sub-btn:hover {
@@ -104,31 +99,24 @@
   transform: translateY(2px);
 }
 
-/* ==== Подпанель со статусами ==== */
 .sub-panel {
   max-height: 0;
-  /* изначально свернута */
   opacity: 0;
   overflow: hidden;
-  /* скрываем содержимое */
   display: flex;
   flex-direction: column;
   transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
   padding: 0;
-  /* убираем отступы */
 }
 
 .sub-panel.open {
   max-height: 200px;
-  /* достаточно для кнопок */
   opacity: 1;
 }
 
-/* Кнопки выбора статуса */
 .status-btn {
   margin-top: 8px;
   padding: 10px;
-  /* как у sub-btn */
   border: none;
   border-radius: 8px;
   background: linear-gradient(135deg, rgb(255, 183, 3, 0.68), rgb(251, 133, 0, 0.68));
@@ -157,7 +145,6 @@
   color: #ffee00
 }
 
-/* ===== Модальное окно ===== */
 .modal {
   position: fixed;
   inset: 0;
@@ -177,13 +164,10 @@
   visibility: visible;
 }
 
-/* ===== Контент модалки ===== */
 .modal-content {
   width: 350px;
   background: rgb(34, 34, 34);
-  /* тёмный фон */
   border: 2px solid #ffee00;
-  /* жёлтая рамка */
   border-radius: 16px;
   padding: 20px;
   text-align: center;
@@ -203,11 +187,9 @@
   color: rgb(255, 255, 255);
 }
 
-/* Выбор аватаров */
 .avatar-options {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  /* сетка из 5 колонок */
   gap: 10px;
   margin-bottom: 16px;
 }
@@ -216,26 +198,21 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  /* круглые аватарки */
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .avatar-choice:hover {
   transform: scale(1.1);
-  /* увеличение */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  /* тень */
 }
 
-/* Кнопка загрузки своего аватара */
 .upload-btn {
   display: inline-block;
   margin-top: 10px;
   padding: 10px 16px;
   border-radius: 8px;
   background: linear-gradient(135deg, #ffb703, #fb8500);
-  /* жёлто-оранжевый */
   color: rgb(255, 255, 255);
   font-weight: bold;
   cursor: pointer;
@@ -245,10 +222,8 @@
   display: none;
 }
 
-/* скрываем input */
 .upload-btn:hover {
   transform: scale(1.05);
-  /* увеличивается на 5% */
   transition: transform 0.4s, box-shadow 0.4s;
 }
 

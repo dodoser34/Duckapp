@@ -1,16 +1,14 @@
-/* === Общие стили для страницы === */
 body {
-  margin: 0; /* Убираем отступы браузера по умолчанию */
-  height: 100vh; /* Высота страницы равна высоте окна браузера */
-  display: flex; /* Используем flex-контейнер для центрирования */
-  align-items: center; /* Выравнивание по вертикали */
-  justify-content: center; /* Выравнивание по горизонтали */
-  background: linear-gradient(135deg, #4e98ff, #89f7fe); /* Градиентный фон */
-  font-family: "Segoe UI", Arial, sans-serif; /* Шрифт для всего документа */
-  overflow: hidden; /* Скрываем прокрутку (чтобы фон был статичным) */
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4e98ff, #89f7fe);
+  font-family: "Segoe UI", Arial, sans-serif;
+  overflow: hidden;
 }
 
-/* === Обертка всего чата === */
 .chat-wrapper {
   width: 100%;
   max-width: 1200px;
@@ -26,7 +24,6 @@ body {
   border: 1px solid rgb(251, 255, 0);
 }
 
-/* === Левая колонка (чат) === */
 .chat-box {
   flex: 3;
   display: flex;
@@ -34,17 +31,15 @@ body {
   border-right: 1px solid rgb(251, 255, 0);
 }
 
-/* Блок сообщений */
 .chat-messages {
-  flex: 1; /* Занимает всё оставшееся место */
-  padding: 15px; /* Отступы */
-  overflow-y: auto; /* Вертикальная прокрутка */
-  background: rgba(0,0,0,0.7); /* Тёмный фон */
-  display: flex; /* Flex-контейнер */
-  flex-direction: column; /* Сообщения идут вертикально */
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
 }
 
-/* === Правая колонка (список чатов) === */
 .chat-list {
   flex: 1;
   background: rgba(0,0,0,0.35);
@@ -55,9 +50,8 @@ body {
   overflow-y: auto;
 }
 
-/* Аватар в списке чатов */
 .avatar-wrapper { 
-  position: relative; /*  для индикатора статуса */
+  position: relative;
   width: 60px;
   height: 60px;
 }
@@ -65,11 +59,10 @@ body {
 .avatar { 
   width: 60px;
   height: 60px;
-  border-radius: 50%; /* круглая форма */
-  object-fit: cover; /* обрезка изображения */
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-/* Футер */
 .footer {
   margin-top: auto;
   padding: 12px;
@@ -79,7 +72,6 @@ body {
   border-top: 1px solid rgba(255,255,255,0.1);
 }
 
-/* ====== УТОЧКИ ====== */
 #ducks {
   position: fixed;
   top: 0; left: 0;

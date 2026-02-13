@@ -1,4 +1,5 @@
-export const API_URL = "http://127.0.0.1:8000/api/auth";
+export const API_URL = "http://127.0.0.1:8000";
+export const ASSETS_PATH = "http://127.0.0.1:8000/assets/";
 
 export async function registerUser(username, email, password) {
     const formData = new URLSearchParams();
@@ -6,7 +7,7 @@ export async function registerUser(username, email, password) {
     formData.append("email", email);
     formData.append("password", password);
 
-    const res = await fetch(`${API_URL}/register`, {
+    const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData,
@@ -21,31 +22,15 @@ export async function loginUser(username, password) {
     formData.append("username", username);
     formData.append("password", password);
 
-    const res = await fetch(`${API_URL}/login`, {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
         body: formData,
         credentials: "include"
     });
 
-    return res.json().then((result) => ({ ok: res.ok, result }));
-}
-
-//! ---------- Token verification ----------
-
-export async function checkToken() {
-    try {
-        const res = await fetch(`${API_URL}/me`, {
-            credentials: "include",
-            cache: "no-store"
-        });
-
-        if (!res.ok) {
-            return { ok: false, result: { detail: res.statusText || "Unauthorized" } };
-        }
-
-        return { ok: true, result: await res.json() };
-    } catch (err) {
-        return { ok: false, result: { detail: err.message } };
-    }
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, ...data };
 }

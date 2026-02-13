@@ -1,3 +1,5 @@
+import { API_URL } from "../api.js";
+
 const profileToggle = document.getElementById("profile-toggle");
 const profilePanel = document.getElementById("profile-panel");
 const statusBtn = document.querySelector(".toggle-status");
@@ -39,7 +41,7 @@ statusBtns.forEach(btn => {
         statusPanel.classList.remove("open");
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/api/users/profile", {
+            const res = await fetch(`${API_URL}/api/users/profile`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -51,8 +53,6 @@ statusBtns.forEach(btn => {
             if (!res.ok) {
                 throw new Error("Failed to save status");
             }
-
-            // const data = await res.json();
 
         } catch (err) {
             console.error("Failed to update status:", err);

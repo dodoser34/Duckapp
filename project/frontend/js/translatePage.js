@@ -1,18 +1,25 @@
 function applyTranslations(lang, translations, page) {
     document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n')
+        const key = el.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][page] && translations[lang][page][key]) {
-            el.innerHTML = translations[lang][page][key]
+            const text = translations[lang][page][key];
+
+            // Для input и textarea меняем placeholder
+            if (el.tagName.toLowerCase() === 'input' || el.tagName.toLowerCase() === 'textarea') {
+                el.placeholder = text;
+            } else {
+                el.innerHTML = text;
+            }
         }
-    })
+    });
 }
 
 fetch('../../lang/language.json')
     .then(res => res.json())
     .then(data => {
-        let browserLang = navigator.language.slice(0, 2)
-        if (!data[browserLang]) browserLang = 'en'
+        let browserLang = navigator.language.slice(0, 2);
+        if (!data[browserLang]) browserLang = 'en';
 
-        const page = document.body.getAttribute("data-page") || "main_page"
-        applyTranslations(browserLang, data, page)
-    })
+        const page = document.body.getAttribute("data-page") || "main_page";
+        applyTranslations(browserLang, data, page);
+    });

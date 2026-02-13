@@ -1,25 +1,32 @@
-import { registerUser, checkToken } from "./api.js";
+import { registerUser } from "./api.js";
+import { getSession } from "./CheckSession.js";
 
-const form = document.getElementById("registerForm");
+const registerForm = document.getElementById("registerForm");
 const msg = document.getElementById("errorMsg");
 
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", async () => {
+    const res = await getSession();
+    if (res.ok) {
+        window.location.replace("main_chat.html");
+    }
+});
 
-    const username = form.username.value.trim();
-    const email = form.email.value.trim();
-    const password = form.password.value;
-    const confirmPassword = form.confirmPassword.value;
+registerForm.addEventListener("submit", async (e) => {e.preventDefault();
+
+    const username = registerForm.username.value.trim();
+    const email = registerForm.email.value.trim();
+    const password = registerForm.password.value;
+    const confirmPassword = registerForm.confirmPassword.value;
 
     if (password !== confirmPassword) {
-        msg.textContent = "❌ Passwords do not match!";
+        msg.textContent = "❌ Пароли не совпадают!";
         return;
     }
 
     const { ok, result } = await registerUser(username, email, password);
 
     if (ok) {
-        const check = await checkToken();
+        const check = await getSession();
         if (check.ok) {
             window.location = "main_chat.html";
         } else {
@@ -29,6 +36,9 @@ form.addEventListener("submit", async (e) => {
         msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
     }
 });
+
+
+
 
 /* ====== DUCKS ====== */
 const duckCount = 8;

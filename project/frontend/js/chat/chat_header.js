@@ -17,7 +17,6 @@ const deleteModal = document.getElementById('delete-modal');
 const deleteConfirm = document.getElementById('delete-confirm');
 const deleteCancel = document.getElementById('delete-cancel');
 
-// === NEW: delete friend modal ===
 const deleteFriendBtn = document.getElementById('delete-friend'); 
 const deleteFriendModal = document.getElementById('delete-friend-modal');
 const deleteFriendCancel = document.getElementById('delete-friend-cancel');
@@ -26,7 +25,6 @@ const deleteFriendConfirm = document.getElementById('delete-friend-confirm');
 let currentChatId = null;
 let localNames = {};
 
-// === menu toggle ===
 menuToggle.addEventListener('click', () => {
     chatMenu.classList.toggle('open');
 });
@@ -37,7 +35,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// === open chat ===
 chatItems.forEach(item => {
     item.addEventListener('click', () => {
         const id = item.dataset.id;
@@ -56,9 +53,8 @@ chatItems.forEach(item => {
     });
 });
 
-// === Delete chat ===
 deleteBtn.addEventListener('click', () => {
-    deleteModal.classList.add('open'); // всегда открываем подтверждение
+    deleteModal.classList.add('open');
 });
 
 deleteCancel.addEventListener('click', () => {
@@ -83,13 +79,11 @@ deleteConfirm.addEventListener('click', () => {
 });
 
 // === Rename chat ===
-
-// open modal
-// renameBtn.addEventListener('click', () => {
-//     if (!currentChatId) return alert('Chat not selected');
-//     renameInput.value = localNames[currentChatId] || chatTitle.textContent;
-//     renameModal.classList.add('open');
-// });
+renameBtn.addEventListener('click', () => {
+    if (!currentChatId) return alert('Chat not selected');
+    renameInput.value = localNames[currentChatId] || chatTitle.textContent;
+    renameModal.classList.add('open');
+});
 
 renameBtn.addEventListener('click', () => {
     renameInput.value = localNames[currentChatId] || chatTitle.textContent || "";
@@ -117,7 +111,6 @@ renameConfirm.addEventListener('click', () => {
     renameModal.classList.remove('open');
 });
 
-// === Delete friend ===
 if (deleteFriendBtn) {
     deleteFriendBtn.addEventListener('click', () => {
         deleteFriendModal.classList.add('open');
@@ -128,7 +121,6 @@ if (deleteFriendBtn) {
     });
 
     deleteFriendConfirm.addEventListener('click', () => {
-        // ⚡️ Здесь логика удаления друга
         alert("Friend removed!"); 
         deleteFriendModal.classList.remove('open');
         chatMenu.classList.remove('open');
