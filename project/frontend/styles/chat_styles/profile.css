@@ -24,26 +24,9 @@
   border-radius: 50%;
 }
 
-.status-indicator-header {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-}
-
 .avatar-wrapper {
   position: relative;
 }
-
-.chat-id {
-  font-size: 13px;
-  color: #aaa;
-  margin-top: 2px;
-}
-
 
 .name {
   font-size: 16px;
@@ -129,6 +112,21 @@
 .status-btn:hover {
   background: linear-gradient(135deg, rgb(251, 133, 0, 0.68), rgb(255, 183, 3, 0.68));
   transform: translateX(10px);
+}
+
+.friends-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.friends-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+.friends-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.friends-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
 .close {
