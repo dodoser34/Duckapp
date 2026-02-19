@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const apiKey = "B9T5fDXrQbPNL35xmHCFUHUKUTJKf7Xf";
+    const page = "main_chat";
 
     const gifPanel = document.getElementById("gif-panel");
     const gifBtn = document.getElementById("sendgif-btn");
@@ -12,6 +13,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     const emojiButton = document.getElementById("sendsmile-btn");
     const emojiCloseBtn = document.getElementById("emojiCloseBtn");
     const messageInput = document.getElementById("message-input");
+    let translations = window.translations;
+    let currentLang = window.currentLang;
+
+    function resolveLang(data) {
+        const browserLang = (navigator.language || "ru").slice(0, 2);
+        if (currentLang && data[currentLang]) return currentLang;
+        if (data[browserLang]) return browserLang;
+        if (data.ru) return "ru";
+        return Object.keys(data)[0];
+    }
+
+    if (!translations) {
+        try {
+            const langRes = await fetch("/project/lang/language.json");
+            translations = await langRes.json();
+            window.translations = translations;
+        } catch (err) {
+            console.error("Error loading language.json:", err);
+            translations = {};
+        }
+    }
+
+    if (!currentLang || !translations[currentLang]) {
+        currentLang = resolveLang(translations);
+        window.currentLang = currentLang;
+    }
+
+    const t = (key, fallback) =>
+        translations?.[currentLang]?.[page]?.[key] || fallback;
+
+    function resetGifPanel() {
+        gifResults.innerHTML = "";
+        gifSearchInput.value = "";
+    }
+
+    function closeGifPanel() {
+        gifPanel.classList.remove("open");
+        resetGifPanel();
+    }
 
     let emojiData = {};
     try {
@@ -31,12 +71,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     emojiPanel.appendChild(scrollContainer);
 
     const grids = {};
+    let firstCategory = null;
+
+    function resetEmojiPanel() {
+        if (!firstCategory) return;
+        Object.entries(grids).forEach(([cat, g]) => {
+            g.style.display = (cat === firstCategory) ? "flex" : "none";
+        });
+        scrollContainer.scrollTop = 0;
+    }
+
+    function closeEmojiPanel() {
+        emojiPanel.classList.remove("open");
+        resetEmojiPanel();
+    }
 
     Object.entries(emojiData).forEach(([category, emojis], catIndex) => {
+        if (catIndex === 0) firstCategory = category;
 
         const tabBtn = document.createElement("button");
         tabBtn.classList.add("emoji-tab-btn");
-        tabBtn.textContent = category;
+        tabBtn.textContent = t(`emoji_category_${category}`, category);
         tabContainer.appendChild(tabBtn);
 
 
@@ -78,36 +133,46 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.addEventListener("click", (e) => {
         if (!emojiPanel.contains(e.target) && e.target !== emojiButton) {
-            emojiPanel.classList.remove("open");
+            closeEmojiPanel();
         }
     });
 
     emojiButton.addEventListener("click", (e) => {
         e.stopPropagation();
-        emojiPanel.classList.toggle("open");
-        gifPanel.classList.remove("open"); 
+        const isOpen = emojiPanel.classList.contains("open");
+        if (isOpen) {
+            closeEmojiPanel();
+        } else {
+            emojiPanel.classList.add("open");
+        }
+        closeGifPanel();
     });
 
     emojiCloseBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        emojiPanel.classList.remove("open");
+        closeEmojiPanel();
     });
 
     document.addEventListener("click", (e) => {
         if (!gifPanel.contains(e.target) && e.target !== gifBtn) {
-            gifPanel.classList.remove("open");
+            closeGifPanel();
         }
     });
 
     gifBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        gifPanel.classList.toggle("open");
-        emojiPanel.classList.remove("open"); 
+        const isOpen = gifPanel.classList.contains("open");
+        if (isOpen) {
+            closeGifPanel();
+        } else {
+            gifPanel.classList.add("open");
+        }
+        closeEmojiPanel();
     });
 
     gifCloseBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        gifPanel.classList.remove("open");
+        closeGifPanel();
     });
 
 
@@ -116,16 +181,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!query) return;
 
         try {
-            const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(query)}&limit=50&rating=g`);
+            const res = await fetch(
+                `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(query)}&limit=50&rating=g`
+            );
+
+            if (!res.ok) {
+                throw new Error(`Giphy error: ${res.status}`);
+            }
+
             const data = await res.json();
             gifResults.innerHTML = "";
 
             if (!data.data || data.data.length === 0) {
-                gifResults.innerHTML = "<p>No results found</p>";
+                gifResults.innerHTML = `<p>${t("gif_no_results", "No results found")}</p>`;
                 return;
             }
 
-            data.data.forEach(gif => {
+            data.data.forEach((gif) => {
                 const img = document.createElement("img");
                 img.src = gif.images.fixed_height_small.url;
                 img.title = "Send to chat";
@@ -134,16 +206,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (window.sendGifMessage) {
                         window.sendGifMessage(gif.images.original.url, "user");
                     }
-                    gifPanel.classList.remove("open");
-                    gifResults.innerHTML = "";
-                    gifSearchInput.value = "";
+                    closeGifPanel();
                 });
 
                 gifResults.appendChild(img);
             });
         } catch (err) {
             console.error("GIF search error:", err);
-            gifResults.innerHTML = "<p>Error loading GIFs</p>";
+            gifResults.innerHTML = `<p>${t("gif_load_error", "Error loading GIFs")}</p>`;
         }
     }
 

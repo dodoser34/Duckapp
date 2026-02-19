@@ -1,19 +1,27 @@
 import { API_URL, ASSETS_PATH } from "../api.js";
+import { loadFriends } from "./loadFriend.js";
 
+const page = "main_chat";
 const profileAddFriendBtn = document.getElementById("profile-add-friend-btn");
 const addFriendModal = document.getElementById("add-friend-modal");
 const friendSearchInput = document.getElementById("friend-search");
 const friendResult = document.getElementById("friend-result");
 const errorMessage = document.getElementById("error-message");
+const requestsList = document.getElementById("friend-requests-list");
+const requestsCount = document.getElementById("friend-requests-count");
+const closeButtons = document.querySelectorAll(".close");
 
-const friendsContainer = document.querySelector(".chat-list-items");
-const closeButtons = document.querySelectorAll('.close')
+const t = (key, fallback) =>
+    window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
 
-closeButtons.forEach(btn => {
-	btn.addEventListener('click', () => {
-		addFriendModal.classList.remove('open')
-	})
-})
+closeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        addFriendModal.classList.remove("open");
+        friendSearchInput.value = "";
+        friendResult.innerHTML = "";
+        errorMessage.innerHTML = "";
+    });
+});
 
 profileAddFriendBtn.addEventListener("click", () => {
     addFriendModal.classList.add("open");
@@ -24,9 +32,6 @@ friendSearchInput.addEventListener("input", () => {
     errorMessage.innerHTML = "";
 });
 
-
-// ---------------------------------------------------------------
-
 let debounceTimeout;
 
 friendSearchInput.addEventListener("input", () => {
@@ -35,22 +40,36 @@ friendSearchInput.addEventListener("input", () => {
 
     if (debounceTimeout) clearTimeout(debounceTimeout);
 
-    let currentController = null;
     const query = friendSearchInput.value.trim();
     if (query.length < 3) {
         friendResult.innerHTML = "";
-        if (currentController) {
-            currentController.abort();
-            currentController = null;
-        }
         return;
     }
 
     debounceTimeout = setTimeout(() => {
-        searchFriend(friendSearchInput.value.trim());
+        searchFriend(query);
     }, 300);
 });
 
+function normalizeAvatarPath(avatar) {
+    if (!avatar) return `${ASSETS_PATH}avatar_2.png`;
+    if (avatar.startsWith("http://") || avatar.startsWith("https://")) return avatar;
+    const clean = avatar.split("/").pop();
+    return `${ASSETS_PATH}${clean}`;
+}
+
+function statusClass(status) {
+    if (status === "dnd") return "dnd";
+    if (status === "invisible" || status === "offline") return "offline";
+    return "online";
+}
+
+function statusLabel(status) {
+    if (status === "online") return t("profile_status_online", "В сети");
+    if (status === "invisible") return t("profile_status_invisible", "Невидимка");
+    if (status === "dnd") return t("profile_status_dnd", "Не беспокоить");
+    return t("friend_status_offline", "Не в сети");
+}
 
 async function searchFriend(query) {
     if (!query) {
@@ -67,108 +86,168 @@ async function searchFriend(query) {
         const data = await res.json();
 
         if (!res.ok) {
-            friendResult.innerHTML = '';
-            showError(data.detail || "User not found");
+            friendResult.innerHTML = "";
+            showError(data.detail || t("friend_error_not_found", "Пользователь не найден"));
             return;
         }
 
         friendResult.innerHTML = `
         <div class="friend-card">
             <div class="avatar-wrapper">
-                <img src="${ASSETS_PATH + (data.avatar || "assets/avatar_2.png")}" class="avatar">
-                <span class="status-indicator ${
-                    (data.status === "invisible" || data.status === "offline")
-                        ? "offline"
-                        : (data.status === "dnd" ? "dnd" : "online")
-                }"></span>
+                <img src="${normalizeAvatarPath(data.avatar)}" class="avatar">
+                <span class="status-indicator ${statusClass(data.status)}"></span>
             </div>
             <div class="friend-info">
                 <div class="name">${data.names}</div>
-                <div class="status muted">${
-                    (data.status === "online")
-                        ? "Online"
-                        : (data.status === "dnd")
-                            ? "Do Not Disturb"
-                            : "Offline"
-                }</div>
+                <div class="status muted">${statusLabel(data.status)}</div>
             </div>
         </div>
         <div class="add_button">
-            <button id="add-friend-final">Add Friend</button>
+            <button id="add-friend-final">${t("friend_request_send_btn", "Отправить заявку")}</button>
         </div>
         `;
 
-        // Добавляем обработчик кнопки добавления друга
         document.getElementById("add-friend-final").addEventListener("click", async () => {
-            await addFriend(data);
+            await addFriendRequest(data.id);
         });
     } catch (err) {
         console.error(err);
-        showError("Failed to connect to the server");
+        showError(t("friend_error_connect", "Не удалось подключиться к серверу"));
     }
 }
 
-
-async function addFriend(data) {
+async function addFriendRequest(friendId) {
     try {
-        const addRes = await fetch(
-            `${API_URL}/api/friends/add`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ friend_id: data.id }),
-            }
-        );
+        const addRes = await fetch(`${API_URL}/api/friends/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ friend_id: friendId }),
+        });
 
         const addData = await addRes.json();
 
         if (!addRes.ok) {
-            showError(addData.detail || "Error while adding friend");
+            showError(addData.detail || t("friend_request_error", "Ошибка отправки заявки"));
             return;
         }
 
-        const newFriend = document.createElement("div");
-        newFriend.className = "chat-list-item";
-        newFriend.dataset.name = data.names;
-        newFriend.dataset.id = data.id;
-        newFriend.dataset.avatar = data.avatar || "../html/assets/avatar_2.png";
-        newFriend.dataset.status = data.status || "offline";
-
-        newFriend.innerHTML = `
-        <div class="avatar-wrapper">
-            <img src="${data.avatar || "../html/assets/avatar_2.png"}" class="avatar">
-            <span class="status-indicator-2 ${
-                (data.status === "invisible" || data.status === "offline")
-                    ? "offline"
-                    : (data.status === "dnd" ? "dnd" : "online")
-            }"></span>
-        </div>
-        <div>
-            <div class="name">${data.names}</div>
-            <div class="status muted">${
-                (data.status === "online")
-                    ? "Online"
-                    : (data.status === "dnd")
-                        ? "Do Not Disturb"
-                        : "Offline"
-            }</div>
-        </div>
-        `;
-
-        friendsContainer.appendChild(newFriend);
-        friendsContainer.scrollTop = friendsContainer.scrollHeight;
-
-        addFriendModal.classList.remove("open");
-        friendSearchInput.value = "";
+        showSuccess(t("friend_request_sent", "Заявка отправлена"));
         friendResult.innerHTML = "";
+        friendSearchInput.value = "";
+
+        setTimeout(() => {
+            addFriendModal.classList.remove("open");
+            errorMessage.innerHTML = "";
+        }, 600);
     } catch (err) {
         console.error(err);
-        showError("Failed to add friend");
+        showError(t("friend_error_connect", "Не удалось подключиться к серверу"));
     }
+}
+
+async function loadIncomingRequests() {
+    if (!requestsList || !requestsCount) return;
+
+    try {
+        const res = await fetch(`${API_URL}/api/friends/requests/incoming`, {
+            credentials: "include",
+        });
+
+        const data = await res.json().catch(() => []);
+
+        if (!res.ok) {
+            console.error("Failed to load friend requests:", data?.detail || data);
+            return;
+        }
+
+        renderIncomingRequests(Array.isArray(data) ? data : []);
+    } catch (err) {
+        console.error("Failed to load friend requests:", err);
+    }
+}
+
+function renderIncomingRequests(requests) {
+    if (!requestsList || !requestsCount) return;
+
+    requestsCount.textContent = String(requests.length);
+
+    if (!requests.length) {
+        requestsList.innerHTML = `<div class="friend-request-empty">${t("friend_requests_empty", "Нет новых заявок")}</div>`;
+        return;
+    }
+
+    requestsList.innerHTML = requests
+        .map(
+            (req) => `
+            <div class="friend-request-item" data-request-id="${req.request_id}">
+                <div class="friend-request-main">
+                    <div class="avatar-wrapper">
+                        <img src="${normalizeAvatarPath(req.avatar)}" class="avatar">
+                    </div>
+                    <div class="friend-info">
+                        <div class="name">${req.names}</div>
+                    </div>
+                </div>
+                <div class="friend-request-actions">
+                    <button class="request-btn accept" data-action="accept">${t("friend_request_accept_btn", "Принять")}</button>
+                    <button class="request-btn reject" data-action="reject">${t("friend_request_reject_btn", "Отклонить")}</button>
+                </div>
+            </div>
+        `
+        )
+        .join("");
+}
+
+async function respondToRequest(requestId, action) {
+    try {
+        const res = await fetch(`${API_URL}/api/friends/requests/respond`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ request_id: requestId, action }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            showError(data.detail || t("friend_request_error", "Ошибка обработки заявки"));
+            return;
+        }
+
+        if (action === "accept") {
+            await loadFriends();
+        }
+        await loadIncomingRequests();
+    } catch (err) {
+        console.error("Failed to respond to friend request:", err);
+        showError(t("friend_error_connect", "Не удалось подключиться к серверу"));
+    }
+}
+
+if (requestsList) {
+    requestsList.addEventListener("click", async (event) => {
+        const btn = event.target.closest(".request-btn");
+        if (!btn) return;
+
+        const card = btn.closest(".friend-request-item");
+        if (!card) return;
+
+        const requestId = Number(card.dataset.requestId);
+        if (!requestId) return;
+
+        await respondToRequest(requestId, btn.dataset.action);
+    });
 }
 
 function showError(msg) {
     errorMessage.innerHTML = msg;
     errorMessage.style.color = "red";
 }
+
+function showSuccess(msg) {
+    errorMessage.innerHTML = msg;
+    errorMessage.style.color = "#2ecc71";
+}
+
+loadIncomingRequests();
+setInterval(loadIncomingRequests, 10000);

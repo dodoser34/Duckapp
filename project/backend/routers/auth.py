@@ -33,7 +33,7 @@ async def register(response: Response, username: str = Form(...), email: str = F
 
         cursor.execute(
             "INSERT INTO user_profiles (user_id, names, status, avatar) VALUES (%s, %s, %s, %s)",
-            (user_id, username, 'Hey there! I am using DuckApp.', '../assets/avatar_1.png')
+            (user_id, username, "online", "avatar_1.png")
         )
         conn.commit()
 
@@ -70,7 +70,29 @@ async def register(response: Response, username: str = Form(...), email: str = F
 
 #! ---------- LOGOUT ----------
 @router.post("/logout")
-async def logout(response: Response):
+async def logout(response: Response, request: Request):
+    token = request.cookies.get("access_token")
+    if token:
+        try:
+            payload = verify_token(token)
+            username = payload.get("sub")
+            if username:
+                conn = db.get_connection()
+                cursor = conn.cursor()
+                cursor.execute("SELECT id FROM registered_users WHERE username = %s", (username,))
+                user = cursor.fetchone()
+                if user:
+                    user_id = user["id"] if isinstance(user, dict) else user[0]
+                    cursor.execute(
+                        "UPDATE user_profiles SET status = %s WHERE user_id = %s",
+                        ("offline", user_id),
+                    )
+                    conn.commit()
+                cursor.close()
+                conn.close()
+        except Exception:
+            pass
+
     response.delete_cookie("access_token")
     return {"message": "Logged out"}
 
@@ -96,7 +118,10 @@ def get_me(token: str = Depends(get_token_from_cookie)):
     payload = verify_token(token)
     username: str = payload.get("sub")
 
-    conn = db.get_connection()
+    try:
+        conn = db.get_connection()
+    except pymysql.MySQLError:
+        raise HTTPException(status_code=503, detail="Database unavailable")
     cursor = conn.cursor(pymysql.cursors.DictCursor)  
     cursor.execute("""
         SELECT 
@@ -108,7 +133,7 @@ def get_me(token: str = Depends(get_token_from_cookie)):
             up.avatar,
             up.status
         FROM registered_users ru
-        LEFT JOIN user_profiles up ON ru.id = up.id
+        LEFT JOIN user_profiles up ON ru.id = up.user_id
         WHERE ru.username = %s
     """, (username,))
     
@@ -134,7 +159,10 @@ def get_current_user(request: Request):
     payload = verify_token(token)
     username = payload.get("sub")
 
-    conn = db.get_connection()
+    try:
+        conn = db.get_connection()
+    except pymysql.MySQLError:
+        raise HTTPException(status_code=503, detail="Database unavailable")
     cursor = conn.cursor()
     cursor.execute("SELECT id, username, email, created_at FROM registered_users WHERE username = %s", (username,))
     user = cursor.fetchone()
@@ -183,6 +211,20 @@ async def login_api(
 
     if not bcrypt.checkpw(password.encode(), user["hashed_password"].encode()):
         raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+
+    conn2 = db.get_connection()
+    cursor2 = conn2.cursor()
+    cursor2.execute("SELECT id FROM registered_users WHERE username = %s", (username,))
+    user_row = cursor2.fetchone()
+    if user_row:
+        user_id = user_row["id"] if isinstance(user_row, dict) else user_row[0]
+        cursor2.execute(
+            "UPDATE user_profiles SET status = %s WHERE user_id = %s",
+            ("online", user_id),
+        )
+        conn2.commit()
+    cursor2.close()
+    conn2.close()
     
     payload = {
         "sub": user["username"],

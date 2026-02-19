@@ -1,5 +1,5 @@
 import { API_URL, ASSETS_PATH } from "../api.js";
-import { setupAvatarChange } from "./ChangeAvatar.js";
+import { setupAvatarChange } from "./changeAvatar.js";
 import { loadFriends } from "./loadFriend.js";
 
 

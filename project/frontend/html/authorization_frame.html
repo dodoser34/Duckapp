@@ -1,47 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title data-i18n="title">Login to DuckApp</title>
+    <title data-i18n="title">duckapp</title>
 
     <link rel="stylesheet" href="../styles/base/auth.css">
-
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
 
     <script type="module" src="../js/auth.js" defer></script>
     <script type="module" src="../js/translatePage.js" defer></script>
-
 </head>
 
 <body data-page="authorization">
     <div id="ducks"></div>
-    <div class="authorization-container">
-        <div class="logo">🦆</div>
 
-        <h2 data-i18n="title">Login to DuckApp</h2>
+    <div class="authorization-container">
+        <a class="logo" href="main_window_frame.html" data-i18n="logo"></a>
+
+        <h2 data-i18n="title"></h2>
 
         <form id="loginForm" autocomplete="on">
             <div class="input-group">
-                <input type="text" id="username" name="username" placeholder="Enter your username" maxlength="21" required>
-                <label for="username" data-i18n="username">Username</label>
+                <input type="text" id="username" name="username" data-i18n="username_input" maxlength="21" required>
+                <label for="username" data-i18n="username"></label>
             </div>
-        
+
             <div class="input-group">
-                <input type="password" id="password" name="password" placeholder="Enter your password" minlength="3" required>
-                <label for="password" data-i18n="password">Password</label>
+                <input type="password" id="password" name="password" data-i18n="password_input" minlength="3" required>
+                <label for="password" data-i18n="password"></label>
             </div>
-        
-            <button type="submit" data-i18n="button-text">Login</button>
+
+            <button type="submit" data-i18n="button-text"></button>
         </form>
 
-        <div class="error" id="errorMsg"></div>
+        <div class="error" id="errorMsg" data-i18n="error-text"></div>
 
-        <span class="noAccountToRegister" data-i18n="noAccount">Don't have an account? <a href="register_frame.html">Sign up</a></span>
-
+        <span class="noAccountToRegister">
+            <span data-i18n="noAccount"></span>
+            <a href="register_frame.html" data-i18n="noAccount_link"></a>
+        </span>
     </div>
 
-    <footer data-i18n="footer">LLC UTYAPUTYA © 2025 All rights reserved</footer>
+    <footer data-i18n="footer"></footer>
 </body>
 </html>

@@ -18,7 +18,6 @@ body {
     animation: fadeIn 0.8s ease-in-out;
     z-index: 1000;
 }
-noAccountToRegister
 .authorization-container h2 {
     margin-bottom: 20px;
     color: #333;
@@ -33,9 +32,21 @@ noAccountToRegister
 }
 
 .logo {
+    display: inline-block;
     font-size: 50px;
     margin-bottom: 15px;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
     animation: bounceRubber 1.5s infinite;
+}
+
+.authorization-container .logo:hover,
+.authorization-container .logo:focus,
+.authorization-container .logo:focus-visible {
+    color: inherit;
+    text-decoration: none;
+    outline: none;
 }
 
 .input-group {
@@ -176,87 +187,4 @@ footer {
     opacity: 0.85;
     user-select: none;
     transition: transform 0.3s;
-}
-
-@media (max-width: 1024px) {
-  .authorization-container {
-    width: 320px;
-    padding: 32px;
-    border-radius: 20px;
-  }
-  .authorization-container h2 {
-    font-size: 20px;
-  }
-  .logo {
-    font-size: 44px;
-  }
-}
-
-@media (max-width: 768px) {
-  .authorization-container {
-    width: 300px;
-    padding: 28px;
-    border-radius: 18px;
-  }
-  .authorization-container h2 {
-    font-size: 18px;
-    margin-bottom: 16px;
-  }
-  .logo {
-    font-size: 38px;
-    margin-bottom: 12px;
-  }
-  .input-group input {
-    font-size: 14px;
-    padding: 12px;
-    border-radius: 12px;
-  }
-  .authorization-container button {
-    font-size: 15px;
-    padding: 12px;
-    border-radius: 12px;
-  }
-  .authorization-container p,
-  .authorization-container .noAccountToRegister {
-    font-size: 13px;
-  }
-  footer {
-    font-size: 9px;
-    padding: 8px;
-  }
-}
-
-@media (max-width: 480px) {
-  .authorization-container {
-    width: 92%;
-    max-width: 280px;
-    padding: 22px;
-    border-radius: 16px;
-  }
-  .authorization-container h2 {
-    font-size: 17px;
-    margin-bottom: 14px;
-  }
-  .logo {
-    font-size: 32px;
-    margin-bottom: 10px;
-  }
-  .input-group input {
-    font-size: 13px;
-    padding: 10px;
-    border-radius: 10px;
-  }
-  .authorization-container button {
-    font-size: 14px;
-    padding: 11px;
-    border-radius: 10px;
-  }
-  .authorization-container p,
-  .authorization-container .noAccountToRegister {
-    font-size: 12px;
-  }
-  footer {
-    font-size: 8px;
-    padding: 6px;
-  }
 }

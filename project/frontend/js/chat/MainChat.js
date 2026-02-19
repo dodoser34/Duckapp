@@ -1,5 +1,5 @@
-import { getSession } from "../CheckSession.js";
-import { getProfile } from "./Profile.js";
+import { getSession } from "../checkSession.js";
+import { getProfile } from "./profile.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const res = await getSession();

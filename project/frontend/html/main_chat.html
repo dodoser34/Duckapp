@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
-    <title data-i18n="title">DuckApp Chat</title>
+
+    <title data-i18n="title">duckapp</title>
 
     <link rel="stylesheet" href="../styles/base/chat.css">
     <link rel="stylesheet" href="../styles/chat_styles/header.css">
@@ -13,169 +14,196 @@
     <link rel="stylesheet" href="../styles/chat_styles/profile.css">
     <link rel="stylesheet" href="../styles/chat_styles/messages.css">
 
-
     <script type="module" src="../js/chat/MainChat.js" defer></script>
-
-    <script type="module" src="../js/chat/Profile.js" defer></script>
+    <script type="module" src="../js/chat/profile.js" defer></script>
     <script type="module" src="../js/chat/chat_header.js" defer></script>
     <script type="module" src="../js/chat/addFriend.js" defer></script>
     <script type="module" src="../js/chat/changeStats.js" defer></script>
     <script type="module" src="../js/chat/logoutProfile.js" defer></script>
     <script type="module" src="../js/chat/emoji_and_GIF.js" defer></script>
     <script type="module" src="../js/chat/chat_logic.js" defer></script>
+    <script type="module" src="../js/chat/loadFriend.js" defer></script>
+    <script type="module" src="../js/chat/changeAvatar.js" defer></script>
 
     <script type="module" src="../js/translatePage.js" defer></script>
 </head>
 
 <body data-page="main_chat">
-    <div id="ducks"></div>
+<div id="ducks"></div>
 
 <div class="chat-wrapper">
     <div class="chat-box">
+
         <div class="chat-header">
-            <div class="chat-header-left">
-                <div class="avatar-wrapper"></div>
-            </div>
-            <div class="chat-header-actions">
-                <button class="header-icon-btn" id="menu-toggle">⋮</button>
-                <div class="chat-menu" id="chat-menu">
-                    <button class="menu-item" id="rename-chat" data-i18n="header_button_rename">📝 Rename</button>
-                    <button class="menu-item" id="delete-chat" data-i18n="header_button_delete_chat">🗨️ Delete Chat</button>
-                    <button class="menu-item" id="delete-friend" data-i18n="header_button_delete_friend">🗑️ Delete Friend</button>
-                </div>
-            </div>
-        </div>
-
-            <div class="chat-messages" id="chat-body">
-                <div class="empty-chat muted" data-i18n="chat_main_window_text"></div>
-            </div>
-
-            <div class="chat-input">
-                <textarea id="message-input" data-i18n="chat_write_textarea" rows="1" maxlength="3000"></textarea>
-
-                <div class="gif-wrapper">
-                    <button id="sendgif-btn">GIF</button>
-                    <div class="gif-inline-panel" id="gif-panel">
-                        <div class="gif-search-bar">
-                            <input type="text" id="gifSearchInput" placeholder="Search GIF...">
-                            <button id="gifSearchBtn">🔍</button>
-                            <button class="gif-close-btn" id="gifCloseBtn">✖</button>
-                        </div>
-                        <div id="gif-results" class="gif-results"></div>
-                    </div>
-                </div>
-
-                <div class="emoji-wrapper">
-                    <button id="sendsmile-btn">😄</button>
-                    <div class="emoji-panel" id="emoji-panel">
-                        <span class="close" id="emojiCloseBtn">✖</span>
-                        <div class="emoji-category" id="emoji-categories"></div>
-                        <div class="emoji-scroll" id="emoji-scroll"></div>
-                    </div>
-                </div>
-
-                <button id="send-btn">🦆</button>
-            </div>
-        </div>
-
-        <aside class="chat-list">
-            <div class="chat-list-item profile" id="profile-toggle">
+            <div class="chat-header-left peer-hidden">
                 <div class="avatar-wrapper">
-                    <img class="avatar" id="profile-avatar">
-                    <span class="status-indicator" id="status-indicator"></span>
+                    <img class="avatar" id="header-avatar" src="../html/assets/avatar_1.png" alt="Chat avatar">
                 </div>
-                <div>
-                    <div class="name" id="profile-name"></div>
-                    <div class="status muted" id="profile-status"></div>
+                <div class="chat-meta">
+                    <div class="chat-title" id="chat-title" data-i18n="chat_header_default_title"></div>
+                    <div class="chat-subtitle" id="chat-subtitle" data-i18n="chat_header_default_subtitle"></div>
                 </div>
             </div>
 
-            <div id="profile-panel" class="profile-panel">
-                <button class="sub-btn toggle-status" data-i18n="profile_btn_change_status"></button>
-                <div class="sub-panel" id="status-panel">
-                    <button class="status-btn" data-status="online" data-i18n="profile_btn_change_status_online">🟢 Online</button>
-                    <button class="status-btn" data-status="invisible" data-i18n="profile_btn_change_status_invisible">👻 Invisible</button>
-                    <button class="status-btn" data-status="dnd" data-i18n="profile_btn_change_status_dnd">⛔ Do Not Disturb</button>
+            <div class="chat-header-actions">
+                <button class="header-icon-btn" id="menu-toggle" data-i18n="header_menu_icon"></button>
+                <div class="chat-menu" id="chat-menu">
+                    <button class="menu-item" id="rename-chat" data-i18n="header_button_rename"></button>
+                    <button class="menu-item" id="delete-chat" data-i18n="header_button_delete_chat"></button>
+                    <button class="menu-item" id="delete-friend" data-i18n="header_button_delete_friend"></button>
                 </div>
-                <button class="sub-btn" id="open-avatar-modal" data-i18n="profile_btn_change_avatar"></button>
-                <button class="sub-btn logout-btn" id="logout-btn" data-i18n="profile_btn_logout"></button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-body">
+            <div class="empty-chat muted" data-i18n="chat_main_window_text"></div>
+        </div>
+
+        <div class="chat-input">
+            <textarea id="message-input" data-i18n="chat_write_textarea" rows="1" maxlength="3000"></textarea>
+
+            <div class="gif-wrapper">
+                <button id="sendgif-btn" data-i18n="chat_btn_gif"></button>
+
+                <div class="gif-inline-panel" id="gif-panel">
+                    <h4 class="gif-panel-title"></h4>
+                    <div class="gif-search-bar">
+                        <input type="text" id="gifSearchInput" data-i18n="gif_search_input">
+                        <button id="gifSearchBtn" data-i18n="gif_search_btn"></button>
+                        <button class="gif-close-btn" id="gifCloseBtn" data-i18n="gif_close_btn"></button>
+                    </div>
+                    <div id="gif-results" class="gif-results"></div>
+                </div>
             </div>
 
-            <div class="friends-panel-wrapper">
-                <div id="profile-panel-friends" class="profile-panel-friends">
-                    <button id="profile-add-friend-btn" data-i18n="btn_add_friend"></button>
+            <div class="emoji-wrapper">
+                <button id="sendsmile-btn" data-i18n="chat_btn_emoji"></button>
+
+                <div class="emoji-panel" id="emoji-panel">
+                    <span class="close" id="emojiCloseBtn" data-i18n="emoji_close_btn"></span>
+                    <div class="emoji-category" id="emoji-categories"></div>
+                    <div class="emoji-scroll" id="emoji-scroll"></div>
                 </div>
-                <div class="friends-scroll" id="friends-scroll"></div>
-                <div class="chat-list-items"></div>
             </div>
 
-            <footer class="footer" data-i18n="footer"></footer>
-        </aside>
-    </div>
-
-    <div id="add-friend-modal" class="modal">
-        <div class="add-friend-content">
-            <span class="close">&times;</span>
-            <h2 data-i18n="btn_add_friend_modal_title"></h2>
-            <input type="text" id="friend-search" data-i18n="btn_add_friend_modal_title_input"  maxlength="18" required/>
-            <div id="friend-result"></div>
-            <div id="error-message"></div>
+            <button id="send-btn" data-i18n="chat_send_btn"></button>
         </div>
     </div>
 
-    <div id="rename-modal" class="modal rename-modal">
-        <div class="modal-content rename-content">
-            <h3 data-i18n="header_menu_renameBtn_modal_title"></h3>
-            <input type="text" id="rename-input" placeholder="New name" maxlength="18"/>
-            <div class="modal-buttons">
-                <button id="rename-confirm" data-i18n="header_menu_renameBtn_modal_saveBtn"></button>
-                <button id="rename-cancel" data-i18n="header_menu_renameBtn_modal_cancelBtn"></button>
+    <aside class="chat-list">
+        <div class="chat-list-item profile" id="profile-toggle">
+            <div class="avatar-wrapper">
+                <img class="avatar" id="profile-avatar">
+                <span class="status-indicator" id="status-indicator"></span>
+            </div>
+            <div>
+                <div class="name" id="profile-name"></div>
+                <div class="status muted" id="profile-status"></div>
             </div>
         </div>
-    </div>
 
-    <div class="delete-modal" id="delete-modal">
-        <div class="delete-content">
-            <h3 data-i18n="header_menu_deleteChatBtn_modal_title"></h3>
-            <p data-i18n="header_menu_deleteChatBtn_modal_text"></p>
-            <div class="modal-buttons">
-                <button id="delete-confirm" data-i18n="header_menu_deleteChatBtn_modal_deleteBtn"></button>
-                <button id="delete-cancel" class="danger" data-i18n="header_menu_deleteChatBtn_modal_cancelBtn"></button>
+        <div id="profile-panel" class="profile-panel">
+            <button class="sub-btn toggle-status" data-i18n="profile_btn_change_status"></button>
+
+            <div class="sub-panel" id="status-panel">
+                <button class="status-btn" data-status="online" data-i18n="profile_status_online"></button>
+                <button class="status-btn" data-status="invisible" data-i18n="profile_status_invisible"></button>
+                <button class="status-btn" data-status="dnd" data-i18n="profile_status_dnd"></button>
             </div>
+
+            <button class="sub-btn" id="open-avatar-modal" data-i18n="profile_btn_change_avatar"></button>
+            <button class="sub-btn logout-btn" id="logout-btn" data-i18n="profile_btn_logout"></button>
+        </div>
+
+        <div class="friends-panel-wrapper">
+            <div id="profile-panel-friends" class="profile-panel-friends">
+                <button id="profile-add-friend-btn" data-i18n="btn_add_friend"></button>
+            </div>
+
+            <div class="friend-requests-block">
+                <div class="friend-requests-header">
+                    <span data-i18n="friend_requests_title"></span>
+                    <span class="friend-requests-count" id="friend-requests-count">0</span>
+                </div>
+                <div class="friend-requests-list" id="friend-requests-list">
+                    <div class="friend-request-empty" data-i18n="friend_requests_empty"></div>
+                </div>
+            </div>
+
+            <div class="friends-scroll" id="friends-scroll"></div>
+            <div class="chat-list-items"></div>
+        </div>
+
+        <footer class="footer" data-i18n="footer"></footer>
+    </aside>
+</div>
+
+<div id="add-friend-modal" class="modal">
+    <div class="add-friend-content">
+        <span class="close" data-i18n="modal_close"></span>
+        <h2 data-i18n="btn_add_friend_modal_title"></h2>
+        <input type="text" id="friend-search" data-i18n="btn_add_friend_modal_title_input" maxlength="18" />
+        <div id="friend-result"></div>
+        <div id="error-message"></div>
+    </div>
+</div>
+
+<div id="rename-modal" class="modal rename-modal">
+    <div class="modal-content rename-content">
+        <h3 data-i18n="header_menu_renameBtn_modal_title"></h3>
+        <input type="text" id="rename-input" data-i18n="header_menu_renameBtn_modal_input" maxlength="18" />
+        <div class="modal-buttons">
+            <button id="rename-confirm" data-i18n="header_menu_renameBtn_modal_saveBtn"></button>
+            <button id="rename-cancel" data-i18n="header_menu_renameBtn_modal_cancelBtn"></button>
         </div>
     </div>
+</div>
 
-    <div class="delete-friend-modal" id="delete-friend-modal">
-        <div class="delete-friend-content">
-            <h3 data-i18n="header_menu_deleteFriendBtn_modal_title"></h3>
-            <p data-i18n="header_menu_deleteFriendBtn_modal_text"></p>
-            <div class="modal-buttons">
-                <button id="delete-friend-confirm" data-i18n="header_menu_deleteFriendBtn_modal_deleteBtn"></button>
-                <button id="delete-friend-cancel" class="danger" data-i18n="header_menu_deleteFriendBtn_modal_cancelBtn"></button>
-            </div>
+<div class="delete-modal" id="delete-modal">
+    <div class="delete-content">
+        <h3 data-i18n="header_menu_deleteChatBtn_modal_title"></h3>
+        <p data-i18n="header_menu_deleteChatBtn_modal_text"></p>
+        <div class="modal-buttons">
+            <button id="delete-confirm" data-i18n="header_menu_deleteChatBtn_modal_deleteBtn"></button>
+            <button id="delete-cancel" class="danger" data-i18n="header_menu_deleteChatBtn_modal_cancelBtn"></button>
         </div>
     </div>
+</div>
 
-    <div class="modal" id="avatar-modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 data-i18n="profile_btn_change_avatar_title"></h2>
-            <div class="avatar-options">
-                <img src="../html/assets/avatar_1.png" class="avatar-choice">
-                <img src="../html/assets/avatar_2.png" class="avatar-choice">
-                <img src="../html/assets/avatar_3.png" class="avatar-choice">
-                <img src="../html/assets/avatar_4.png" class="avatar-choice">
-                <img src="../html/assets/avatar_5.png" class="avatar-choice">
-                <img src="../html/assets/avatar_6.png" class="avatar-choice">
-                <img src="../html/assets/avatar_7.png" class="avatar-choice">
-                <img src="../html/assets/avatar_8.png" class="avatar-choice">
-                <img src="../html/assets/avatar_9.png" class="avatar-choice">
-                <img src="../html/assets/avatar_10.png" class="avatar-choice">
-            </div>
-            <label class="upload-btn" data-i18n="profile_btn_change_avatar_btn_upload_avatar">
+<div class="delete-friend-modal" id="delete-friend-modal">
+    <div class="delete-friend-content">
+        <h3 data-i18n="header_menu_deleteFriendBtn_modal_title"></h3>
+        <p data-i18n="header_menu_deleteFriendBtn_modal_text"></p>
+        <div class="modal-buttons">
+            <button id="delete-friend-confirm" data-i18n="header_menu_deleteFriendBtn_modal_deleteBtn"></button>
+            <button id="delete-friend-cancel" class="danger" data-i18n="header_menu_deleteFriendBtn_modal_cancelBtn"></button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="avatar-modal">
+    <div class="modal-content">
+        <span class="close" data-i18n="modal_close"></span>
+        <h2 data-i18n="profile_btn_change_avatar_title"></h2>
+
+        <div class="avatar-options">
+            <img src="../html/assets/avatar_1.png" class="avatar-choice">
+            <img src="../html/assets/avatar_2.png" class="avatar-choice">
+            <img src="../html/assets/avatar_3.png" class="avatar-choice">
+            <img src="../html/assets/avatar_4.png" class="avatar-choice">
+            <img src="../html/assets/avatar_5.png" class="avatar-choice">
+            <img src="../html/assets/avatar_6.png" class="avatar-choice">
+            <img src="../html/assets/avatar_7.png" class="avatar-choice">
+            <img src="../html/assets/avatar_8.png" class="avatar-choice">
+            <img src="../html/assets/avatar_9.png" class="avatar-choice">
+            <img src="../html/assets/avatar_10.png" class="avatar-choice">
+        </div>
+
+        <label class="upload-btn" data-i18n="profile_btn_change_avatar_btn_upload_avatar">
             <input type="file" id="avatar-input" accept="image/*">
-            </label>
-        </div>
+        </label>
     </div>
+</div>
+
 </body>
 </html>

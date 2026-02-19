@@ -20,9 +20,21 @@ body {
 }
 
 .logo {
+  display: inline-block;
   font-size: 50px;
   margin-bottom: 15px;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
   animation: bounceRubber 1.5s infinite;
+}
+
+.register-container .logo:hover,
+.register-container .logo:focus,
+.register-container .logo:focus-visible {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
 }
 
 .register-container h2 {
@@ -176,87 +188,4 @@ footer {
   opacity: 0.85;
   user-select: none;
   transition: transform 0.3s;
-}
-
-@media (max-width: 1024px) {
-  .register-container {
-    width: 380px;
-    padding: 32px;
-    border-radius: 20px;
-  }
-  .register-container h2 {
-    font-size: 22px;
-  }
-  .logo {
-    font-size: 44px;
-  }
-}
-
-@media (max-width: 768px) {
-  .register-container {
-    width: 340px;
-    padding: 28px;
-    border-radius: 18px;
-  }
-  .register-container h2 {
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
-  .logo {
-    font-size: 38px;
-    margin-bottom: 12px;
-  }
-  .input-group input {
-    font-size: 14px;
-    padding: 12px;
-    border-radius: 12px;
-  }
-  .register-container button {
-    font-size: 15px;
-    padding: 12px;
-    border-radius: 12px;
-  }
-  .haveAnAccountLogin {
-    font-size: 13px;
-    margin-top: 28px;
-  }
-  footer {
-    font-size: 9px;
-    padding: 8px;
-  }
-}
-
-@media (max-width: 480px) {
-  .register-container {
-    width: 92%;
-    max-width: 300px;
-    padding: 22px;
-    border-radius: 16px;
-  }
-  .register-container h2 {
-    font-size: 18px;
-    margin-bottom: 14px;
-  }
-  .logo {
-    font-size: 32px;
-    margin-bottom: 10px;
-  }
-  .input-group input {
-    font-size: 13px;
-    padding: 10px;
-    border-radius: 10px;
-  }
-  .register-container button {
-    font-size: 14px;
-    padding: 11px;
-    border-radius: 10px;
-  }
-  .haveAnAccountLogin {
-    font-size: 12px;
-    margin-top: 22px;
-  }
-  footer {
-    font-size: 8px;
-    padding: 6px;
-  }
 }

@@ -1,5 +1,5 @@
 import { loginUser } from "./api.js";
-import { getSession } from "./CheckSession.js"
+import { getSession } from "./checkSession.js"
 
 const loginForm = document.getElementById("loginForm");
 const msg = document.getElementById("errorMsg");

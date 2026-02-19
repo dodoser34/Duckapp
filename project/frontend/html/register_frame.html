@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title data-i18n="title">Registration in DuckApp</title>
+    <title data-i18n="title">duckapp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="stylesheet" href="../styles/base/register.css">
@@ -16,43 +16,42 @@
     <div id="ducks"></div>
 
     <div class="register-container">
-        <div class="logo" aria-hidden="true">🦆</div>
-        <h2 data-i18n="title">Registration in DuckApp</h2>
+        <a class="logo" href="main_window_frame.html" data-i18n="logo"></a>
+        <h2 data-i18n="title"></h2>
 
         <form id="registerForm" autocomplete="on">
             <div class="input-group">
-                <input type="text" id="username" name="username" placeholder=" " maxlength="21" required>
-                <label for="username" data-i18n="username">Username</label>
+                <input type="text" id="username" name="username" data-i18n="username_input" maxlength="21" required>
+                <label for="username" data-i18n="username"></label>
             </div>
 
             <div class="input-group">
-                <input type="email" id="email" name="email" placeholder=" " required>
-                <label for="email" data-i18n="email">Email</label>
+                <input type="email" id="email" name="email" data-i18n="email_input" required>
+                <label for="email" data-i18n="email"></label>
             </div>
 
             <div class="input-group">
-                <input type="password" id="password" name="password" placeholder=" " minlength="3" required>
-                <label for="password" data-i18n="password">Password</label>
+                <input type="password" id="password" name="password" data-i18n="password_input" minlength="3" required>
+                <label for="password" data-i18n="password"></label>
             </div>
 
             <div class="input-group">
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " minlength="3" required>
-                <label for="confirmPassword" data-i18n="confirm_password">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" data-i18n="confirm_password_input" minlength="3" required>
+                <label for="confirmPassword" data-i18n="confirm_password"></label>
             </div>
 
             <div class="form-buttons">
-                <button type="submit" id="submit" data-i18n="registrationBtn">Register</button>
-                <span class="haveAnAccountLogin" data-i18n="haveAnAccountLogin">
-                    Already have an account? <a href="authorization_frame.html">Log in</a>
+                <button type="submit" id="submit" data-i18n="registrationBtn"></button>
+                <span class="haveAnAccountLogin">
+                    <span data-i18n="haveAnAccountLogin"></span>
+                    <a href="authorization_frame.html" data-i18n="haveAnAccountLogin_link"></a>
                 </span>
             </div>
 
-            <div class="error" id="errorMsg" aria-live="polite"></div>
+            <div class="error" id="errorMsg" aria-live="polite" data-i18n="error-text"></div>
         </form>
     </div>
 
-    <footer data-i18n="footer">
-        LLC UTYAPUTYA © 2025 All rights reserved
-    </footer>
+    <footer data-i18n="footer"></footer>
 </body>
 </html>

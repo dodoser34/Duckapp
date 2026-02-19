@@ -1,138 +1,142 @@
-const menuToggle = document.getElementById('menu-toggle');
-const chatMenu = document.getElementById('chat-menu');
-const deleteBtn = document.getElementById('delete-chat');
-const chatItems = document.querySelectorAll('.chat-list-item:not(.profile)');
-const chatTitle = document.querySelector('.chat-title');
-const chatSubtitle = document.querySelector('.chat-subtitle');
-const chatAvatar = document.querySelector('.chat-header-left .avatar');
-const chatMessages = document.getElementById('chat-body');
+import { API_URL } from "../api.js";
+import { loadFriends } from "./loadFriend.js";
 
-const renameBtn = document.getElementById('rename-chat');
-const renameModal = document.getElementById('rename-modal');
-const renameInput = document.getElementById('rename-input');
-const renameConfirm = document.getElementById('rename-confirm');
-const renameCancel = document.getElementById('rename-cancel');
+document.addEventListener("DOMContentLoaded", () => {
+    const page = "main_chat";
+    const menuToggle = document.getElementById("menu-toggle");
+    const chatMenu = document.getElementById("chat-menu");
 
-const deleteModal = document.getElementById('delete-modal');
-const deleteConfirm = document.getElementById('delete-confirm');
-const deleteCancel = document.getElementById('delete-cancel');
+    const renameBtn = document.getElementById("rename-chat");
+    const renameModal = document.getElementById("rename-modal");
+    const renameInput = document.getElementById("rename-input");
+    const renameConfirm = document.getElementById("rename-confirm");
+    const renameCancel = document.getElementById("rename-cancel");
 
-const deleteFriendBtn = document.getElementById('delete-friend'); 
-const deleteFriendModal = document.getElementById('delete-friend-modal');
-const deleteFriendCancel = document.getElementById('delete-friend-cancel');
-const deleteFriendConfirm = document.getElementById('delete-friend-confirm');
+    const deleteBtn = document.getElementById("delete-chat");
+    const deleteModal = document.getElementById("delete-modal");
+    const deleteConfirm = document.getElementById("delete-confirm");
+    const deleteCancel = document.getElementById("delete-cancel");
 
-let currentChatId = null;
-let localNames = {};
+    const deleteFriendBtn = document.getElementById("delete-friend");
+    const deleteFriendModal = document.getElementById("delete-friend-modal");
+    const deleteFriendCancel = document.getElementById("delete-friend-cancel");
+    const deleteFriendConfirm = document.getElementById("delete-friend-confirm");
 
-menuToggle.addEventListener('click', () => {
-    chatMenu.classList.toggle('open');
-});
-
-document.addEventListener('click', (e) => {
-    if (!chatMenu.contains(e.target) && !menuToggle.contains(e.target)) {
-        chatMenu.classList.remove('open');
-    }
-});
-
-chatItems.forEach(item => {
-    item.addEventListener('click', () => {
-        const id = item.dataset.id;
-        currentChatId = id;
-
-        const defaultName = item.dataset.name || 'No name';
-        const name = localNames[id] || defaultName;
-        const avatar = item.dataset.avatar || 'none';
-        const status = item.dataset.status || '—';
-
-        chatTitle.textContent = name;
-        chatSubtitle.textContent = status;
-        chatAvatar.src = avatar;
-
-        chatMessages.innerHTML = `<div class="message-bubble">Hello, ${name}!</div>`;
-    });
-});
-
-deleteBtn.addEventListener('click', () => {
-    deleteModal.classList.add('open');
-});
-
-deleteCancel.addEventListener('click', () => {
-    deleteModal.classList.remove('open');
-});
-
-deleteConfirm.addEventListener('click', () => {
-    if (currentChatId) {
-        const chatToDelete = document.querySelector(`.chat-list-item[data-id="${currentChatId}"]`);
-        if (chatToDelete) chatToDelete.remove();
-
-        delete localNames[currentChatId];
-        currentChatId = null;
-
-        chatTitle.textContent = 'Chat';
-        chatSubtitle.textContent = 'Select a chat on the right';
-        chatAvatar.src = 'none';
-        chatMessages.innerHTML = '<div class="empty-chat muted">Chat deleted</div>';
-    }
-    deleteModal.classList.remove('open');
-    chatMenu.classList.remove('open');
-});
-
-// === Rename chat ===
-renameBtn.addEventListener('click', () => {
-    if (!currentChatId) return alert('Chat not selected');
-    renameInput.value = localNames[currentChatId] || chatTitle.textContent;
-    renameModal.classList.add('open');
-});
-
-renameBtn.addEventListener('click', () => {
-    renameInput.value = localNames[currentChatId] || chatTitle.textContent || "";
-    renameModal.classList.add('open');
-});
-
-renameCancel.addEventListener('click', () => {
-    renameModal.classList.remove('open');
-});
-
-renameConfirm.addEventListener('click', () => {
-    const newName = renameInput.value.trim();
-    if (newName === "") return alert("Enter a name");
-
-    if (currentChatId) {
-        localNames[currentChatId] = newName;
-        chatTitle.textContent = newName;
-
-        const chatItem = document.querySelector(`.chat-list-item[data-id="${currentChatId}"] .name`);
-        if (chatItem) chatItem.textContent = newName;
-    } else {
-        chatTitle.textContent = newName;
+    function t(key, fallback) {
+        return window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
     }
 
-    renameModal.classList.remove('open');
-});
+    function getSelected() {
+        return window.ChatUI?.getSelectedFriend?.() || null;
+    }
 
-if (deleteFriendBtn) {
-    deleteFriendBtn.addEventListener('click', () => {
-        deleteFriendModal.classList.add('open');
+    function closeMenu() {
+        chatMenu?.classList.remove("open");
+    }
+
+    function closeModals() {
+        renameModal?.classList.remove("open");
+        deleteModal?.classList.remove("open");
+        deleteFriendModal?.classList.remove("open");
+    }
+
+    menuToggle?.addEventListener("click", () => {
+        chatMenu?.classList.toggle("open");
     });
 
-    deleteFriendCancel.addEventListener('click', () => {
-        deleteFriendModal.classList.remove('open');
+    document.addEventListener("click", (e) => {
+        if (!chatMenu?.contains(e.target) && !menuToggle?.contains(e.target)) {
+            closeMenu();
+        }
     });
 
-    deleteFriendConfirm.addEventListener('click', () => {
-        alert("Friend removed!"); 
-        deleteFriendModal.classList.remove('open');
-        chatMenu.classList.remove('open');
+    renameBtn?.addEventListener("click", () => {
+        const selected = getSelected();
+        if (!selected) {
+            alert(t("chat_select_friend_first", "Сначала выберите друга"));
+            return;
+        }
+        renameInput.value = selected.name || "";
+        renameModal.classList.add("open");
+        closeMenu();
     });
-}
 
-    document.querySelectorAll(
-    '#rename-modal, #delete-modal, #delete-friend-modal'
-    ).forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('open');
+    renameCancel?.addEventListener("click", () => {
+        renameModal.classList.remove("open");
+    });
+
+    renameConfirm?.addEventListener("click", () => {
+        const ok = window.ChatUI?.renameSelectedChat?.(renameInput.value || "");
+        if (!ok) {
+            alert(t("chat_enter_new_name", "Введите новое имя друга"));
+            return;
+        }
+        renameModal.classList.remove("open");
+    });
+
+    deleteBtn?.addEventListener("click", () => {
+        if (!getSelected()) {
+            alert(t("chat_select_friend_first", "Сначала выберите друга"));
+            return;
+        }
+        deleteModal.classList.add("open");
+        closeMenu();
+    });
+
+    deleteCancel?.addEventListener("click", () => {
+        deleteModal.classList.remove("open");
+    });
+
+    deleteConfirm?.addEventListener("click", async () => {
+        await window.ChatUI?.clearSelectedChat?.();
+        deleteModal.classList.remove("open");
+    });
+
+    deleteFriendBtn?.addEventListener("click", () => {
+        if (!getSelected()) {
+            alert(t("chat_select_friend_first", "Сначала выберите друга"));
+            return;
+        }
+        deleteFriendModal.classList.add("open");
+        closeMenu();
+    });
+
+    deleteFriendCancel?.addEventListener("click", () => {
+        deleteFriendModal.classList.remove("open");
+    });
+
+    deleteFriendConfirm?.addEventListener("click", async () => {
+        const selected = getSelected();
+        if (!selected) return;
+
+        try {
+            const res = await fetch(`${API_URL}/api/friends/remove/${selected.id}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                alert(data.detail || t("friend_remove_error", "Не удалось удалить друга"));
+                return;
             }
+
+            window.ChatUI?.removeSelectedFriendFromUI?.(selected.id);
+            await loadFriends();
+            deleteFriendModal.classList.remove("open");
+        } catch (err) {
+            console.error("Failed to remove friend:", err);
+            alert(t("friend_remove_error", "Не удалось удалить друга"));
+        }
+    });
+
+    [renameModal, deleteModal, deleteFriendModal].forEach((modal) => {
+        modal?.addEventListener("click", (e) => {
+            if (e.target === modal) modal.classList.remove("open");
         });
+    });
+
+    window.addEventListener("duckapp:chat-ready", () => {
+        closeModals();
+        closeMenu();
+    });
 });

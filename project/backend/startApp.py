@@ -4,7 +4,7 @@ from DataBases import db_manager as db
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from routers import auth, profile, friends
+from routers import auth, profile, friends, messages
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -24,6 +24,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/auth")
 app.include_router(profile.router, prefix="/api")
 app.include_router(friends.router)
+app.include_router(messages.router)
 
 app.mount("/assets", StaticFiles(directory=r"project/frontend/html/assets"), name="assets")
 

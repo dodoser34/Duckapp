@@ -12,6 +12,63 @@ const openAvatarModal = document.getElementById("open-avatar-modal");
 const avatarChoices = document.querySelectorAll(".avatar-choice");
 const profileAvatar = document.getElementById("profile-avatar");
 const avatarInput = document.getElementById("avatar-input");
+const page = "main_chat";
+
+let translations = window.translations;
+let currentLang = window.currentLang;
+
+function resolveLang(data) {
+    const browserLang = (navigator.language || "ru").slice(0, 2);
+    if (currentLang && data[currentLang]) return currentLang;
+    if (data[browserLang]) return browserLang;
+    if (data.ru) return "ru";
+    return Object.keys(data)[0];
+}
+
+async function ensureTranslations() {
+    if (!translations) {
+        try {
+            const langRes = await fetch("/project/lang/language.json");
+            translations = await langRes.json();
+            window.translations = translations;
+        } catch (err) {
+            console.error("Error loading language.json:", err);
+            translations = {};
+        }
+    }
+
+    if (!currentLang || !translations[currentLang]) {
+        currentLang = resolveLang(translations);
+        window.currentLang = currentLang;
+    }
+}
+
+function t(key, fallback) {
+    return translations?.[currentLang]?.[page]?.[key] || fallback;
+}
+
+const statusKeyByType = {
+    online: "profile_status_online",
+    invisible: "profile_status_invisible",
+    dnd: "profile_status_dnd",
+};
+
+const statusFallbackByType = {
+    online: "Online",
+    invisible: "Invisible",
+    dnd: "Do Not Disturb",
+};
+
+(async () => {
+    await ensureTranslations();
+    statusBtns.forEach((btn) => {
+        const type = btn.dataset.status;
+        const key = statusKeyByType[type];
+        if (key) {
+            btn.textContent = t(key, statusFallbackByType[type]);
+        }
+    });
+})();
 
 profileToggle.addEventListener("click", () => {
     profilePanel.classList.toggle("open");
@@ -24,17 +81,18 @@ statusBtn.addEventListener("click", () => {
 statusBtns.forEach(btn => {
     btn.addEventListener("click", async () => {
         const type = btn.dataset.status;
+        const key = statusKeyByType[type];
         switch (type) {
             case "online":
-                profileStatus.textContent = "Online";
+                profileStatus.textContent = t(key, statusFallbackByType[type]);
                 statusIndicator.style.background = "#2ecc71";
                 break;
             case "invisible":
-                profileStatus.textContent = "Invisible";
+                profileStatus.textContent = t(key, statusFallbackByType[type]);
                 statusIndicator.style.background = "#888";
                 break;
             case "dnd":
-                profileStatus.textContent = "Do Not Disturb";
+                profileStatus.textContent = t(key, statusFallbackByType[type]);
                 statusIndicator.style.background = "#e74c3c";
                 break;
         }
