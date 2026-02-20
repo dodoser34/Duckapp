@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="../styles/base/register.css">
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
 
-    <script type="module" src="../js/register.js"></script>
     <script type="module" src="../js/translatePage.js"></script>
+    <script type="module" src="../js/register.js"></script>
 </head>
 
 <body data-page="register">
@@ -30,14 +30,16 @@
                 <label for="email" data-i18n="email"></label>
             </div>
 
-            <div class="input-group">
+            <div class="input-group password-group">
                 <input type="password" id="password" name="password" data-i18n="password_input" minlength="3" required>
                 <label for="password" data-i18n="password"></label>
+                <button type="button" class="password-toggle" data-target="password" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
             </div>
 
-            <div class="input-group">
+            <div class="input-group password-group">
                 <input type="password" id="confirmPassword" name="confirmPassword" data-i18n="confirm_password_input" minlength="3" required>
                 <label for="confirmPassword" data-i18n="confirm_password"></label>
+                <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
             </div>
 
             <div class="form-buttons">

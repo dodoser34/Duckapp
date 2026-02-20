@@ -4,8 +4,14 @@ from routers.auth import get_current_user
 from DataBases.db_manager import get_connection
 import asyncio
 import datetime
+import json
+import os
+import urllib.parse
+import urllib.request
+from dotenv import load_dotenv
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
+load_dotenv()
 
 
 class MessageCreate(BaseModel):
@@ -30,6 +36,61 @@ def _is_friend_accepted(cursor, user_id: int, friend_id: int) -> bool:
         (user_id, friend_id, friend_id, user_id),
     )
     return cursor.fetchone() is not None
+
+
+def _to_utc_iso(value):
+    if not isinstance(value, datetime.datetime):
+        return str(value)
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=datetime.timezone.utc)
+    return value.astimezone(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+@router.get("/gif/search")
+async def search_gifs(q: str, limit: int = 25):
+    query = (q or "").strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Empty GIF search query")
+
+    safe_limit = max(1, min(limit, 50))
+    api_key = os.getenv("GIPHY_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=503, detail="GIF search is not configured")
+
+    def request_gifs():
+        params = urllib.parse.urlencode(
+            {
+                "api_key": api_key,
+                "q": query,
+                "limit": safe_limit,
+                "rating": "g",
+            }
+        )
+        url = f"https://api.giphy.com/v1/gifs/search?{params}"
+        req = urllib.request.Request(url, method="GET")
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            if resp.status != 200:
+                return None
+            raw = resp.read().decode("utf-8")
+            return json.loads(raw)
+
+    try:
+        data = await asyncio.to_thread(request_gifs)
+    except Exception:
+        raise HTTPException(status_code=502, detail="GIF provider unavailable")
+
+    if not data:
+        raise HTTPException(status_code=502, detail="GIF provider returned an error")
+
+    items = []
+    for gif in data.get("data", []):
+        images = gif.get("images") or {}
+        preview_url = (images.get("fixed_height_small") or {}).get("url")
+        original_url = (images.get("original") or {}).get("url")
+        if preview_url and original_url:
+            items.append({"preview_url": preview_url, "url": original_url})
+
+    return {"data": items}
 
 
 @router.get("/{friend_id}")
@@ -63,16 +124,12 @@ async def get_messages(friend_id: int, current_user=Depends(get_current_user)):
                 result = []
                 for row in rows:
                     created = row.get("created_at")
-                    if isinstance(created, datetime.datetime):
-                        created_iso = created.isoformat()
-                    else:
-                        created_iso = str(created)
                     result.append(
                         {
                             "side": "user" if row["sender_id"] == user_id else "bot",
                             "type": row["msg_type"],
                             "content": row["content"],
-                            "created_at": created_iso,
+                            "created_at": _to_utc_iso(created),
                             "created_at_ms": row.get("created_at_ms"),
                         }
                     )
@@ -128,14 +185,10 @@ async def send_message(payload: MessageCreate, current_user=Depends(get_current_
                 )
                 created_row = cursor.fetchone() or {}
                 created = created_row.get("created_at")
-                if isinstance(created, datetime.datetime):
-                    created_iso = created.isoformat()
-                else:
-                    created_iso = str(created)
                 return {
                     "type": msg_type,
                     "content": content,
-                    "created_at": created_iso,
+                    "created_at": _to_utc_iso(created),
                     "created_at_ms": created_row.get("created_at_ms"),
                     "side": "user",
                 }

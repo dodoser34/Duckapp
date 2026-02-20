@@ -20,6 +20,7 @@ def get_connection():
                 read_timeout=12,
                 write_timeout=12,
                 charset="utf8mb4",
+                init_command="SET time_zone = '+00:00'",
                 autocommit=False,
             )  # type: ignore
         except pymysql.MySQLError as err:
@@ -70,6 +71,29 @@ def init_db():
         FOREIGN KEY (friend_id) REFERENCES registered_users(id) ON DELETE CASCADE
     )
     """)
+
+    # Prevent duplicate relation rows for the same direction.
+    cursor.execute("SHOW INDEX FROM friends WHERE Key_name = 'uq_friends_direction'")
+    if not cursor.fetchone():
+        try:
+            cursor.execute(
+                "ALTER TABLE friends ADD CONSTRAINT uq_friends_direction UNIQUE (user_id, friend_id)"
+            )
+        except pymysql.MySQLError:
+            # Keep the newest row dropped so schema migration can proceed.
+            cursor.execute(
+                """
+                DELETE f1
+                FROM friends f1
+                JOIN friends f2
+                    ON f1.user_id = f2.user_id
+                    AND f1.friend_id = f2.friend_id
+                    AND f1.id > f2.id
+                """
+            )
+            cursor.execute(
+                "ALTER TABLE friends ADD CONSTRAINT uq_friends_direction UNIQUE (user_id, friend_id)"
+            )
 
     # Messages
     cursor.execute("""

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, Request
+from fastapi import APIRouter, Depends, HTTPException, Form, Response, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from DataBases import db_manager as db
 import jwt, datetime, bcrypt, pymysql, os
@@ -13,7 +13,14 @@ SECRET_KEY: str = str(os.getenv("JWT_KEY"))
 ALGORITHM = "HS256"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_DIR = BASE_DIR / "static"
+FRONTEND_HTML_DIR = BASE_DIR / "frontend" / "html"
+
+
+def read_html_file(filename: str) -> str:
+    path = FRONTEND_HTML_DIR / filename
+    if not path.exists():
+        raise HTTPException(status_code=500, detail=f"HTML file not found: {filename}")
+    return path.read_text(encoding="utf-8")
 
 @router.post("/register")
 async def register(response: Response, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
@@ -50,7 +57,7 @@ async def register(response: Response, username: str = Form(...), email: str = F
     cursor.close()
     conn.close()
 
-    # JWT токен
+    # JWT token
     payload = {
         "sub": username,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2),
@@ -181,9 +188,7 @@ def get_current_user(request: Request):
 #! ---------- LOGIN PAGE ----------
 @router.get("/login", response_class=HTMLResponse)
 async def login_page():
-    return HTMLResponse(
-        open("static/login.html", encoding="utf-8").read()
-    )
+    return HTMLResponse(read_html_file("authorization_frame.html"))
 
 
 #! ---------- LOGIN API ----------
@@ -207,10 +212,10 @@ async def login_api(
     conn.close()
     
     if not user:
-        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+        raise HTTPException(status_code=401, detail="Invalid username or password")
 
     if not bcrypt.checkpw(password.encode(), user["hashed_password"].encode()):
-        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+        raise HTTPException(status_code=401, detail="Invalid username or password")
 
     conn2 = db.get_connection()
     cursor2 = conn2.cursor()
@@ -242,8 +247,6 @@ async def login_api(
     )
 
     return {"status": "ok"}
-
-    
 
 #! ---------- TOKEN CHECK ----------
 @router.get("/check")
@@ -286,6 +289,4 @@ async def chat_page(request: Request):
     except jwt.PyJWTError:
         return RedirectResponse("/api/auth/login", 302)
 
-    return HTMLResponse(
-        open("static/main_chat.html", encoding="utf-8").read()
-    )  
+    return HTMLResponse(read_html_file("main_chat.html"))

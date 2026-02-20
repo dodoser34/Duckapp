@@ -9,7 +9,9 @@ const friendResult = document.getElementById("friend-result");
 const errorMessage = document.getElementById("error-message");
 const requestsList = document.getElementById("friend-requests-list");
 const requestsCount = document.getElementById("friend-requests-count");
-const closeButtons = document.querySelectorAll(".close");
+const closeButtons = addFriendModal
+    ? addFriendModal.querySelectorAll(".close")
+    : [];
 let incomingRequestsTimer = null;
 
 const t = (key, fallback) =>
@@ -17,27 +19,22 @@ const t = (key, fallback) =>
 
 closeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
-        addFriendModal.classList.remove("open");
-        friendSearchInput.value = "";
-        friendResult.innerHTML = "";
-        errorMessage.innerHTML = "";
+        addFriendModal?.classList.remove("open");
+        if (friendSearchInput) friendSearchInput.value = "";
+        if (friendResult) friendResult.innerHTML = "";
+        if (errorMessage) errorMessage.textContent = "";
     });
 });
 
-profileAddFriendBtn.addEventListener("click", () => {
-    addFriendModal.classList.add("open");
-});
-
-friendSearchInput.addEventListener("input", () => {
-    friendSearchInput.classList.remove("input-error");
-    errorMessage.innerHTML = "";
+profileAddFriendBtn?.addEventListener("click", () => {
+    addFriendModal?.classList.add("open");
 });
 
 let debounceTimeout;
 
-friendSearchInput.addEventListener("input", () => {
+friendSearchInput?.addEventListener("input", () => {
     friendSearchInput.classList.remove("input-error");
-    errorMessage.innerHTML = "";
+    errorMessage.textContent = "";
 
     if (debounceTimeout) clearTimeout(debounceTimeout);
 
@@ -72,6 +69,23 @@ function statusLabel(status) {
     return t("friend_status_offline", "Offline");
 }
 
+function createAvatarWrapper(avatarSrc, status) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "avatar-wrapper";
+
+    const img = document.createElement("img");
+    img.src = avatarSrc;
+    img.className = "avatar";
+    img.alt = "Avatar";
+
+    const indicator = document.createElement("span");
+    indicator.className = `status-indicator ${statusClass(status)}`;
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(indicator);
+    return wrapper;
+}
+
 async function searchFriend(query) {
     if (!query) {
         friendResult.innerHTML = "";
@@ -92,25 +106,40 @@ async function searchFriend(query) {
             return;
         }
 
-        friendResult.innerHTML = `
-        <div class="friend-card">
-            <div class="avatar-wrapper">
-                <img src="${normalizeAvatarPath(data.avatar)}" class="avatar">
-                <span class="status-indicator ${statusClass(data.status)}"></span>
-            </div>
-            <div class="friend-info">
-                <div class="name">${data.names}</div>
-                <div class="status muted">${statusLabel(data.status)}</div>
-            </div>
-        </div>
-        <div class="add_button">
-            <button id="add-friend-final">${t("friend_request_send_btn", "Send request")}</button>
-        </div>
-        `;
+        friendResult.innerHTML = "";
 
-        document.getElementById("add-friend-final").addEventListener("click", async () => {
+        const card = document.createElement("div");
+        card.className = "friend-card";
+        card.appendChild(createAvatarWrapper(normalizeAvatarPath(data.avatar), data.status));
+
+        const info = document.createElement("div");
+        info.className = "friend-info";
+
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = data.names || "Friend";
+
+        const status = document.createElement("div");
+        status.className = "status muted";
+        status.textContent = statusLabel(data.status);
+
+        info.appendChild(name);
+        info.appendChild(status);
+        card.appendChild(info);
+
+        const addButtonWrap = document.createElement("div");
+        addButtonWrap.className = "add_button";
+
+        const addButton = document.createElement("button");
+        addButton.id = "add-friend-final";
+        addButton.textContent = t("friend_request_send_btn", "Send request");
+        addButton.addEventListener("click", async () => {
             await addFriendRequest(data.id);
         });
+
+        addButtonWrap.appendChild(addButton);
+        friendResult.appendChild(card);
+        friendResult.appendChild(addButtonWrap);
     } catch (err) {
         console.error(err);
         showError(t("friend_error_connect", "Could not connect to server"));
@@ -138,8 +167,8 @@ async function addFriendRequest(friendId) {
         friendSearchInput.value = "";
 
         setTimeout(() => {
-            addFriendModal.classList.remove("open");
-            errorMessage.innerHTML = "";
+            addFriendModal?.classList.remove("open");
+            if (errorMessage) errorMessage.textContent = "";
         }, 600);
     } catch (err) {
         console.error(err);
@@ -186,26 +215,54 @@ function renderIncomingRequests(requests) {
         return;
     }
 
-    requestsList.innerHTML = requests
-        .map(
-            (req) => `
-            <div class="friend-request-item" data-request-id="${req.request_id}">
-                <div class="friend-request-main">
-                    <div class="avatar-wrapper">
-                        <img src="${normalizeAvatarPath(req.avatar)}" class="avatar">
-                    </div>
-                    <div class="friend-info">
-                        <div class="name">${req.names}</div>
-                    </div>
-                </div>
-                <div class="friend-request-actions">
-                    <button class="request-btn accept" data-action="accept">${t("friend_request_accept_btn", "Accept")}</button>
-                    <button class="request-btn reject" data-action="reject">${t("friend_request_reject_btn", "Reject")}</button>
-                </div>
-            </div>
-        `
-        )
-        .join("");
+    requestsList.innerHTML = "";
+
+    requests.forEach((req) => {
+        const item = document.createElement("div");
+        item.className = "friend-request-item";
+        item.dataset.requestId = String(req.request_id);
+
+        const main = document.createElement("div");
+        main.className = "friend-request-main";
+
+        const avatarWrap = document.createElement("div");
+        avatarWrap.className = "avatar-wrapper";
+        const avatar = document.createElement("img");
+        avatar.src = normalizeAvatarPath(req.avatar);
+        avatar.className = "avatar";
+        avatar.alt = "Avatar";
+        avatarWrap.appendChild(avatar);
+
+        const info = document.createElement("div");
+        info.className = "friend-info";
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = req.names || "Friend";
+        info.appendChild(name);
+
+        main.appendChild(avatarWrap);
+        main.appendChild(info);
+
+        const actions = document.createElement("div");
+        actions.className = "friend-request-actions";
+
+        const acceptBtn = document.createElement("button");
+        acceptBtn.className = "request-btn accept";
+        acceptBtn.dataset.action = "accept";
+        acceptBtn.textContent = t("friend_request_accept_btn", "Accept");
+
+        const rejectBtn = document.createElement("button");
+        rejectBtn.className = "request-btn reject";
+        rejectBtn.dataset.action = "reject";
+        rejectBtn.textContent = t("friend_request_reject_btn", "Reject");
+
+        actions.appendChild(acceptBtn);
+        actions.appendChild(rejectBtn);
+
+        item.appendChild(main);
+        item.appendChild(actions);
+        requestsList.appendChild(item);
+    });
 }
 
 async function respondToRequest(requestId, action) {
@@ -249,15 +306,21 @@ if (requestsList) {
 }
 
 function showError(msg) {
-    errorMessage.innerHTML = msg;
+    if (!errorMessage) return;
+    errorMessage.textContent = msg;
     errorMessage.style.color = "red";
 }
 
 function showSuccess(msg) {
-    errorMessage.innerHTML = msg;
+    if (!errorMessage) return;
+    errorMessage.textContent = msg;
     errorMessage.style.color = "#2ecc71";
 }
 
 loadIncomingRequests();
 incomingRequestsTimer = setInterval(loadIncomingRequests, 10000);
+
+window.addEventListener("duckapp:translations-ready", () => {
+    loadIncomingRequests();
+});
 

@@ -104,6 +104,15 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBody.innerHTML = `<div class="empty-chat muted" data-i18n="chat_main_window_text">${t("chat_main_window_text", "Choose a chat on the right")}</div>`;
     }
 
+    function refreshLocalizedChatState() {
+        if (!state.selectedFriendId) {
+            setDefaultHeader();
+            renderEmptyChat();
+            return;
+        }
+        chatSubtitle.textContent = statusLabel(state.selectedFriendStatus);
+    }
+
     function createTextMessageBubble(text, side, time) {
         const row = document.createElement("div");
         row.classList.add("message-row", side);
@@ -429,6 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initExistingFriendNamesFromAliases();
     setDefaultHeader();
     renderEmptyChat();
+    window.addEventListener("duckapp:translations-ready", refreshLocalizedChatState);
 
     window.addEventListener("duckapp:friends-updated", () => {
         initExistingFriendNamesFromAliases();

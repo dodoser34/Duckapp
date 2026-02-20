@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="../styles/base/auth.css">
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
 
-    <script type="module" src="../js/auth.js" defer></script>
     <script type="module" src="../js/translatePage.js" defer></script>
+    <script type="module" src="../js/auth.js" defer></script>
 </head>
 
 <body data-page="authorization">
@@ -27,9 +27,10 @@
                 <label for="username" data-i18n="username"></label>
             </div>
 
-            <div class="input-group">
+            <div class="input-group password-group">
                 <input type="password" id="password" name="password" data-i18n="password_input" minlength="3" required>
                 <label for="password" data-i18n="password"></label>
+                <button type="button" class="password-toggle" data-target="password" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
             </div>
 
             <button type="submit" data-i18n="button-text"></button>

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from routers.auth import get_current_user
 import asyncio
+import pymysql
 from DataBases.db_manager import get_connection
 from pydantic import BaseModel
 
@@ -87,12 +88,16 @@ async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_use
                     if rel["user_id"] == friend_id and rel["friend_id"] == user_id and rel["status"] == "pending":
                         return "incoming_exists"
 
-                cursor.execute(
-                    "INSERT INTO friends (user_id, friend_id, status) VALUES (%s, %s, 'pending')",
-                    (user_id, friend_id),
-                )
-                conn.commit()
-                return "created"
+                try:
+                    cursor.execute(
+                        "INSERT INTO friends (user_id, friend_id, status) VALUES (%s, %s, 'pending')",
+                        (user_id, friend_id),
+                    )
+                    conn.commit()
+                    return "created"
+                except pymysql.err.IntegrityError:
+                    conn.rollback()
+                    return "already_sent"
         finally:
             conn.close()
 

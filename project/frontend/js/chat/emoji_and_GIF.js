@@ -1,5 +1,6 @@
+import { API_URL } from "../api.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
-    const apiKey = "B9T5fDXrQbPNL35xmHCFUHUKUTJKf7Xf";
     const page = "main_chat";
 
     const gifPanel = document.getElementById("gif-panel");
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!translations) {
         try {
-            const langRes = await fetch("/project/lang/language.json");
+            const langRes = await fetch("../../lang/language.json");
             translations = await langRes.json();
             window.translations = translations;
         } catch (err) {
@@ -55,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let emojiData = {};
     try {
-        const res = await fetch("/project/emoji/emoji.json");
+        const res = await fetch("../../emoji/emoji.json");
         emojiData = await res.json();
     } catch (err) {
         console.error("Error loading emoji.json:", err);
@@ -182,11 +183,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
             const res = await fetch(
-                `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(query)}&limit=50&rating=g`
+                `${API_URL}/api/messages/gif/search?q=${encodeURIComponent(query)}&limit=50`,
+                { credentials: "include" }
             );
 
             if (!res.ok) {
-                throw new Error(`Giphy error: ${res.status}`);
+                const errorBody = await res.json().catch(() => ({}));
+                throw new Error(errorBody.detail || `GIF error: ${res.status}`);
             }
 
             const data = await res.json();
@@ -199,12 +202,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             data.data.forEach((gif) => {
                 const img = document.createElement("img");
-                img.src = gif.images.fixed_height_small.url;
+                img.src = gif.preview_url;
                 img.title = "Send to chat";
 
                 img.addEventListener("click", () => {
                     if (window.sendGifMessage) {
-                        window.sendGifMessage(gif.images.original.url, "user");
+                        window.sendGifMessage(gif.url, "user");
                     }
                     closeGifPanel();
                 });

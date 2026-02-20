@@ -1,7 +1,9 @@
 import { API_URL, ASSETS_PATH } from "../api.js";
 
 const avatarModal = document.getElementById('avatar-modal')
-const closeButtons = document.querySelectorAll('.close')
+const closeButtons = avatarModal
+    ? avatarModal.querySelectorAll('.close')
+    : []
 
 closeButtons.forEach(btn => {
 	btn.addEventListener('click', () => {

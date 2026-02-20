@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from DataBases import db_manager as db
 from routers.auth import get_token_from_cookie, verify_token
@@ -51,7 +51,3 @@ def update_profile(
 
     return {"message": "Profile updated", "status": data.status, "avatar": data.avatar}
 
-@router.post("/auth/logout")
-def logout(response: Response):
-    response.delete_cookie("access_token")
-    return {"message": "Logged out"}

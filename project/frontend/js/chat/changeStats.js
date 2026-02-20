@@ -28,7 +28,7 @@ function resolveLang(data) {
 async function ensureTranslations() {
     if (!translations) {
         try {
-            const langRes = await fetch("/project/lang/language.json");
+            const langRes = await fetch("../../lang/language.json");
             translations = await langRes.json();
             window.translations = translations;
         } catch (err) {
