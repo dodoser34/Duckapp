@@ -1,8 +1,11 @@
 import { loginUser } from "./api.js";
-import { getSession } from "./checkSession.js"
+import { getSession } from "./checkSession.js";
 
 const loginForm = document.getElementById("loginForm");
 const msg = document.getElementById("errorMsg");
+const page = document.body.getAttribute("data-page") || "authorization";
+const t = (key, fallback) =>
+    window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
 
 document.addEventListener("DOMContentLoaded", async () => {
     const res = await getSession();
@@ -23,32 +26,26 @@ loginForm.addEventListener("submit", async (e) => {
     if (res.ok) {
         window.location.replace("main_chat.html");
     } else {
-        msg.textContent = "❌ " + (res.detail || "Ошибка авторизации");
+        msg.textContent = "Error: " + (res.detail || t("auth_error", "Authorization error"));
     }
 });
 
-
-//! ====== DUCKS ====== 
+//! ====== DUCKS ======
 const duckCount = 8;
 const ducksContainer = document.getElementById("ducks");
 
 function spawnDuck() {
     const duck = document.createElement("div");
     duck.classList.add("duck");
-    duck.textContent = "🦆";
+    duck.textContent = "\uD83E\uDD86";
 
-    // size
     const size = Math.random() * 20 + 30;
     duck.style.fontSize = size + "px";
 
-    // height
     const top = Math.random() * 90;
     duck.style.top = top + "vh";
 
-    // speed
     const speed = Math.random() * 6 + 6;
-
-    // direction
     const direction = Math.random() < 0.5 ? "right" : "left";
 
     if (direction === "right") {
@@ -76,4 +73,6 @@ function spawnDuck() {
     }, speed * 1000);
 }
 
-for (let i = 0; i < duckCount; i++) {setTimeout(spawnDuck, i * 1000);}
+for (let i = 0; i < duckCount; i++) {
+    setTimeout(spawnDuck, i * 1000);
+}

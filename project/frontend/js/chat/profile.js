@@ -2,10 +2,13 @@ import { API_URL, ASSETS_PATH } from "../api.js";
 import { setupAvatarChange } from "./changeAvatar.js";
 import { loadFriends } from "./loadFriend.js";
 
+const page = "main_chat";
+const t = (key, fallback) =>
+    window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
 
 async function fetchProfile() {
     const res = await fetch(`${API_URL}/api/auth/me`, {
-        credentials: "include"
+        credentials: "include",
     });
 
     if (!res.ok) {
@@ -29,10 +32,8 @@ export async function getProfile() {
     try {
         const result = await fetchProfile();
 
-
         profileName.textContent = result.names;
-
-        updateStatus(result.status)
+        updateStatus(result.status);
 
         profileAvatar.src = result.avatar
             ? ASSETS_PATH + result.avatar
@@ -51,36 +52,21 @@ export async function getProfile() {
     }
 
     function updateStatus(status) {
-        const userLang = navigator.language || navigator.userLanguage; 
-        const lang = userLang.startsWith("ru") ? "ru" : "en"; 
+        const statusByType = {
+            online: t("profile_status_online", "Online"),
+            invisible: t("profile_status_invisible", "Invisible"),
+            dnd: t("profile_status_dnd", "Do Not Disturb"),
+            offline: t("friend_status_offline", "Offline"),
+        };
 
-        const statuses = {
-            en: {
-            online: "Online",
-            invisible: "Invisible",
-            dnd: "Do Not Disturb",
-            offline: "Offline",
-        },
-        ru: {
-            online: "В сети",
-            invisible: "Невидимка",
-            dnd: "Не беспокоить",
-            offline: "Не в сети",
-        }
-    };
+        const colors = {
+            online: "#2ecc71",
+            invisible: "#888",
+            dnd: "#e74c3c",
+            offline: "#888",
+        };
 
-    const colors = {
-        online: "#2ecc71",
-        invisible: "#888",
-        dnd: "#e74c3c",
-        offline: "#888",
-    };
-
-    const statusText = (statuses[lang] && statuses[lang][status]) || "Unknown";
-    document.getElementById("profile-status").textContent = statusText;
-    statusIndicator.style.background = colors[status] || "gray";
+        document.getElementById("profile-status").textContent = statusByType[status] || "Unknown";
+        statusIndicator.style.background = colors[status] || "gray";
+    }
 }
-
-}
-
-

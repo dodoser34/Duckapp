@@ -3,7 +3,7 @@ import { API_URL } from "./api.js";
 export async function getSession() {
     try {
         const checkToken = await fetch(`${API_URL}/api/auth/check`, {
-            credentials: "include"
+            credentials: "include",
         });
 
         if (checkToken.ok) {
@@ -12,10 +12,8 @@ export async function getSession() {
         }
 
         return { ok: false, result: {} };
-        
-
     } catch (e) {
-        console.error("Ошибка проверки токена:", e);
+        console.error("Session check error:", e);
         return { ok: false, result: {} };
     }
 }

@@ -3,6 +3,9 @@ import { getSession } from "./checkSession.js";
 
 const registerForm = document.getElementById("registerForm");
 const msg = document.getElementById("errorMsg");
+const page = document.body.getAttribute("data-page") || "register";
+const t = (key, fallback) =>
+    window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
 
 document.addEventListener("DOMContentLoaded", async () => {
     const res = await getSession();
@@ -11,7 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-registerForm.addEventListener("submit", async (e) => {e.preventDefault();
+registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
     const username = registerForm.username.value.trim();
     const email = registerForm.email.value.trim();
@@ -19,7 +23,7 @@ registerForm.addEventListener("submit", async (e) => {e.preventDefault();
     const confirmPassword = registerForm.confirmPassword.value;
 
     if (password !== confirmPassword) {
-        msg.textContent = "❌ Пароли не совпадают!";
+        msg.textContent = "Error: " + t("password_mismatch_error", "Passwords do not match");
         return;
     }
 
@@ -30,15 +34,12 @@ registerForm.addEventListener("submit", async (e) => {e.preventDefault();
         if (check.ok) {
             window.location = "main_chat.html";
         } else {
-            msg.textContent = "❌ Session check error: " + (check.result.detail || "");
+            msg.textContent = "Error: " + t("session_check_error", "Session check error") + ": " + (check.result.detail || "");
         }
     } else {
-        msg.textContent = "❌ Error: " + (result.detail || "Unknown error");
+        msg.textContent = "Error: " + (result.detail || t("unknown_error", "Unknown error"));
     }
 });
-
-
-
 
 /* ====== DUCKS ====== */
 const duckCount = 8;
@@ -47,20 +48,15 @@ const ducksContainer = document.getElementById("ducks");
 function spawnDuck() {
     const duck = document.createElement("div");
     duck.classList.add("duck");
-    duck.textContent = "🦆";
+    duck.textContent = "\uD83E\uDD86";
 
-    // size
     const size = Math.random() * 20 + 30;
     duck.style.fontSize = size + "px";
 
-    // height
     const top = Math.random() * 90;
     duck.style.top = top + "vh";
 
-    // speed
     const speed = Math.random() * 6 + 6;
-
-    // direction
     const direction = Math.random() < 0.5 ? "right" : "left";
 
     if (direction === "right") {

@@ -8,10 +8,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatBody = document.getElementById("chat-body");
     const messageInput = document.getElementById("message-input");
     const sendBtn = document.getElementById("send-btn");
+    const gifBtn = document.getElementById("sendgif-btn");
+    const emojiBtn = document.getElementById("sendsmile-btn");
+    const gifPanel = document.getElementById("gif-panel");
+    const emojiPanel = document.getElementById("emoji-panel");
+    const gifSearchInput = document.getElementById("gifSearchInput");
+    const gifSearchBtn = document.getElementById("gifSearchBtn");
     const chatTitle = document.getElementById("chat-title");
     const chatSubtitle = document.getElementById("chat-subtitle");
     const headerAvatar = document.getElementById("header-avatar");
     const chatHeaderLeft = document.querySelector(".chat-header-left");
+    const chatHeaderActions = document.querySelector(".chat-header-actions");
+    const chatMenu = document.getElementById("chat-menu");
     const friendsContainer = document.querySelector(".chat-list-items");
 
     const state = {
@@ -42,10 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function statusLabel(status) {
-        if (status === "online") return t("profile_status_online", "В сети");
-        if (status === "invisible") return t("profile_status_invisible", "Невидимка");
-        if (status === "dnd") return t("profile_status_dnd", "Не беспокоить");
-        return t("friend_status_offline", "Не в сети");
+        if (status === "online") return t("profile_status_online", "Online");
+        if (status === "invisible") return t("profile_status_invisible", "Invisible");
+        if (status === "dnd") return t("profile_status_dnd", "Do Not Disturb");
+        return t("friend_status_offline", "Offline");
     }
 
     function formatTime(value, createdAtMs) {
@@ -69,14 +77,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function setDefaultHeader() {
-        chatTitle.textContent = t("chat_header_default_title", "Чат");
-        chatSubtitle.textContent = t("chat_header_default_subtitle", "Выберите друга справа");
+        chatTitle.textContent = t("chat_header_default_title", "Chat");
+        chatSubtitle.textContent = t("chat_header_default_subtitle", "Choose a friend on the right");
         headerAvatar.src = "../html/assets/avatar_1.png";
         chatHeaderLeft?.classList.add("peer-hidden");
+        chatHeaderActions?.classList.add("peer-hidden");
+        chatMenu?.classList.remove("open");
+        setComposerEnabled(false);
     }
 
+    function setComposerEnabled(enabled) {
+        const blocked = !enabled;
+        messageInput.disabled = blocked;
+        sendBtn.disabled = blocked;
+        gifBtn.disabled = blocked;
+        emojiBtn.disabled = blocked;
+        if (gifSearchInput) gifSearchInput.disabled = blocked;
+        if (gifSearchBtn) gifSearchBtn.disabled = blocked;
+
+        if (blocked) {
+            gifPanel?.classList.remove("open");
+            emojiPanel?.classList.remove("open");
+        }
+    }
     function renderEmptyChat() {
-        chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_main_window_text", "Выберите чат справа 👉")}</div>`;
+        chatBody.innerHTML = `<div class="empty-chat muted" data-i18n="chat_main_window_text">${t("chat_main_window_text", "Choose a chat on the right")}</div>`;
     }
 
     function createTextMessageBubble(text, side, time) {
@@ -133,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
             chatBody.scrollHeight - chatBody.scrollTop - chatBody.clientHeight < 120;
         chatBody.innerHTML = "";
         if (!messages.length) {
-            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_empty_for_friend", "Сообщений пока нет")}</div>`;
+            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_empty_for_friend", "No messages yet")}</div>`;
             return;
         }
 
@@ -165,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function renderMessages(friendId, options = {}) {
         const { showLoading = true, skipIfUnchanged = false } = options;
         if (showLoading) {
-            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_loading", "Загрузка...")}</div>`;
+            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_loading", "Loading...")}</div>`;
         }
         try {
             const messages = await fetchMessages(friendId);
@@ -177,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
             renderMessagesList(messages);
         } catch (err) {
             console.error("Failed to load messages:", err);
-            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_load_error", "Не удалось загрузить сообщения")}</div>`;
+            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_load_error", "Failed to load messages")}</div>`;
         }
     }
 
@@ -260,6 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
         chatSubtitle.textContent = statusLabel(state.selectedFriendStatus);
         headerAvatar.src = state.selectedFriendAvatar;
         chatHeaderLeft?.classList.remove("peer-hidden");
+        chatHeaderActions?.classList.remove("peer-hidden");
+        setComposerEnabled(true);
 
         await renderMessages(state.selectedFriendId, { showLoading: true, skipIfUnchanged: false });
         startMessagesPolling();
@@ -275,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
             await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
         } catch (err) {
             console.error("Failed to send text message:", err);
-            alert(t("chat_send_error", "Не удалось отправить сообщение"));
+            alert(t("chat_send_error", "Failed to send message"));
         }
     }
 
@@ -353,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return true;
             } catch (err) {
                 console.error("Failed to clear chat:", err);
-                alert(t("chat_clear_error", "Не удалось очистить чат"));
+                alert(t("chat_clear_error", "Failed to clear chat"));
                 return false;
             }
         },
@@ -386,7 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
             await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
         } catch (err) {
             console.error("Failed to send GIF:", err);
-            alert(t("chat_send_error", "Не удалось отправить сообщение"));
+            alert(t("chat_send_error", "Failed to send message"));
         }
     };
 

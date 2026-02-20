@@ -27,6 +27,11 @@
   box-shadow: 0 0 6px rgba(255, 183, 3, 0.6);
 }
 
+.chat-input textarea:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .chat-input textarea::-webkit-scrollbar {
   width: 6px;
 }
@@ -55,6 +60,13 @@
   font-weight: bold;
   color: #fff;
   transition: background 0.3s ease, transform 0.15s ease;
+}
+
+.chat-input button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
 }
 
 #send-btn {

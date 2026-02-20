@@ -69,6 +69,11 @@
   margin-left: auto;
 }
 
+.chat-header-actions.peer-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .header-icon-btn {
   font-size: 24px;
   color: #fff;

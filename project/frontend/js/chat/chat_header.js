@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renameBtn?.addEventListener("click", () => {
         const selected = getSelected();
         if (!selected) {
-            alert(t("chat_select_friend_first", "Сначала выберите друга"));
+            alert(t("chat_select_friend_first", "Select a friend first"));
             return;
         }
         renameInput.value = selected.name || "";
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renameConfirm?.addEventListener("click", () => {
         const ok = window.ChatUI?.renameSelectedChat?.(renameInput.value || "");
         if (!ok) {
-            alert(t("chat_enter_new_name", "Введите новое имя друга"));
+            alert(t("chat_enter_new_name", "Enter a new friend name"));
             return;
         }
         renameModal.classList.remove("open");
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     deleteBtn?.addEventListener("click", () => {
         if (!getSelected()) {
-            alert(t("chat_select_friend_first", "Сначала выберите друга"));
+            alert(t("chat_select_friend_first", "Select a friend first"));
             return;
         }
         deleteModal.classList.add("open");
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     deleteFriendBtn?.addEventListener("click", () => {
         if (!getSelected()) {
-            alert(t("chat_select_friend_first", "Сначала выберите друга"));
+            alert(t("chat_select_friend_first", "Select a friend first"));
             return;
         }
         deleteFriendModal.classList.add("open");
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) {
-                alert(data.detail || t("friend_remove_error", "Не удалось удалить друга"));
+                alert(data.detail || t("friend_remove_error", "Failed to remove friend"));
                 return;
             }
 
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
             deleteFriendModal.classList.remove("open");
         } catch (err) {
             console.error("Failed to remove friend:", err);
-            alert(t("friend_remove_error", "Не удалось удалить друга"));
+            alert(t("friend_remove_error", "Failed to remove friend"));
         }
     });
 
@@ -140,3 +140,4 @@ document.addEventListener("DOMContentLoaded", () => {
         closeMenu();
     });
 });
+

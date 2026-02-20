@@ -18,10 +18,10 @@ function getAliases() {
 }
 
 function statusText(status) {
-    if (status === "online") return t("profile_status_online", "В сети");
-    if (status === "invisible") return t("profile_status_invisible", "Невидимка");
-    if (status === "dnd") return t("profile_status_dnd", "Не беспокоить");
-    return t("friend_status_offline", "Не в сети");
+    if (status === "online") return t("profile_status_online", "Online");
+    if (status === "invisible") return t("profile_status_invisible", "Invisible");
+    if (status === "dnd") return t("profile_status_dnd", "Do Not Disturb");
+    return t("friend_status_offline", "Offline");
 }
 
 function statusColor(status) {
@@ -90,3 +90,4 @@ export async function loadFriends() {
         console.error("Failed to load friends:", err);
     }
 }
+

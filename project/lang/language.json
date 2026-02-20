@@ -61,6 +61,7 @@
             "password": "Пароль",
             "button-text": "Войти",
             "error-text": "",
+            "auth_error": "Ошибка авторизации",
             "noAccount": "Нет аккаунта?",
             "noAccount_link": "Зарегистрироваться",
             "footer": "LLC UTYAPUTYA © 2026 Все права защищены"
@@ -81,6 +82,9 @@
             "haveAnAccountLogin": "Уже есть аккаунт?",
             "haveAnAccountLogin_link": "Войти",
             "error-text": "",
+            "password_mismatch_error": "Пароли не совпадают",
+            "session_check_error": "Ошибка проверки сессии",
+            "unknown_error": "Неизвестная ошибка",
             "footer": "LLC UTYAPUTYA © 2026 Все права защищены"
         },
 
@@ -223,6 +227,7 @@
             "password": "Password",
             "button-text": "Sign In",
             "error-text": "",
+            "auth_error": "Authorization error",
             "noAccount": "No account?",
             "noAccount_link": "Register",
             "footer": "LLC UTYAPUTYA © 2026 All rights reserved"
@@ -242,6 +247,9 @@
             "haveAnAccountLogin": "Already have an account?",
             "haveAnAccountLogin_link": "Sign In",
             "error-text": "",
+            "password_mismatch_error": "Passwords do not match",
+            "session_check_error": "Session check error",
+            "unknown_error": "Unknown error",
             "footer": "LLC UTYAPUTYA © 2026 All rights reserved"
         },
         "main_chat": {
@@ -370,6 +378,7 @@
             "password": "Passwort",
             "button-text": "Anmelden",
             "error-text": "",
+            "auth_error": "Anmeldefehler",
             "noAccount": "Kein Konto?",
             "noAccount_link": "Registrieren",
             "footer": "LLC UTYAPUTYA © 2026 Alle Rechte vorbehalten"
@@ -389,6 +398,9 @@
             "haveAnAccountLogin": "Du hast schon ein Konto?",
             "haveAnAccountLogin_link": "Anmelden",
             "error-text": "",
+            "password_mismatch_error": "Passwörter stimmen nicht überein",
+            "session_check_error": "Sitzungsprüfung fehlgeschlagen",
+            "unknown_error": "Unbekannter Fehler",
             "footer": "LLC UTYAPUTYA © 2026 Alle Rechte vorbehalten"
         },
         "main_chat": {
@@ -517,6 +529,7 @@
             "password": "Құпиясөз",
             "button-text": "Кіру",
             "error-text": "",
+            "auth_error": "Авторизация қатесі",
             "noAccount": "Тіркелгі жоқ па?",
             "noAccount_link": "Тіркелу",
             "footer": "LLC UTYAPUTYA © 2026 Барлық құқықтар қорғалған"
@@ -536,6 +549,9 @@
             "haveAnAccountLogin": "Тіркелгіңіз бар ма?",
             "haveAnAccountLogin_link": "Кіру",
             "error-text": "",
+            "password_mismatch_error": "Құпиясөздер сәйкес келмейді",
+            "session_check_error": "Сессияны тексеру қатесі",
+            "unknown_error": "Белгісіз қате",
             "footer": "LLC UTYAPUTYA © 2026 Барлық құқықтар қорғалған"
         },
         "main_chat": {

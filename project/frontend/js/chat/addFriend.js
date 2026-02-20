@@ -66,10 +66,10 @@ function statusClass(status) {
 }
 
 function statusLabel(status) {
-    if (status === "online") return t("profile_status_online", "В сети");
-    if (status === "invisible") return t("profile_status_invisible", "Невидимка");
-    if (status === "dnd") return t("profile_status_dnd", "Не беспокоить");
-    return t("friend_status_offline", "Не в сети");
+    if (status === "online") return t("profile_status_online", "Online");
+    if (status === "invisible") return t("profile_status_invisible", "Invisible");
+    if (status === "dnd") return t("profile_status_dnd", "Do Not Disturb");
+    return t("friend_status_offline", "Offline");
 }
 
 async function searchFriend(query) {
@@ -88,7 +88,7 @@ async function searchFriend(query) {
 
         if (!res.ok) {
             friendResult.innerHTML = "";
-            showError(data.detail || t("friend_error_not_found", "Пользователь не найден"));
+            showError(data.detail || t("friend_error_not_found", "User not found"));
             return;
         }
 
@@ -104,7 +104,7 @@ async function searchFriend(query) {
             </div>
         </div>
         <div class="add_button">
-            <button id="add-friend-final">${t("friend_request_send_btn", "Отправить заявку")}</button>
+            <button id="add-friend-final">${t("friend_request_send_btn", "Send request")}</button>
         </div>
         `;
 
@@ -113,7 +113,7 @@ async function searchFriend(query) {
         });
     } catch (err) {
         console.error(err);
-        showError(t("friend_error_connect", "Не удалось подключиться к серверу"));
+        showError(t("friend_error_connect", "Could not connect to server"));
     }
 }
 
@@ -129,11 +129,11 @@ async function addFriendRequest(friendId) {
         const addData = await addRes.json();
 
         if (!addRes.ok) {
-            showError(addData.detail || t("friend_request_error", "Ошибка отправки заявки"));
+            showError(addData.detail || t("friend_request_error", "Request processing error"));
             return;
         }
 
-        showSuccess(t("friend_request_sent", "Заявка отправлена"));
+        showSuccess(t("friend_request_sent", "Request sent"));
         friendResult.innerHTML = "";
         friendSearchInput.value = "";
 
@@ -143,7 +143,7 @@ async function addFriendRequest(friendId) {
         }, 600);
     } catch (err) {
         console.error(err);
-        showError(t("friend_error_connect", "Не удалось подключиться к серверу"));
+        showError(t("friend_error_connect", "Could not connect to server"));
     }
 }
 
@@ -182,7 +182,7 @@ function renderIncomingRequests(requests) {
     requestsCount.textContent = String(requests.length);
 
     if (!requests.length) {
-        requestsList.innerHTML = `<div class="friend-request-empty">${t("friend_requests_empty", "Нет новых заявок")}</div>`;
+        requestsList.innerHTML = `<div class="friend-request-empty">${t("friend_requests_empty", "No new requests")}</div>`;
         return;
     }
 
@@ -199,8 +199,8 @@ function renderIncomingRequests(requests) {
                     </div>
                 </div>
                 <div class="friend-request-actions">
-                    <button class="request-btn accept" data-action="accept">${t("friend_request_accept_btn", "Принять")}</button>
-                    <button class="request-btn reject" data-action="reject">${t("friend_request_reject_btn", "Отклонить")}</button>
+                    <button class="request-btn accept" data-action="accept">${t("friend_request_accept_btn", "Accept")}</button>
+                    <button class="request-btn reject" data-action="reject">${t("friend_request_reject_btn", "Reject")}</button>
                 </div>
             </div>
         `
@@ -219,7 +219,7 @@ async function respondToRequest(requestId, action) {
 
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
-            showError(data.detail || t("friend_request_error", "Ошибка обработки заявки"));
+            showError(data.detail || t("friend_request_error", "Request processing error"));
             return;
         }
 
@@ -229,7 +229,7 @@ async function respondToRequest(requestId, action) {
         await loadIncomingRequests();
     } catch (err) {
         console.error("Failed to respond to friend request:", err);
-        showError(t("friend_error_connect", "Не удалось подключиться к серверу"));
+        showError(t("friend_error_connect", "Could not connect to server"));
     }
 }
 
@@ -260,3 +260,4 @@ function showSuccess(msg) {
 
 loadIncomingRequests();
 incomingRequestsTimer = setInterval(loadIncomingRequests, 10000);
+
