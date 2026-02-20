@@ -18,7 +18,6 @@ avatarModal.addEventListener('click', e => {
 export function setupAvatarChange() {
 	const avatarChoices = document.querySelectorAll('.avatar-choice')
 	const profileAvatar = document.getElementById('profile-avatar')
-	const headerAvatar = document.getElementById('header-avatar')
 	const avatarModal = document.getElementById('avatar-modal')
 
 	avatarChoices.forEach(choice => {
@@ -39,7 +38,6 @@ export function setupAvatarChange() {
 				const data = await res.json()
 
 				profileAvatar.src = ASSETS_PATH + data.avatar
-				if (headerAvatar) headerAvatar.src = ASSETS_PATH + data.avatar
 
 				avatarModal.classList.remove('open')
 			} catch (err) {

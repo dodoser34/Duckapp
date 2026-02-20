@@ -3,6 +3,7 @@ import { API_URL } from "../api.js";
 document.addEventListener("DOMContentLoaded", () => {
     const page = "main_chat";
     const ALIASES_KEY = "duckapp_chat_aliases";
+    const MESSAGES_POLL_INTERVAL_MS = 2000;
 
     const chatBody = document.getElementById("chat-body");
     const messageInput = document.getElementById("message-input");
@@ -19,6 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedFriendStatus: "",
         selectedFriendAvatar: "",
     };
+    let pollTimer = null;
+    let pollInFlight = false;
+    let lastRenderedMessagesKey = "";
 
     function t(key, fallback) {
         return window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
@@ -44,8 +48,18 @@ document.addEventListener("DOMContentLoaded", () => {
         return t("friend_status_offline", "Не в сети");
     }
 
-    function formatTime(value) {
-        const date = value ? new Date(value) : new Date();
+    function formatTime(value, createdAtMs) {
+        let date;
+        const ms = Number(createdAtMs);
+        if (Number.isFinite(ms) && ms > 0) {
+            date = new Date(ms);
+        } else {
+            let normalized = value || new Date().toISOString();
+            if (typeof normalized === "string") {
+                normalized = normalized.replace(" ", "T");
+            }
+            date = new Date(normalized);
+        }
         if (Number.isNaN(date.getTime())) return "";
         return (
             date.getHours().toString().padStart(2, "0") +
@@ -108,7 +122,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return row;
     }
 
+    function buildMessagesKey(messages) {
+        return messages
+            .map((msg) => `${msg.side || ""}|${msg.type || ""}|${msg.content || ""}|${msg.created_at_ms || ""}|${msg.created_at || ""}`)
+            .join("||");
+    }
+
     function renderMessagesList(messages) {
+        const isNearBottom =
+            chatBody.scrollHeight - chatBody.scrollTop - chatBody.clientHeight < 120;
         chatBody.innerHTML = "";
         if (!messages.length) {
             chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_empty_for_friend", "Сообщений пока нет")}</div>`;
@@ -117,14 +139,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         messages.forEach((msg) => {
             const side = msg.side || "user";
-            const time = formatTime(msg.created_at);
+            const time = formatTime(msg.created_at, msg.created_at_ms);
             if (msg.type === "gif") {
                 chatBody.appendChild(createGifMessageBubble(msg.content, side, time));
             } else {
                 chatBody.appendChild(createTextMessageBubble(msg.content, side, time));
             }
         });
-        chatBody.scrollTop = chatBody.scrollHeight;
+        if (isNearBottom) {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
     }
 
     async function fetchMessages(friendId) {
@@ -138,15 +162,47 @@ document.addEventListener("DOMContentLoaded", () => {
         return Array.isArray(data) ? data : [];
     }
 
-    async function renderMessages(friendId) {
-        chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_loading", "Загрузка...")}</div>`;
+    async function renderMessages(friendId, options = {}) {
+        const { showLoading = true, skipIfUnchanged = false } = options;
+        if (showLoading) {
+            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_loading", "Загрузка...")}</div>`;
+        }
         try {
             const messages = await fetchMessages(friendId);
+            const currentKey = buildMessagesKey(messages);
+            if (skipIfUnchanged && currentKey === lastRenderedMessagesKey) {
+                return;
+            }
+            lastRenderedMessagesKey = currentKey;
             renderMessagesList(messages);
         } catch (err) {
             console.error("Failed to load messages:", err);
             chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_load_error", "Не удалось загрузить сообщения")}</div>`;
         }
+    }
+
+    function stopMessagesPolling() {
+        if (pollTimer) {
+            clearInterval(pollTimer);
+            pollTimer = null;
+        }
+        pollInFlight = false;
+    }
+
+    function startMessagesPolling() {
+        stopMessagesPolling();
+        pollTimer = setInterval(async () => {
+            if (!state.selectedFriendId || pollInFlight) return;
+            pollInFlight = true;
+            try {
+                await renderMessages(state.selectedFriendId, {
+                    showLoading: false,
+                    skipIfUnchanged: true,
+                });
+            } finally {
+                pollInFlight = false;
+            }
+        }, MESSAGES_POLL_INTERVAL_MS);
     }
 
     async function postMessage(friendId, type, content) {
@@ -205,7 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
         headerAvatar.src = state.selectedFriendAvatar;
         chatHeaderLeft?.classList.remove("peer-hidden");
 
-        await renderMessages(state.selectedFriendId);
+        await renderMessages(state.selectedFriendId, { showLoading: true, skipIfUnchanged: false });
+        startMessagesPolling();
     }
 
     async function sendTextMessage() {
@@ -214,9 +271,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             await postMessage(state.selectedFriendId, "text", text);
-            chatBody.appendChild(createTextMessageBubble(text, "user", formatTime()));
-            chatBody.scrollTop = chatBody.scrollHeight;
             messageInput.value = "";
+            await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
         } catch (err) {
             console.error("Failed to send text message:", err);
             alert(t("chat_send_error", "Не удалось отправить сообщение"));
@@ -244,6 +300,8 @@ document.addEventListener("DOMContentLoaded", () => {
         state.selectedFriendName = "";
         state.selectedFriendStatus = "";
         state.selectedFriendAvatar = "";
+        lastRenderedMessagesKey = "";
+        stopMessagesPolling();
         setDefaultHeader();
         renderEmptyChat();
     }
@@ -290,7 +348,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!state.selectedFriendId) return false;
             try {
                 await clearMessages(state.selectedFriendId);
-                await renderMessages(state.selectedFriendId);
+                await renderMessages(state.selectedFriendId, { showLoading: true, skipIfUnchanged: false });
+                startMessagesPolling();
                 return true;
             } catch (err) {
                 console.error("Failed to clear chat:", err);
@@ -312,6 +371,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 state.selectedFriendName = "";
                 state.selectedFriendStatus = "";
                 state.selectedFriendAvatar = "";
+                lastRenderedMessagesKey = "";
+                stopMessagesPolling();
                 setDefaultHeader();
                 renderEmptyChat();
             }
@@ -322,8 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!state.selectedFriendId || !url) return;
         try {
             await postMessage(state.selectedFriendId, "gif", url);
-            chatBody.appendChild(createGifMessageBubble(url, side, formatTime()));
-            chatBody.scrollTop = chatBody.scrollHeight;
+            await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
         } catch (err) {
             console.error("Failed to send GIF:", err);
             alert(t("chat_send_error", "Не удалось отправить сообщение"));
@@ -349,4 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     window.dispatchEvent(new Event("duckapp:chat-ready"));
+    window.addEventListener("beforeunload", stopMessagesPolling);
 });
+
+

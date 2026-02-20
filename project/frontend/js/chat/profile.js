@@ -8,7 +8,12 @@ async function fetchProfile() {
         credentials: "include"
     });
 
-    if (!res.ok) throw new Error("Unauthorized");
+    if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const err = new Error(data.detail || "Failed to load profile");
+        err.status = res.status;
+        throw err;
+    }
 
     return await res.json();
 }
@@ -34,8 +39,14 @@ export async function getProfile() {
             : ASSETS_PATH + "avatar_1.png";
     } catch (err) {
         console.error("Profile loading error:", err);
-        profileName.textContent = "Guest";
-        profileAvatar.src = "/assets/avatar_.png";
+
+        if (err?.status === 401 || err?.status === 404) {
+            window.location.replace("./authorization_frame.html");
+            return;
+        }
+
+        profileName.textContent = "";
+        profileAvatar.src = ASSETS_PATH + "avatar_1.png";
         updateStatus("offline");
     }
 

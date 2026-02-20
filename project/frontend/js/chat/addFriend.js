@@ -10,6 +10,7 @@ const errorMessage = document.getElementById("error-message");
 const requestsList = document.getElementById("friend-requests-list");
 const requestsCount = document.getElementById("friend-requests-count");
 const closeButtons = document.querySelectorAll(".close");
+let incomingRequestsTimer = null;
 
 const t = (key, fallback) =>
     window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
@@ -157,7 +158,15 @@ async function loadIncomingRequests() {
         const data = await res.json().catch(() => []);
 
         if (!res.ok) {
-            console.error("Failed to load friend requests:", data?.detail || data);
+            const detail = data?.detail || data;
+            console.error("Failed to load friend requests:", detail);
+            if (res.status === 401 || (res.status === 404 && detail === "User not found")) {
+                if (incomingRequestsTimer) {
+                    clearInterval(incomingRequestsTimer);
+                    incomingRequestsTimer = null;
+                }
+                window.location.replace("./authorization_frame.html");
+            }
             return;
         }
 
@@ -250,4 +259,4 @@ function showSuccess(msg) {
 }
 
 loadIncomingRequests();
-setInterval(loadIncomingRequests, 10000);
+incomingRequestsTimer = setInterval(loadIncomingRequests, 10000);

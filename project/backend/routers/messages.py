@@ -45,7 +45,13 @@ async def get_messages(friend_id: int, current_user=Depends(get_current_user)):
 
                 cursor.execute(
                     """
-                    SELECT sender_id, receiver_id, msg_type, content, created_at
+                    SELECT
+                        sender_id,
+                        receiver_id,
+                        msg_type,
+                        content,
+                        created_at,
+                        CAST(UNIX_TIMESTAMP(created_at) * 1000 AS UNSIGNED) AS created_at_ms
                     FROM direct_messages
                     WHERE (sender_id = %s AND receiver_id = %s)
                         OR (sender_id = %s AND receiver_id = %s)
@@ -67,6 +73,7 @@ async def get_messages(friend_id: int, current_user=Depends(get_current_user)):
                             "type": row["msg_type"],
                             "content": row["content"],
                             "created_at": created_iso,
+                            "created_at_ms": row.get("created_at_ms"),
                         }
                     )
                 return result
@@ -110,10 +117,17 @@ async def send_message(payload: MessageCreate, current_user=Depends(get_current_
                 conn.commit()
 
                 cursor.execute(
-                    "SELECT created_at FROM direct_messages WHERE id = %s",
+                    """
+                    SELECT
+                        created_at,
+                        CAST(UNIX_TIMESTAMP(created_at) * 1000 AS UNSIGNED) AS created_at_ms
+                    FROM direct_messages
+                    WHERE id = %s
+                    """,
                     (cursor.lastrowid,),
                 )
-                created = cursor.fetchone().get("created_at")
+                created_row = cursor.fetchone() or {}
+                created = created_row.get("created_at")
                 if isinstance(created, datetime.datetime):
                     created_iso = created.isoformat()
                 else:
@@ -122,6 +136,7 @@ async def send_message(payload: MessageCreate, current_user=Depends(get_current_
                     "type": msg_type,
                     "content": content,
                     "created_at": created_iso,
+                    "created_at_ms": created_row.get("created_at_ms"),
                     "side": "user",
                 }
         finally:
@@ -157,4 +172,3 @@ async def clear_chat(friend_id: int, current_user=Depends(get_current_user)):
 
     deleted = await asyncio.to_thread(clear)
     return {"ok": True, "deleted": deleted}
-

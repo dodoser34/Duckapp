@@ -254,7 +254,21 @@ async def check_token(request: Request):
         raise HTTPException(status_code=401)
 
     try:
-        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if not username:
+            raise HTTPException(status_code=401)
+
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM registered_users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if not user:
+            raise HTTPException(status_code=401)
+
         return {"status": "ok"}
     except jwt.PyJWTError:
         raise HTTPException(status_code=401)

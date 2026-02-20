@@ -47,7 +47,11 @@ export async function loadFriends() {
 
         const friends = await res.json();
         if (!res.ok) {
-            console.error("Error while loading friends:", friends?.detail || friends);
+            const detail = friends?.detail || friends;
+            console.error("Error while loading friends:", detail);
+            if (res.status === 401 || (res.status === 404 && detail === "User not found")) {
+                window.location.replace("./authorization_frame.html");
+            }
             return;
         }
 
@@ -86,4 +90,3 @@ export async function loadFriends() {
         console.error("Failed to load friends:", err);
     }
 }
-
