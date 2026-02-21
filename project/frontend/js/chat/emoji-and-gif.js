@@ -1,4 +1,5 @@
 import { API_URL } from "../api.js";
+import { ensureI18n, tForPage } from "../i18n.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const page = "main_chat";
@@ -14,35 +15,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const emojiButton = document.getElementById("sendsmile-btn");
     const emojiCloseBtn = document.getElementById("emojiCloseBtn");
     const messageInput = document.getElementById("message-input");
-    let translations = window.translations;
-    let currentLang = window.currentLang;
-
-    function resolveLang(data) {
-        const browserLang = (navigator.language || "ru").slice(0, 2);
-        if (currentLang && data[currentLang]) return currentLang;
-        if (data[browserLang]) return browserLang;
-        if (data.ru) return "ru";
-        return Object.keys(data)[0];
+    try {
+        await ensureI18n();
+    } catch (err) {
+        console.error("Error loading language.json:", err);
     }
 
-    if (!translations) {
-        try {
-            const langRes = await fetch("../../lang/language.json");
-            translations = await langRes.json();
-            window.translations = translations;
-        } catch (err) {
-            console.error("Error loading language.json:", err);
-            translations = {};
-        }
-    }
-
-    if (!currentLang || !translations[currentLang]) {
-        currentLang = resolveLang(translations);
-        window.currentLang = currentLang;
-    }
-
-    const t = (key, fallback) =>
-        translations?.[currentLang]?.[page]?.[key] || fallback;
+    const t = tForPage(page);
 
     function resetGifPanel() {
         gifResults.innerHTML = "";

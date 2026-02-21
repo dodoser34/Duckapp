@@ -1,14 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from routers.auth import get_current_user
-from DataBases.db_manager import get_connection
 import asyncio
 import datetime
 import json
 import os
 import urllib.parse
 import urllib.request
+
 from dotenv import load_dotenv
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+
+from databases.db_manager import get_connection
+from routers.auth import get_current_user
+from routers.common import extract_user_id
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
 load_dotenv()
@@ -59,12 +62,7 @@ async def search_gifs(q: str, limit: int = 25):
 
     def request_gifs():
         params = urllib.parse.urlencode(
-            {
-                "api_key": api_key,
-                "q": query,
-                "limit": safe_limit,
-                "rating": "g",
-            }
+            {"api_key": api_key, "q": query, "limit": safe_limit, "rating": "g"}
         )
         url = f"https://api.giphy.com/v1/gifs/search?{params}"
         req = urllib.request.Request(url, method="GET")
@@ -95,7 +93,7 @@ async def search_gifs(q: str, limit: int = 25):
 
 @router.get("/{friend_id}")
 async def get_messages(friend_id: int, current_user=Depends(get_current_user)):
-    user_id = current_user.get("id") or current_user.get("user_id")
+    user_id = extract_user_id(current_user)
 
     def query():
         conn = get_connection()
@@ -145,7 +143,7 @@ async def get_messages(friend_id: int, current_user=Depends(get_current_user)):
 
 @router.post("")
 async def send_message(payload: MessageCreate, current_user=Depends(get_current_user)):
-    user_id = current_user.get("id") or current_user.get("user_id")
+    user_id = extract_user_id(current_user)
     friend_id = payload.friend_id
     msg_type = (payload.message_type or "text").strip().lower()
     content = (payload.content or "").strip()
@@ -154,6 +152,10 @@ async def send_message(payload: MessageCreate, current_user=Depends(get_current_
         raise HTTPException(status_code=400, detail="Invalid message type")
     if not content:
         raise HTTPException(status_code=400, detail="Empty message")
+    if len(content) > 3000:
+        raise HTTPException(status_code=400, detail="Message is too long")
+    if msg_type == "gif" and not (content.startswith("http://") or content.startswith("https://")):
+        raise HTTPException(status_code=400, detail="Invalid GIF URL")
     if user_id == friend_id:
         raise HTTPException(status_code=400, detail="You cannot message yourself")
 
@@ -203,7 +205,7 @@ async def send_message(payload: MessageCreate, current_user=Depends(get_current_
 
 @router.delete("/{friend_id}")
 async def clear_chat(friend_id: int, current_user=Depends(get_current_user)):
-    user_id = current_user.get("id") or current_user.get("user_id")
+    user_id = extract_user_id(current_user)
 
     def clear():
         conn = get_connection()

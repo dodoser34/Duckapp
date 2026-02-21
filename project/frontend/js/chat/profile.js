@@ -1,6 +1,6 @@
 import { API_URL, ASSETS_PATH } from "../api.js";
-import { setupAvatarChange } from "./changeAvatar.js";
-import { loadFriends } from "./loadFriend.js";
+import { setupAvatarChange } from "./change-avatar.js";
+import { loadFriends } from "./load-friend.js";
 
 const page = "main_chat";
 const t = (key, fallback) =>
@@ -42,7 +42,7 @@ export async function getProfile() {
         console.error("Profile loading error:", err);
 
         if (err?.status === 401 || err?.status === 404) {
-            window.location.replace("./authorization_frame.html");
+            window.location.replace("./authorization-frame.html");
             return;
         }
 

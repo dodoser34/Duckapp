@@ -1,5 +1,5 @@
 import { API_URL, ASSETS_PATH } from "../api.js";
-import { loadFriends } from "./loadFriend.js";
+import { loadFriends } from "./load-friend.js";
 
 const page = "main_chat";
 const profileAddFriendBtn = document.getElementById("profile-add-friend-btn");
@@ -52,8 +52,7 @@ friendSearchInput?.addEventListener("input", () => {
 function normalizeAvatarPath(avatar) {
     if (!avatar) return `${ASSETS_PATH}avatar_2.png`;
     if (avatar.startsWith("http://") || avatar.startsWith("https://")) return avatar;
-    const clean = avatar.split("/").pop();
-    return `${ASSETS_PATH}${clean}`;
+    return `${ASSETS_PATH}${avatar}`;
 }
 
 function statusClass(status) {
@@ -194,7 +193,7 @@ async function loadIncomingRequests() {
                     clearInterval(incomingRequestsTimer);
                     incomingRequestsTimer = null;
                 }
-                window.location.replace("./authorization_frame.html");
+                window.location.replace("./authorization-frame.html");
             }
             return;
         }

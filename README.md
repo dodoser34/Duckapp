@@ -1,36 +1,30 @@
-# DuckApp 🦆
+# DuckApp
 
-<p><strong>DuckApp — a playful and vibrant web messenger</strong></p>
+DuckApp is a lightweight web messenger built with FastAPI, MySQL, and vanilla HTML/CSS/JavaScript.
 
-<p>
-  DuckApp is a lightweight web messenger with a fun “duck-themed” interface:
-  quirky icons, rounded avatars, a soft color palette, and smooth animations.
-</p>
+## Features
 
-<hr>
+- User registration and login with JWT cookie session
+- Profile data with status and avatar
+- Upload custom avatar (stored on server, visible to other users)
+- Friend requests and friends list
+- Direct messages (text and GIF)
+- Multi-language UI via `project/lang/language.json`
 
-<h2>🎯 Main Idea</h2>
-<p>
-  A simple, beautiful, and intuitive messaging app suitable for personal
-  projects, demos, and educational purposes. The focus is on visual uniqueness
-  and smooth user experience.
-</p>
+## Stack
 
-<hr>
+- Backend: Python, FastAPI, PyMySQL
+- Frontend: HTML, CSS, JavaScript (ES modules)
+- Database: MySQL
 
-<h2>✨ Key Features</h2>
-<ul>
-  <li>Chat list with avatars and online/offline statuses</li>
-  <li>Chat window with message history and timestamps</li>
-  <li>Smooth open/close animations for panels</li>
-  <li>API for user registration/authentication and message sending</li>
-</ul>
+## Run
 
-<hr>
+1. Install dependencies:
+   `pip install -r requirements.txt`
 
-<h2>🧭 Tech Stack</h2>
-<ul>
-  <li><strong>Frontend:</strong> HTML, CSS , JavaScript</li>
-  <li><strong>Backend:</strong> Python + FastAPI</li>
-  <li><strong>Database:</strong> MySQL</li>
-</ul>
+2. Configure `.env` with DB and security values
+
+3. Start backend from repository root:
+   `python project/backend/start_app.py`
+
+Backend will serve API and static assets.

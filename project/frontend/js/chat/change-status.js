@@ -1,4 +1,5 @@
 import { API_URL } from "../api.js";
+import { ensureI18n, tForPage } from "../i18n.js";
 
 const profileToggle = document.getElementById("profile-toggle");
 const profilePanel = document.getElementById("profile-panel");
@@ -9,43 +10,8 @@ const profileStatus = document.getElementById("profile-status");
 const statusIndicator = document.getElementById("status-indicator");
 const avatarModal = document.getElementById("avatar-modal");
 const openAvatarModal = document.getElementById("open-avatar-modal");
-const avatarChoices = document.querySelectorAll(".avatar-choice");
-const profileAvatar = document.getElementById("profile-avatar");
-const avatarInput = document.getElementById("avatar-input");
 const page = "main_chat";
-
-let translations = window.translations;
-let currentLang = window.currentLang;
-
-function resolveLang(data) {
-    const browserLang = (navigator.language || "ru").slice(0, 2);
-    if (currentLang && data[currentLang]) return currentLang;
-    if (data[browserLang]) return browserLang;
-    if (data.ru) return "ru";
-    return Object.keys(data)[0];
-}
-
-async function ensureTranslations() {
-    if (!translations) {
-        try {
-            const langRes = await fetch("../../lang/language.json");
-            translations = await langRes.json();
-            window.translations = translations;
-        } catch (err) {
-            console.error("Error loading language.json:", err);
-            translations = {};
-        }
-    }
-
-    if (!currentLang || !translations[currentLang]) {
-        currentLang = resolveLang(translations);
-        window.currentLang = currentLang;
-    }
-}
-
-function t(key, fallback) {
-    return translations?.[currentLang]?.[page]?.[key] || fallback;
-}
+const t = tForPage(page);
 
 const statusKeyByType = {
     online: "profile_status_online",
@@ -60,7 +26,11 @@ const statusFallbackByType = {
 };
 
 (async () => {
-    await ensureTranslations();
+    try {
+        await ensureI18n();
+    } catch (err) {
+        console.error("Error loading language.json:", err);
+    }
     statusBtns.forEach((btn) => {
         const type = btn.dataset.status;
         const key = statusKeyByType[type];
@@ -70,11 +40,11 @@ const statusFallbackByType = {
     });
 })();
 
-profileToggle.addEventListener("click", () => {
+profileToggle?.addEventListener("click", () => {
     profilePanel.classList.toggle("open");
 });
 
-statusBtn.addEventListener("click", () => {
+statusBtn?.addEventListener("click", () => {
     statusPanel.classList.toggle("open");
 });
 
@@ -118,23 +88,4 @@ statusBtns.forEach(btn => {
     });
 });
 
-openAvatarModal.addEventListener("click", () => avatarModal.classList.add("open"));
-
-avatarChoices.forEach(choice => {
-    choice.addEventListener("click", () => {
-        profileAvatar.src = choice.src;
-        avatarModal.classList.remove("open");
-    });
-});
-
-avatarInput.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = ev => {
-            profileAvatar.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
-        avatarModal.classList.remove("open");
-    }
-});
+openAvatarModal?.addEventListener("click", () => avatarModal?.classList.add("open"));

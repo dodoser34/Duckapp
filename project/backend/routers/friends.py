@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
-from routers.auth import get_current_user
 import asyncio
+
 import pymysql
-from DataBases.db_manager import get_connection
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+
+from databases.db_manager import get_connection
+from routers.auth import get_current_user
+from routers.common import extract_user_id
 
 router = APIRouter(prefix="/api/friends", tags=["friends"])
 
@@ -17,10 +20,9 @@ class FriendRequestRespond(BaseModel):
     action: str
 
 
-# Search user by nickname
 @router.get("/search")
 async def search_friend(names: str, current_user=Depends(get_current_user)):
-    current_user_id = current_user.get("id") or current_user.get("user_id")
+    current_user_id = extract_user_id(current_user)
 
     def query():
         conn = get_connection()
@@ -55,7 +57,7 @@ async def search_friend(names: str, current_user=Depends(get_current_user)):
 
 @router.post("/add")
 async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_user)):
-    user_id = current_user.get("id") or current_user.get("user_id")
+    user_id = extract_user_id(current_user)
     friend_id = req.friend_id
 
     if user_id == friend_id:
@@ -117,7 +119,7 @@ async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_use
 
 @router.get("/requests/incoming")
 async def get_incoming_requests(current_user=Depends(get_current_user)):
-    user_id = current_user.get("id") or current_user.get("user_id")
+    user_id = extract_user_id(current_user)
 
     def load_requests():
         conn = get_connection()
@@ -149,7 +151,7 @@ async def get_incoming_requests(current_user=Depends(get_current_user)):
 
 @router.post("/requests/respond")
 async def respond_to_request(req: FriendRequestRespond, current_user=Depends(get_current_user)):
-    user_id = current_user.get("id") or current_user.get("user_id")
+    user_id = extract_user_id(current_user)
     action = (req.action or "").strip().lower()
 
     if action not in {"accept", "reject"}:
@@ -181,7 +183,6 @@ async def respond_to_request(req: FriendRequestRespond, current_user=Depends(get
                     return "rejected"
 
                 cursor.execute("UPDATE friends SET status = 'accepted' WHERE id = %s", (req.request_id,))
-
                 cursor.execute(
                     "SELECT id, status FROM friends WHERE user_id = %s AND friend_id = %s",
                     (user_id, requester_id),
@@ -213,7 +214,7 @@ async def respond_to_request(req: FriendRequestRespond, current_user=Depends(get
 
 @router.delete("/remove/{friend_id}")
 async def remove_friend(friend_id: int, current_user=Depends(get_current_user)):
-    user_id = current_user.get("id") or current_user.get("user_id")
+    user_id = extract_user_id(current_user)
 
     if user_id == friend_id:
         raise HTTPException(status_code=400, detail="You cannot remove yourself")
@@ -244,10 +245,9 @@ async def remove_friend(friend_id: int, current_user=Depends(get_current_user)):
     return {"ok": True, "removed": True}
 
 
-#! Get friends list from DB --------------------
 @router.get("/list")
 async def get_friends(current_user=Depends(get_current_user)):
-    user_id = current_user.get("id") or current_user.get("user_id")
+    user_id = extract_user_id(current_user)
 
     conn = get_connection()
     try:

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../styles/base/register.css">
     <link rel="icon" href="../html/assets/icon.ico" type="image/x-icon">
 
-    <script type="module" src="../js/translatePage.js"></script>
+    <script type="module" src="../js/translate-page.js"></script>
     <script type="module" src="../js/register.js"></script>
 </head>
 
@@ -16,7 +16,7 @@
     <div id="ducks"></div>
 
     <div class="register-container">
-        <a class="logo" href="main_window_frame.html" data-i18n="logo"></a>
+        <a class="logo" href="main-window-frame.html" data-i18n="logo"></a>
         <h2 data-i18n="title"></h2>
 
         <form id="registerForm" autocomplete="on">
@@ -31,13 +31,13 @@
             </div>
 
             <div class="input-group password-group">
-                <input type="password" id="password" name="password" data-i18n="password_input" minlength="3" required>
+                <input type="password" id="password" name="password" data-i18n="password_input" minlength="8" required>
                 <label for="password" data-i18n="password"></label>
                 <button type="button" class="password-toggle" data-target="password" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
             </div>
 
             <div class="input-group password-group">
-                <input type="password" id="confirmPassword" name="confirmPassword" data-i18n="confirm_password_input" minlength="3" required>
+                <input type="password" id="confirmPassword" name="confirmPassword" data-i18n="confirm_password_input" minlength="8" required>
                 <label for="confirmPassword" data-i18n="confirm_password"></label>
                 <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
             </div>
@@ -46,7 +46,7 @@
                 <button type="submit" id="submit" data-i18n="registrationBtn"></button>
                 <span class="haveAnAccountLogin">
                     <span data-i18n="haveAnAccountLogin"></span>
-                    <a href="authorization_frame.html" data-i18n="haveAnAccountLogin_link"></a>
+                    <a href="authorization-frame.html" data-i18n="haveAnAccountLogin_link"></a>
                 </span>
             </div>
 

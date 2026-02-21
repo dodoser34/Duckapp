@@ -33,8 +33,7 @@ function statusColor(status) {
 function normalizeAvatarPath(avatar) {
     if (!avatar) return `${ASSETS_PATH}avatar_2.png`;
     if (avatar.startsWith("http://") || avatar.startsWith("https://")) return avatar;
-    const clean = avatar.split("/").pop();
-    return `${ASSETS_PATH}${clean}`;
+    return `${ASSETS_PATH}${avatar}`;
 }
 
 function createFriendListItem(friend, displayName, avatarSrc, status) {
@@ -93,7 +92,7 @@ export async function loadFriends() {
             const detail = friends?.detail || friends;
             console.error("Error while loading friends:", detail);
             if (res.status === 401 || (res.status === 404 && detail === "User not found")) {
-                window.location.replace("./authorization_frame.html");
+                window.location.replace("./authorization-frame.html");
             }
             return;
         }

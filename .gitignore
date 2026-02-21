@@ -214,3 +214,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# DuckApp runtime uploads
+project/frontend/html/assets/user_avatars/*

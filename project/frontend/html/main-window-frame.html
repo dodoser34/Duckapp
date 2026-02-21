@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../styles/base/main.css">
 
     <script type="module" src="../js/main.js" defer></script>
-    <script type="module" src="../js/translatePage.js" defer></script>
+    <script type="module" src="../js/translate-page.js" defer></script>
 </head>
 
 <body data-page="main_page">
@@ -28,7 +28,7 @@
     <div class="hero-text">
         <h1 data-i18n="hero-text_h1"></h1>
         <p data-i18n="hero-text_p"></p>
-        <button onclick="location.href='authorization_frame.html'" data-i18n="hero-text_button"></button>
+        <button id="start-chat-btn" data-i18n="hero-text_button"></button>
     </div>
 
     <div>
@@ -88,6 +88,35 @@
 </section>
 
 <footer data-i18n="footer"></footer>
+
+<button id="site-helper-toggle" class="site-helper-toggle" aria-label="Open help and feedback">?</button>
+<aside id="site-helper-panel" class="site-helper-panel" aria-hidden="true">
+    <div class="site-helper-header">
+        <h3>Отзывы и помощь</h3>
+        <button id="site-helper-close" class="site-helper-close" aria-label="Close panel">✕</button>
+    </div>
+    <div class="site-helper-content">
+        <section>
+            <h4>Отзывы о сайте</h4>
+            <p>Интерфейс стал быстрее и чище, но мы продолжаем улучшать мобильную адаптацию и стабильность анимаций.</p>
+        </section>
+        <section>
+            <h4>Известные проблемы</h4>
+            <ul>
+                <li>При медленном интернете GIF-поиск может загружаться дольше обычного.</li>
+                <li>В старых браузерах возможны мелкие визуальные отличия в модальных окнах.</li>
+            </ul>
+        </section>
+        <section>
+            <h4>Помощь по навигации</h4>
+            <ul>
+                <li>Кнопка «Начать общение» переводит на вход в аккаунт.</li>
+                <li>Раздел «О проекте» открывает описание возможностей DuckApp.</li>
+                <li>Раздел «Команда» показывает авторов и их контакты.</li>
+            </ul>
+        </section>
+    </div>
+</aside>
 
 <div id="aboutSiteModal" class="modal">
     <div class="modal-content">

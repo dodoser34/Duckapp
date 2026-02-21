@@ -1,5 +1,5 @@
 import { API_URL } from "../api.js";
-import { loadFriends } from "./loadFriend.js";
+import { loadFriends } from "./load-friend.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const page = "main_chat";
