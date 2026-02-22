@@ -10,6 +10,7 @@ const profileStatus = document.getElementById("profile-status");
 const statusIndicator = document.getElementById("status-indicator");
 const avatarModal = document.getElementById("avatar-modal");
 const openAvatarModal = document.getElementById("open-avatar-modal");
+const chatList = profileToggle?.closest(".chat-list") || null;
 const page = "main_chat";
 const t = tForPage(page);
 
@@ -29,7 +30,7 @@ const statusFallbackByType = {
     try {
         await ensureI18n();
     } catch (err) {
-        console.error("Error loading language.json:", err);
+        console.error("Error loading translations:", err);
     }
     statusBtns.forEach((btn) => {
         const type = btn.dataset.status;
@@ -40,8 +41,24 @@ const statusFallbackByType = {
     });
 })();
 
+function syncProfilePanelPosition() {
+    if (!profileToggle || !profilePanel || !chatList) return;
+
+    const top = profileToggle.offsetTop + profileToggle.offsetHeight + 8;
+    profilePanel.style.top = `${top}px`;
+    profilePanel.style.left = `${profileToggle.offsetLeft}px`;
+    profilePanel.style.width = `${profileToggle.offsetWidth}px`;
+    profilePanel.style.right = "auto";
+}
+
 profileToggle?.addEventListener("click", () => {
+    syncProfilePanelPosition();
     profilePanel.classList.toggle("open");
+});
+
+window.addEventListener("resize", () => {
+    if (!profilePanel?.classList.contains("open")) return;
+    syncProfilePanelPosition();
 });
 
 statusBtn?.addEventListener("click", () => {

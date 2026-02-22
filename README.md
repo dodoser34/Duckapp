@@ -9,7 +9,7 @@ DuckApp is a lightweight web messenger built with FastAPI, MySQL, and vanilla HT
 - Upload custom avatar (stored on server, visible to other users)
 - Friend requests and friends list
 - Direct messages (text and GIF)
-- Multi-language UI via `project/lang/language.json`
+- Multi-language UI via `project/lang/<lang>.json`
 
 ## Stack
 

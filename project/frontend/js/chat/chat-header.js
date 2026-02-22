@@ -23,7 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteFriendConfirm = document.getElementById("delete-friend-confirm");
 
     function t(key, fallback) {
-        return window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
+        const lang = window.currentLang;
+        const defaultLang = window.__duckappLangIndex?.default || "en";
+        return (
+            window.translations?.[lang]?.[page]?.[key] ??
+            window.translations?.[defaultLang]?.[page]?.[key] ??
+            fallback
+        );
     }
 
     function getSelected() {

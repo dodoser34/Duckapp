@@ -5,8 +5,15 @@ import { initDucks } from "./ducks.js";
 const loginForm = document.getElementById("loginForm");
 const msg = document.getElementById("errorMsg");
 const page = document.body.getAttribute("data-page") || "authorization";
-const t = (key, fallback) =>
-    window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
+const t = (key, fallback) => {
+    const lang = window.currentLang;
+    const defaultLang = window.__duckappLangIndex?.default || "en";
+    return (
+        window.translations?.[lang]?.[page]?.[key] ??
+        window.translations?.[defaultLang]?.[page]?.[key] ??
+        fallback
+    );
+};
 
 function setupPasswordToggles() {
     const icons = {

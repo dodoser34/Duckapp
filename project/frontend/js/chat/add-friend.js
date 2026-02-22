@@ -14,8 +14,15 @@ const closeButtons = addFriendModal
     : [];
 let incomingRequestsTimer = null;
 
-const t = (key, fallback) =>
-    window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
+const t = (key, fallback) => {
+    const lang = window.currentLang;
+    const defaultLang = window.__duckappLangIndex?.default || "en";
+    return (
+        window.translations?.[lang]?.[page]?.[key] ??
+        window.translations?.[defaultLang]?.[page]?.[key] ??
+        fallback
+    );
+};
 
 closeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {

@@ -129,6 +129,20 @@ def init_db():
         """
     )
 
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS site_feedback (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nickname VARCHAR(30) NOT NULL,
+            problem_type ENUM('bug','ui','performance','security','other') NOT NULL,
+            description TEXT NOT NULL,
+            reproduction TEXT NOT NULL,
+            recommendation TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+    )
+
     conn.commit()
     cursor.close()
     conn.close()

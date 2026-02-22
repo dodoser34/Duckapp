@@ -1,90 +1,194 @@
+:root {
+  --chat-font: "Bahnschrift", "Trebuchet MS", "Segoe UI", sans-serif;
+  --bg-start: #0a2138;
+  --bg-mid: #123b5d;
+  --bg-end: #1f5778;
+  --surface-deep: rgba(9, 20, 34, 0.86);
+  --surface-mid: rgba(16, 33, 54, 0.76);
+  --surface-soft: rgba(28, 52, 79, 0.62);
+  --surface-card: rgba(255, 255, 255, 0.08);
+  --surface-card-strong: rgba(255, 255, 255, 0.14);
+  --stroke-soft: rgba(200, 224, 247, 0.2);
+  --stroke-strong: rgba(214, 234, 253, 0.34);
+  --text-main: #f4f9ff;
+  --text-soft: #b9cee3;
+  --accent: #ff9845;
+  --accent-strong: #ffc06a;
+  --accent-cool: #59c3ff;
+  --ok: #2ecc71;
+  --warn: #e74c3c;
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 10px;
+  --shadow-main: 0 24px 60px rgba(2, 9, 20, 0.56);
+  --shadow-soft: 0 12px 28px rgba(4, 11, 24, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #4e98ff, #89f7fe);
-  font-family: "Segoe UI", Arial, sans-serif;
+  padding: 16px;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(102, 204, 255, 0.22), transparent 44%),
+    radial-gradient(circle at 84% 76%, rgba(255, 179, 94, 0.3), transparent 46%),
+    linear-gradient(140deg, var(--bg-start) 0%, var(--bg-mid) 48%, var(--bg-end) 100%);
+  color: var(--text-main);
+  font-family: var(--chat-font);
   overflow: hidden;
+  position: relative;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 44vmax;
+  height: 44vmax;
+  border-radius: 50%;
+  filter: blur(64px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  top: -20vmax;
+  right: -12vmax;
+  background: #42c4ff;
+}
+
+body::after {
+  bottom: -23vmax;
+  left: -16vmax;
+  background: #ff9e50;
 }
 
 .chat-wrapper {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1240px;
   height: 90vh;
-  max-height: 740px;
-  border-radius: 16px;
+  max-height: 760px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
   display: flex;
   flex-direction: row;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  background: rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgb(251, 255, 0);
+  background: linear-gradient(155deg, rgba(9, 22, 36, 0.88), rgba(16, 36, 58, 0.72));
+  border: 1px solid var(--stroke-soft);
+  box-shadow: var(--shadow-main);
+  position: relative;
+  z-index: 2;
+}
+
+.chat-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: calc(var(--radius-xl) - 2px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
 }
 
 .chat-box {
   flex: 3;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgb(251, 255, 0);
+  border-right: 1px solid var(--stroke-soft);
+  min-width: 0;
 }
 
 .chat-messages {
   flex: 1;
-  padding: 15px;
-  overflow-y: auto;
-  background: rgba(0,0,0,0.7);
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .chat-list {
   flex: 1;
-  background: rgba(0,0,0,0.35);
+  min-width: 310px;
+  max-width: 360px;
+  --chat-list-pad: 16px;
+  --profile-row-h: 86px;
+  background: linear-gradient(170deg, rgba(16, 34, 55, 0.88), rgba(11, 25, 42, 0.8));
   display: flex;
   flex-direction: column;
   padding: 16px;
-  gap: 4px;
+  gap: 8px;
   overflow-y: auto;
+  position: relative;
 }
 
-.avatar-wrapper { 
+.avatar-wrapper {
   position: relative;
   width: 60px;
   height: 60px;
 }
 
-.avatar { 
+.avatar {
   width: 60px;
   height: 60px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 16px rgba(5, 13, 24, 0.35);
 }
 
 .footer {
   margin-top: auto;
-  padding: 12px;
+  padding: 12px 8px 6px;
   font-size: 12px;
-  color: #bbb;
+  color: var(--text-soft);
   text-align: center;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 #ducks {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
 }
 
 .duck {
   position: absolute;
   font-size: 40px;
-  opacity: 0.85;
+  opacity: 0.82;
   user-select: none;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 980px) {
+  body {
+    padding: 0;
+  }
+
+  .chat-wrapper {
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .chat-wrapper::after {
+    border-radius: 0;
+  }
+
+  .chat-list {
+    --chat-list-pad: 12px;
+    --profile-row-h: 84px;
+    min-width: 280px;
+    max-width: 320px;
+    padding: 12px;
+  }
 }

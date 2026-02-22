@@ -1,46 +1,95 @@
-const DEFAULT_DUCK_COUNT = 8;
-const DUCK_EMOJI = "\uD83E\uDD86";
+const DUCK_EMOJI = "🦆";
 
-export function initDucks(duckCount = DEFAULT_DUCK_COUNT) {
-    const ducksContainer = document.getElementById("ducks");
-    if (!ducksContainer) return;
+if (!document.getElementById("duck-style")) {
+    const style = document.createElement("style");
+    style.id = "duck-style";
+    style.textContent = `
+#ducks {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
 
-    function spawnDuck() {
-        const duck = document.createElement("div");
-        duck.classList.add("duck");
-        duck.textContent = DUCK_EMOJI;
+.duck {
+    position: absolute;
+    will-change: transform;
+}
+`;
+    document.head.appendChild(style);
+}
 
-        const size = Math.random() * 20 + 30;
-        duck.style.fontSize = `${size}px`;
+export function initDucks(count = null) {
+    if (count === null) count = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
 
-        const top = Math.random() * 90;
-        duck.style.top = `${top}vh`;
+    let container = document.getElementById("ducks");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "ducks";
+        document.body.appendChild(container);
+    }
 
-        const speed = Math.random() * 6 + 6;
-        const direction = Math.random() < 0.5 ? "right" : "left";
+    const ducks = [];
 
-        if (direction === "right") {
-            duck.style.left = "-80px";
-            duck.style.transform = "scaleX(-1)";
-        } else {
-            duck.style.left = "100vw";
-            duck.style.transform = "scaleX(1)";
+    for (let i = 0; i < count; i++) {
+        const el = document.createElement("div");
+        el.className = "duck";
+        el.textContent = DUCK_EMOJI;
+
+        el.style.fontSize = `${Math.random() * 20 + 30}px`;
+
+        const y = Math.random() * (window.innerHeight * 0.7) + window.innerHeight * 0.15;
+        const dir = Math.random() < 0.5 ? 1 : -1;
+
+        const duck = {
+            el,
+            x: Math.random() * window.innerWidth,
+            y,
+            dir,
+            speed: Math.random() * 40 + 50,
+            waveAmp: Math.random() * 6 + 4,
+            waveSpeed: Math.random() * 1.5 + 0.8,
+            phase: Math.random() * Math.PI * 2,
+            flip: dir === 1 ? -1 : 1
+        };
+
+        container.appendChild(el);
+        ducks.push(duck);
+    }
+
+    let lastTime = performance.now();
+
+    function animate(time) {
+        const dt = (time - lastTime) / 1000;
+        lastTime = time;
+
+        const maxX = window.innerWidth - 40;
+
+        for (const d of ducks) {
+            d.x += d.dir * d.speed * dt;
+            d.phase += d.waveSpeed * dt;
+
+            if (d.x <= 0) {
+                d.x = 0;
+                d.dir = 1;
+                d.flip = -1;
+            } else if (d.x >= maxX) {
+                d.x = maxX;
+                d.dir = -1;
+                d.flip = 1;
+            }
+
+            const waveY = Math.sin(d.phase) * d.waveAmp;
+
+            d.el.style.transform = `
+                translate(${d.x}px, ${d.y + waveY}px)
+                scaleX(${d.flip})
+                rotate(${Math.sin(d.phase) * 2}deg)
+            `;
         }
 
-        ducksContainer.appendChild(duck);
-
-        requestAnimationFrame(() => {
-            duck.style.transition = `left ${speed}s linear`;
-            duck.style.left = direction === "right" ? "110vw" : "-100px";
-        });
-
-        setTimeout(() => {
-            duck.remove();
-            spawnDuck();
-        }, speed * 1000);
+        requestAnimationFrame(animate);
     }
 
-    for (let i = 0; i < duckCount; i++) {
-        setTimeout(spawnDuck, i * 1000);
-    }
+    requestAnimationFrame(animate);
 }

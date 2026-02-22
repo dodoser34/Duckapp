@@ -14,11 +14,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const emojiPanel = document.getElementById("emoji-panel");
     const emojiButton = document.getElementById("sendsmile-btn");
     const emojiCloseBtn = document.getElementById("emojiCloseBtn");
+    const emojiCategories = document.getElementById("emoji-categories");
+    const emojiScroll = document.getElementById("emoji-scroll");
     const messageInput = document.getElementById("message-input");
     try {
         await ensureI18n();
     } catch (err) {
-        console.error("Error loading language.json:", err);
+        console.error("Error loading translations:", err);
     }
 
     const t = tForPage(page);
@@ -42,13 +44,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    const tabContainer = document.createElement("div");
-    tabContainer.classList.add("emoji-tabs-horizontal");
-    emojiPanel.appendChild(tabContainer);
+    if (!emojiCategories || !emojiScroll) {
+        return;
+    }
 
-    const scrollContainer = document.createElement("div");
-    scrollContainer.classList.add("emoji-scroll");
-    emojiPanel.appendChild(scrollContainer);
+    const tabContainer = emojiCategories;
+    tabContainer.className = "emoji-tabs-horizontal";
+    tabContainer.innerHTML = "";
+
+    const scrollContainer = emojiScroll;
+    scrollContainer.className = "emoji-scroll";
+    scrollContainer.innerHTML = "";
 
     const grids = {};
     let firstCategory = null;

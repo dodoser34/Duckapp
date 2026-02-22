@@ -34,7 +34,7 @@
     <div>
         <div class="slider">
             <div class="slides">
-                <img src="assets/logo_main_window.png" alt="Duck">
+                <img src="assets/logo_main_window.png" data-i18n-attr="alt:main_logo_alt">
             </div>
         </div>
         <div class="dots"></div>
@@ -61,7 +61,7 @@
     </div>
 </section>
 
-<section class="hero">
+<section class="hero hero-qr">
     <div class="qhero-text">
         <p data-i18n="qhero-text_p"></p>
     </div>
@@ -69,7 +69,7 @@
     <div>
         <div class="sliderq">
             <div class="slidesq">
-                <img src="assets/qr-code.png" alt="QR code">
+                <img src="assets/qr-code.png" data-i18n-attr="alt:qr_code_alt">
             </div>
         </div>
     </div>
@@ -77,46 +77,172 @@
 
 <section class="stats" id="stats">
     <div class="stat">
-        <h3 data-counter="17362">0</h3>
+        <h3 id="active-users-counter" data-counter="17362">0</h3>
         <p data-i18n="Auhero-text"></p>
     </div>
 
     <div class="stat">
-        <h3 data-counter="93.7" data-decimal="true">0</h3>
+        <h3 id="uptime-counter" data-counter="93.7" data-decimal="true">0</h3>
         <p data-i18n="Uphero-text"></p>
+    </div>
+</section>
+
+<section class="feedback-section" id="feedback-section">
+    <div class="feedback-card">
+        <h2 data-i18n="feedback_title"></h2>
+        <p class="feedback-subtitle" data-i18n="feedback_subtitle"></p>
+
+        <form id="feedback-form" class="feedback-form">
+            <label for="feedback-nickname" data-i18n="feedback_nickname_label"></label>
+            <input
+                type="text"
+                id="feedback-nickname"
+                name="nickname"
+                maxlength="30"
+                required
+                data-i18n="feedback_nickname_placeholder"
+            >
+
+            <label for="feedback-problem-type" data-i18n="feedback_problem_type_label"></label>
+            <div class="feedback-select-wrap" id="feedback-problem-type-wrap">
+                <select id="feedback-problem-type" name="problem_type" required>
+                    <option value="" selected disabled data-i18n="feedback_problem_type_placeholder"></option>
+                    <option value="bug" data-i18n="feedback_problem_type_bug"></option>
+                    <option value="ui" data-i18n="feedback_problem_type_ui"></option>
+                    <option value="performance" data-i18n="feedback_problem_type_performance"></option>
+                    <option value="security" data-i18n="feedback_problem_type_security"></option>
+                    <option value="other" data-i18n="feedback_problem_type_other"></option>
+                </select>
+                <button
+                    id="feedback-problem-type-trigger"
+                    class="feedback-select-trigger"
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                ></button>
+                <ul id="feedback-problem-type-menu" class="feedback-select-menu" role="listbox"></ul>
+            </div>
+
+            <label for="feedback-description" data-i18n="feedback_description_label"></label>
+            <textarea
+                id="feedback-description"
+                name="description"
+                rows="4"
+                maxlength="2000"
+                required
+                data-i18n="feedback_description_placeholder"
+            ></textarea>
+
+            <label for="feedback-reproduce" data-i18n="feedback_reproduce_label"></label>
+            <textarea
+                id="feedback-reproduce"
+                name="reproduction"
+                rows="4"
+                maxlength="2000"
+                required
+                data-i18n="feedback_reproduce_placeholder"
+            ></textarea>
+
+            <label for="feedback-recommendation" data-i18n="feedback_recommendation_label"></label>
+            <textarea
+                id="feedback-recommendation"
+                name="recommendation"
+                rows="4"
+                maxlength="2000"
+                required
+                data-i18n="feedback_recommendation_placeholder"
+            ></textarea>
+
+            <div class="feedback-form-actions">
+                <button id="feedback-submit" type="submit" data-i18n="feedback_submit_btn"></button>
+                <button id="feedback-open-list" type="button" data-i18n="feedback_view_btn"></button>
+            </div>
+            <div id="feedback-status" class="feedback-status" aria-live="polite"></div>
+        </form>
     </div>
 </section>
 
 <footer data-i18n="footer"></footer>
 
-<button id="site-helper-toggle" class="site-helper-toggle" aria-label="Open help and feedback">?</button>
+<button
+    id="site-helper-toggle"
+    class="site-helper-toggle"
+    data-i18n="site_helper_toggle"
+    data-i18n-attr="aria-label:site_helper_toggle_aria;title:site_helper_toggle_aria"
+></button>
+
 <aside id="site-helper-panel" class="site-helper-panel" aria-hidden="true">
     <div class="site-helper-header">
-        <h3>Отзывы и помощь</h3>
-        <button id="site-helper-close" class="site-helper-close" aria-label="Close panel">✕</button>
+        <h3 data-i18n="site_helper_panel_title"></h3>
+        <button
+            id="site-helper-close"
+            class="site-helper-close"
+            data-i18n="site_helper_close"
+            data-i18n-attr="aria-label:site_helper_close_aria;title:site_helper_close_aria"
+        ></button>
     </div>
+
     <div class="site-helper-content">
-        <section>
-            <h4>Отзывы о сайте</h4>
-            <p>Интерфейс стал быстрее и чище, но мы продолжаем улучшать мобильную адаптацию и стабильность анимаций.</p>
-        </section>
-        <section>
-            <h4>Известные проблемы</h4>
+        <section class="site-helper-block">
+            <h4 data-i18n="site_helper_registration_title"></h4>
             <ul>
-                <li>При медленном интернете GIF-поиск может загружаться дольше обычного.</li>
-                <li>В старых браузерах возможны мелкие визуальные отличия в модальных окнах.</li>
+                <li data-i18n="site_helper_registration_step_1"></li>
+                <li data-i18n="site_helper_registration_step_2"></li>
+                <li data-i18n="site_helper_registration_step_3"></li>
             </ul>
         </section>
-        <section>
-            <h4>Помощь по навигации</h4>
+
+        <section class="site-helper-block">
+            <h4 data-i18n="site_helper_navigation_title"></h4>
             <ul>
-                <li>Кнопка «Начать общение» переводит на вход в аккаунт.</li>
-                <li>Раздел «О проекте» открывает описание возможностей DuckApp.</li>
-                <li>Раздел «Команда» показывает авторов и их контакты.</li>
+                <li data-i18n="site_helper_navigation_item_1"></li>
+                <li data-i18n="site_helper_navigation_item_2"></li>
+                <li data-i18n="site_helper_navigation_item_3"></li>
             </ul>
         </section>
+
+        <section class="site-helper-block">
+            <h4 data-i18n="site_helper_more_title"></h4>
+            <ul>
+                <li data-i18n="site_helper_more_item_1"></li>
+                <li data-i18n="site_helper_more_item_2"></li>
+                <li data-i18n="site_helper_more_item_3"></li>
+            </ul>
+        </section>
+
+        <div class="site-helper-actions">
+            <button
+                id="site-helper-start-chat"
+                class="site-helper-action-btn primary"
+                type="button"
+                data-i18n="hero-text_button"
+            ></button>
+            <button
+                id="site-helper-open-feedback-form"
+                class="site-helper-action-btn"
+                type="button"
+                data-i18n="feedback_submit_btn"
+            ></button>
+            <button
+                id="site-helper-open-feedback-list"
+                class="site-helper-action-btn ghost"
+                type="button"
+                data-i18n="feedback_view_btn"
+            ></button>
+        </div>
     </div>
 </aside>
+
+<div id="feedbackListModal" class="modal feedback-list-modal">
+    <div class="modal-content feedback-list-modal-content">
+        <span class="close" data-i18n="modal_close">✕</span>
+        <h2 data-i18n="feedback_view_title"></h2>
+        <p class="feedback-list-subtitle" data-i18n="feedback_view_subtitle"></p>
+        <div id="feedback-list-body" class="feedback-list-body"></div>
+    </div>
+</div>
+
+
 
 <div id="aboutSiteModal" class="modal">
     <div class="modal-content">
@@ -146,16 +272,42 @@
             <h3 data-i18n="aboutUsModal-member1_name"></h3>
             <p data-i18n="aboutUsModal-member1_role"></p>
             <p data-i18n="aboutUsModal-member1_text"></p>
-            <a href="https://github.com/dodoser34" target="_blank" data-i18n="aboutUsModal-member1_github" style="color: blueviolet;"></a>
-            <a href="https://t.me/Dodoser34" target="_blank" data-i18n="aboutUsModal-member1_telegram"></a>
+            <a
+                href="https://github.com/dodoser34"
+                class="team-link-primary"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutUsModal-member1_github"
+                data-i18n-attr="aria-label:aboutUsModal-member1_github_aria;title:aboutUsModal-member1_github_aria"
+            ></a>
+            <a
+                href="https://t.me/Dodoser34"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutUsModal-member1_telegram"
+                data-i18n-attr="aria-label:aboutUsModal-member1_telegram_aria;title:aboutUsModal-member1_telegram_aria"
+            ></a>
         </div>
 
         <div class="team-member">
             <h3 data-i18n="aboutUsModal-member2_name"></h3>
             <p data-i18n="aboutUsModal-member2_role"></p>
             <p data-i18n="aboutUsModal-member2_text"></p>
-            <a href="https://github.com/Teych-Man" target="_blank" data-i18n="aboutUsModal-member2_github" style="color: blueviolet;"></a>
-            <a href="https://t.me/Teych_Man" target="_blank" data-i18n="aboutUsModal-member2_telegram"></a>
+            <a
+                href="https://github.com/Teych-Man"
+                class="team-link-primary"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutUsModal-member2_github"
+                data-i18n-attr="aria-label:aboutUsModal-member2_github_aria;title:aboutUsModal-member2_github_aria"
+            ></a>
+            <a
+                href="https://t.me/Teych_Man"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-i18n="aboutUsModal-member2_telegram"
+                data-i18n-attr="aria-label:aboutUsModal-member2_telegram_aria;title:aboutUsModal-member2_telegram_aria"
+            ></a>
         </div>
     </div>
 </div>

@@ -5,8 +5,24 @@ import { initDucks } from "./ducks.js";
 const registerForm = document.getElementById("registerForm");
 const msg = document.getElementById("errorMsg");
 const page = document.body.getAttribute("data-page") || "register";
-const t = (key, fallback) =>
-    window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
+const passwordInput = document.getElementById("password");
+const confirmPasswordInput = document.getElementById("confirmPassword");
+const passwordChecklistItems = Array.from(document.querySelectorAll("#passwordChecklist li"));
+const passwordStrengthValue = document.getElementById("passwordStrengthValue");
+const passwordStrengthFill = document.getElementById("passwordStrengthFill");
+const passwordMatchState = document.getElementById("passwordMatchState");
+const passwordCapsLockHint = document.getElementById("passwordCapsLockHint");
+const confirmPasswordCapsLockHint = document.getElementById("confirmPasswordCapsLockHint");
+
+const t = (key, fallback) => {
+    const lang = window.currentLang;
+    const defaultLang = window.__duckappLangIndex?.default || "en";
+    return (
+        window.translations?.[lang]?.[page]?.[key] ??
+        window.translations?.[defaultLang]?.[page]?.[key] ??
+        fallback
+    );
+};
 
 function setupPasswordToggles() {
     const icons = {
@@ -43,8 +59,130 @@ function setupPasswordToggles() {
     });
 }
 
+function getPasswordChecks(value) {
+    const password = String(value || "");
+    return {
+        length: password.length >= 8,
+        digit: /[0-9]/.test(password),
+        upper: /[A-ZА-ЯЁ]/.test(password),
+        special: /[^A-Za-z0-9\s]/.test(password),
+    };
+}
+
+function resolvePasswordStrength(password, checks) {
+    if (!password) {
+        return {
+            state: "empty",
+            text: t("password_strength_empty", "Not set"),
+            width: 0,
+        };
+    }
+
+    const passed = Object.values(checks).filter(Boolean).length;
+    if (passed <= 2) {
+        return {
+            state: "weak",
+            text: t("password_strength_weak", "Weak"),
+            width: 38,
+        };
+    }
+    if (passed === 3) {
+        return {
+            state: "medium",
+            text: t("password_strength_medium", "Medium"),
+            width: 68,
+        };
+    }
+    return {
+        state: "strong",
+        text: t("password_strength_strong", "Strong"),
+        width: 100,
+    };
+}
+
+function renderPasswordChecklist(checks) {
+    passwordChecklistItems.forEach((item) => {
+        const rule = item.dataset.rule;
+        if (!rule) return;
+        item.dataset.ok = checks[rule] ? "1" : "0";
+    });
+}
+
+function renderPasswordStrength(password, checks) {
+    if (!passwordStrengthValue || !passwordStrengthFill) return;
+    const { state, text, width } = resolvePasswordStrength(password, checks);
+    passwordStrengthValue.dataset.state = state;
+    passwordStrengthValue.textContent = text;
+    passwordStrengthFill.dataset.state = state;
+    passwordStrengthFill.style.width = `${width}%`;
+}
+
+function renderPasswordMatch() {
+    if (!passwordMatchState || !passwordInput || !confirmPasswordInput) return;
+
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+
+    let state = "idle";
+    let text = t("password_match_idle", "Repeat password to check match");
+
+    if (confirmPassword) {
+        if (password === confirmPassword) {
+            state = "match";
+            text = t("password_match_yes", "Passwords match");
+        } else {
+            state = "mismatch";
+            text = t("password_match_no", "Passwords do not match");
+        }
+    }
+
+    passwordMatchState.dataset.state = state;
+    passwordMatchState.textContent = text;
+}
+
+function updatePasswordAssistant() {
+    if (!passwordInput) return;
+    const checks = getPasswordChecks(passwordInput.value);
+    renderPasswordChecklist(checks);
+    renderPasswordStrength(passwordInput.value, checks);
+    renderPasswordMatch();
+}
+
+function bindCapsLockHint(input, hintEl) {
+    if (!input || !hintEl || hintEl.dataset.bound === "1") return;
+
+    const updateHint = (event) => {
+        const isCapsLockOn = Boolean(event?.getModifierState?.("CapsLock"));
+        hintEl.hidden = !isCapsLockOn;
+    };
+
+    input.addEventListener("keydown", updateHint);
+    input.addEventListener("keyup", updateHint);
+    input.addEventListener("focus", updateHint);
+    input.addEventListener("blur", () => {
+        hintEl.hidden = true;
+    });
+
+    hintEl.dataset.bound = "1";
+}
+
+function setupPasswordAssistant() {
+    if (!passwordInput || !confirmPasswordInput) return;
+
+    if (passwordInput.dataset.assistantBound !== "1") {
+        passwordInput.addEventListener("input", updatePasswordAssistant);
+        confirmPasswordInput.addEventListener("input", renderPasswordMatch);
+        passwordInput.dataset.assistantBound = "1";
+    }
+
+    bindCapsLockHint(passwordInput, passwordCapsLockHint);
+    bindCapsLockHint(confirmPasswordInput, confirmPasswordCapsLockHint);
+    updatePasswordAssistant();
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     setupPasswordToggles();
+    setupPasswordAssistant();
     const res = await getSession();
     if (res.ok) {
         window.location.replace("main-chat.html");
@@ -53,6 +191,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 window.addEventListener("duckapp:translations-ready", () => {
     setupPasswordToggles();
+    setupPasswordAssistant();
 });
 
 registerForm.addEventListener("submit", async (e) => {
@@ -62,6 +201,7 @@ registerForm.addEventListener("submit", async (e) => {
     const email = registerForm.email.value.trim();
     const password = registerForm.password.value;
     const confirmPassword = registerForm.confirmPassword.value;
+    updatePasswordAssistant();
 
     if (password !== confirmPassword) {
         msg.textContent = "Error: " + t("password_mismatch_error", "Passwords do not match");

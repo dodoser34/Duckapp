@@ -1,5 +1,6 @@
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,7 +8,10 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from databases import db_manager as db
-from routers import auth, friends, messages, profile
+from routers import auth, common, feedback, friends, messages, profile
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+ASSETS_DIR = BASE_DIR / "frontend" / "html" / "assets"
 
 
 def _parse_hosts() -> list[str]:
@@ -60,11 +64,13 @@ async def add_security_headers(request, call_next):
 
 
 app.include_router(auth.router, prefix="/api/auth")
+app.include_router(common.router)
 app.include_router(profile.router, prefix="/api")
 app.include_router(friends.router)
 app.include_router(messages.router)
+app.include_router(feedback.router)
 
-app.mount("/assets", StaticFiles(directory=r"project/frontend/html/assets"), name="assets")
+app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
 if __name__ == "__main__":
     import uvicorn

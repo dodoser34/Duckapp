@@ -2,10 +2,19 @@ import { API_URL, ASSETS_PATH } from "../api.js";
 
 const page = "main_chat";
 const ALIASES_KEY = "duckapp_chat_aliases";
+const FRIENDS_POLL_INTERVAL_MS = 10000;
 const friendsContainer = document.querySelector(".chat-list-items");
+let friendsLoadInFlight = false;
+let friendsPollTimer = null;
 
 function t(key, fallback) {
-    return window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
+    const lang = window.currentLang;
+    const defaultLang = window.__duckappLangIndex?.default || "en";
+    return (
+        window.translations?.[lang]?.[page]?.[key] ??
+        window.translations?.[defaultLang]?.[page]?.[key] ??
+        fallback
+    );
 }
 
 function getAliases() {
@@ -81,6 +90,8 @@ function createFriendListItem(friend, displayName, avatarSrc, status) {
 
 export async function loadFriends() {
     if (!friendsContainer) return;
+    if (friendsLoadInFlight) return;
+    friendsLoadInFlight = true;
 
     try {
         const res = await fetch(`${API_URL}/api/friends/list`, {
@@ -112,10 +123,35 @@ export async function loadFriends() {
         window.dispatchEvent(new Event("duckapp:friends-updated"));
     } catch (err) {
         console.error("Failed to load friends:", err);
+    } finally {
+        friendsLoadInFlight = false;
     }
+}
+
+function startFriendsPolling() {
+    if (!friendsContainer || friendsPollTimer) return;
+    friendsPollTimer = setInterval(() => {
+        if (document.hidden) return;
+        loadFriends();
+    }, FRIENDS_POLL_INTERVAL_MS);
 }
 
 window.addEventListener("duckapp:translations-ready", () => {
     loadFriends();
 });
+
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        loadFriends();
+    }
+});
+
+window.addEventListener("beforeunload", () => {
+    if (friendsPollTimer) {
+        clearInterval(friendsPollTimer);
+        friendsPollTimer = null;
+    }
+});
+
+startFriendsPolling();
 

@@ -34,13 +34,44 @@
                 <input type="password" id="password" name="password" data-i18n="password_input" minlength="8" required>
                 <label for="password" data-i18n="password"></label>
                 <button type="button" class="password-toggle" data-target="password" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
+                <div class="caps-lock-hint" id="passwordCapsLockHint" hidden data-i18n="caps_lock_on"></div>
+            </div>
+
+            <div class="password-assistant" id="passwordAssistant">
+                <div class="password-strength">
+                    <span class="password-strength-label" data-i18n="password_strength_label"></span>
+                    <span class="password-strength-value" id="passwordStrengthValue" data-state="empty" data-i18n="password_strength_empty"></span>
+                </div>
+                <div class="password-strength-track" aria-hidden="true">
+                    <span class="password-strength-fill" id="passwordStrengthFill" data-state="empty"></span>
+                </div>
+                <ul class="password-checklist" id="passwordChecklist">
+                    <li data-rule="length" data-ok="0">
+                        <span class="rule-indicator" aria-hidden="true"></span>
+                        <span data-i18n="password_rule_length"></span>
+                    </li>
+                    <li data-rule="digit" data-ok="0">
+                        <span class="rule-indicator" aria-hidden="true"></span>
+                        <span data-i18n="password_rule_digit"></span>
+                    </li>
+                    <li data-rule="upper" data-ok="0">
+                        <span class="rule-indicator" aria-hidden="true"></span>
+                        <span data-i18n="password_rule_upper"></span>
+                    </li>
+                    <li data-rule="special" data-ok="0">
+                        <span class="rule-indicator" aria-hidden="true"></span>
+                        <span data-i18n="password_rule_special"></span>
+                    </li>
+                </ul>
             </div>
 
             <div class="input-group password-group">
                 <input type="password" id="confirmPassword" name="confirmPassword" data-i18n="confirm_password_input" minlength="8" required>
                 <label for="confirmPassword" data-i18n="confirm_password"></label>
                 <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
+                <div class="caps-lock-hint" id="confirmPasswordCapsLockHint" hidden data-i18n="caps_lock_on"></div>
             </div>
+            <div class="password-match" id="passwordMatchState" data-state="idle" data-i18n="password_match_idle"></div>
 
             <div class="form-buttons">
                 <button type="submit" id="submit" data-i18n="registrationBtn"></button>

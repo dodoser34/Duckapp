@@ -37,7 +37,12 @@
         <div class="chat-header">
             <div class="chat-header-left peer-hidden">
                 <div class="avatar-wrapper">
-                    <img class="avatar" id="header-avatar" src="../html/assets/avatar_1.png" alt="Chat avatar">
+                    <img
+                        class="avatar"
+                        id="header-avatar"
+                        src="../html/assets/avatar_1.png"
+                        data-i18n-attr="alt:chat_header_avatar_alt"
+                    >
                 </div>
                 <div class="chat-meta">
                     <div class="chat-title" id="chat-title" data-i18n="chat_header_default_title"></div>
@@ -81,7 +86,7 @@
 
                 <div class="emoji-panel" id="emoji-panel">
                     <span class="close" id="emojiCloseBtn" data-i18n="emoji_close_btn"></span>
-                    <div class="emoji-category" id="emoji-categories"></div>
+                    <div class="emoji-tabs-horizontal" id="emoji-categories"></div>
                     <div class="emoji-scroll" id="emoji-scroll"></div>
                 </div>
             </div>
@@ -199,9 +204,11 @@
             <img src="../html/assets/avatar_10.png" class="avatar-choice">
         </div>
 
-        <label class="upload-btn" data-i18n="profile_btn_change_avatar_btn_upload_avatar">
-            <input type="file" id="avatar-input" accept="image/*">
+        <label class="upload-btn">
+            <span data-i18n="profile_btn_change_avatar_btn_upload_avatar"></span>
+            <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp,image/gif">
         </label>
+        <p class="avatar-upload-hint" data-i18n="profile_btn_change_avatar_upload_hint"></p>
     </div>
 </div>
 

@@ -1,0 +1,10 @@
+{
+    "default": "en",
+    "supported": [
+        "ru",
+        "en",
+        "de",
+        "kk",
+        "ja"
+    ]
+}

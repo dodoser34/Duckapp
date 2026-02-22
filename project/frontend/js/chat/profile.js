@@ -3,8 +3,15 @@ import { setupAvatarChange } from "./change-avatar.js";
 import { loadFriends } from "./load-friend.js";
 
 const page = "main_chat";
-const t = (key, fallback) =>
-    window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
+const t = (key, fallback) => {
+    const lang = window.currentLang;
+    const defaultLang = window.__duckappLangIndex?.default || "en";
+    return (
+        window.translations?.[lang]?.[page]?.[key] ??
+        window.translations?.[defaultLang]?.[page]?.[key] ??
+        fallback
+    );
+};
 
 async function fetchProfile() {
     const res = await fetch(`${API_URL}/api/auth/me`, {

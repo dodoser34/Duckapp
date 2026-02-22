@@ -33,7 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let lastRenderedMessagesKey = "";
 
     function t(key, fallback) {
-        return window.translations?.[window.currentLang]?.[page]?.[key] || fallback;
+        const lang = window.currentLang;
+        const defaultLang = window.__duckappLangIndex?.default || "en";
+        return (
+            window.translations?.[lang]?.[page]?.[key] ??
+            window.translations?.[defaultLang]?.[page]?.[key] ??
+            fallback
+        );
     }
 
     function loadAliases() {
@@ -277,15 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (nameEl) nameEl.textContent = displayName;
     }
 
-    async function setActiveFriend(friendItem) {
-        if (!friendItem) return;
-
-        friendsContainer?.querySelectorAll(".chat-list-item.active").forEach((item) => {
-            item.classList.remove("active");
-        });
-        friendItem.classList.add("active");
-
-        state.selectedFriendId = String(friendItem.dataset.id || "");
+    function syncSelectedFriendMeta(friendItem) {
         state.selectedFriendName = friendItem.dataset.name || friendItem.dataset.originalName || "Friend";
         state.selectedFriendStatus = friendItem.dataset.status || "offline";
         state.selectedFriendAvatar = friendItem.dataset.avatar || "../html/assets/avatar_1.png";
@@ -293,6 +291,18 @@ document.addEventListener("DOMContentLoaded", () => {
         chatTitle.textContent = state.selectedFriendName;
         chatSubtitle.textContent = statusLabel(state.selectedFriendStatus);
         headerAvatar.src = state.selectedFriendAvatar;
+
+        friendsContainer?.querySelectorAll(".chat-list-item.active").forEach((item) => {
+            item.classList.remove("active");
+        });
+        friendItem.classList.add("active");
+    }
+
+    async function setActiveFriend(friendItem) {
+        if (!friendItem) return;
+
+        state.selectedFriendId = String(friendItem.dataset.id || "");
+        syncSelectedFriendMeta(friendItem);
         chatHeaderLeft?.classList.remove("peer-hidden");
         chatHeaderActions?.classList.remove("peer-hidden");
         setComposerEnabled(true);
@@ -328,7 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!state.selectedFriendId || !friendsContainer) return;
         const item = friendsContainer.querySelector(`.chat-list-item[data-id="${state.selectedFriendId}"]`);
         if (item) {
-            setActiveFriend(item);
+            syncSelectedFriendMeta(item);
             return;
         }
 
