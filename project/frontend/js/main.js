@@ -30,6 +30,8 @@ const feedbackListModal = document.getElementById("feedbackListModal");
 const feedbackListBody = document.getElementById("feedback-list-body");
 const feedbackNicknameInput = document.getElementById("feedback-nickname");
 const heroQrSection = document.querySelector(".hero-qr");
+const featuresSection = document.querySelector(".features.features-classic-animated");
+const footerSection = document.querySelector("footer");
 const page = "main_page";
 const DEFAULT_PUBLIC_STATS = Object.freeze({
     active_users: 17362,
@@ -168,7 +170,7 @@ helperOpenFeedbackFormBtn?.addEventListener("click", () => {
 
 helperOpenFeedbackListBtn?.addEventListener("click", async () => {
     toggleHelperPanel(false);
-    openModal(feedbackListModal);
+    openModal(feedbackListModal, helperOpenFeedbackListBtn);
     await loadFeedbackList();
 });
 
@@ -422,7 +424,7 @@ async function loadFeedbackList() {
 }
 
 feedbackOpenListBtn?.addEventListener("click", async () => {
-    openModal(feedbackListModal);
+    openModal(feedbackListModal, feedbackOpenListBtn);
     await loadFeedbackList();
 });
 
@@ -696,9 +698,31 @@ function initHeroQrAnimation() {
     );
 
     observer.observe(heroQrSection);
-    window.setTimeout(forceVisible, 1200);
     window.addEventListener("scroll", scheduleHeroQrParallax, { passive: true });
     window.addEventListener("resize", scheduleHeroQrParallax);
+}
+
+function initScrollReveal() {
+    const revealTargets = [featuresSection, statsSection, feedbackSection, footerSection].filter(Boolean);
+    if (!revealTargets.length) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+        revealTargets.forEach((section) => section.classList.add("is-visible"));
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+            });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -2% 0px" }
+    );
+
+    revealTargets.forEach((section) => observer.observe(section));
 }
 
 async function initStatsSection() {
@@ -713,6 +737,7 @@ async function initStatsSection() {
 
 initStatsSection();
 initHeroQrAnimation();
+initScrollReveal();
 
 window.addEventListener("beforeunload", () => {
     if (statsPollTimer) {
