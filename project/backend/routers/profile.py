@@ -26,6 +26,7 @@ ALLOWED_IMAGE_TYPES = {
     "image/x-webp",
     "image/gif",
 }
+
 GENERIC_IMAGE_TYPES = {"application/octet-stream", "binary/octet-stream"}
 ALLOWED_IMAGE_EXT = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
 MAX_AVATAR_BYTES = 2 * 1024 * 1024
@@ -36,15 +37,12 @@ AVATAR_NAME_RE = re.compile(
     r"^(avatar_[0-9]{1,2}\.png|user_avatars/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$"
 )
 
-
 class ProfileUpdate(BaseModel):
     status: str | None = None
     avatar: str | None = None
 
-
 def _normalize_content_type(content_type: str | None) -> str:
     return str(content_type or "").split(";")[0].strip().lower()
-
 
 def _get_user_id_by_username(username: str) -> int:
     conn = db.get_connection()
@@ -59,17 +57,14 @@ def _get_user_id_by_username(username: str) -> int:
         cursor.close()
         conn.close()
 
-
 def _validate_avatar_name(avatar: str) -> str:
     value = (avatar or "").strip()
     if not AVATAR_NAME_RE.match(value):
         raise HTTPException(status_code=400, detail="Invalid avatar name")
     return value
 
-
 def _is_custom_avatar(avatar: str) -> bool:
     return avatar.startswith(CUSTOM_AVATAR_PREFIX)
-
 
 def _touch_avatar_history(cursor, user_id: int, avatar: str) -> None:
     cursor.execute(
@@ -80,7 +75,6 @@ def _touch_avatar_history(cursor, user_id: int, avatar: str) -> None:
         """,
         (user_id, avatar),
     )
-
 
 def _ensure_avatar_history_row(cursor, user_id: int, avatar: str) -> None:
     cursor.execute(

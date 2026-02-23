@@ -16,15 +16,12 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 ASSETS_DIR = BASE_DIR / "frontend" / "html" / "assets"
 HEARTBEAT_INTERVAL_SECONDS = 30
 
-# Windows/Python environments may miss .webp mapping, which breaks image rendering with nosniff.
 mimetypes.add_type("image/webp", ".webp")
-
 
 def _parse_hosts() -> list[str]:
     raw = os.getenv("DUCKAPP_ALLOWED_HOSTS", "127.0.0.1,localhost")
     hosts = [item.strip() for item in raw.split(",") if item.strip()]
     return hosts or ["127.0.0.1", "localhost"]
-
 
 async def _heartbeat_loop(stop_event: asyncio.Event) -> None:
     while not stop_event.is_set():
@@ -37,7 +34,6 @@ async def _heartbeat_loop(stop_event: asyncio.Event) -> None:
             await asyncio.wait_for(stop_event.wait(), timeout=HEARTBEAT_INTERVAL_SECONDS)
         except asyncio.TimeoutError:
             continue
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -57,7 +53,6 @@ async def lifespan(app: FastAPI):
         stop_event.set()
         await heartbeat_task
 
-
 app = FastAPI(title="DuckApp Messenger", lifespan=lifespan)
 
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=_parse_hosts())
@@ -71,7 +66,6 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
-
 
 @app.middleware("http")
 async def add_security_headers(request, call_next):
@@ -91,7 +85,6 @@ async def add_security_headers(request, call_next):
         "frame-ancestors 'none'"
     )
     return response
-
 
 app.include_router(auth.router, prefix="/api/auth")
 app.include_router(common.router)

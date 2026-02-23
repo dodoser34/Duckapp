@@ -29,12 +29,15 @@ const feedbackProblemTypeMenu = document.getElementById("feedback-problem-type-m
 const feedbackListModal = document.getElementById("feedbackListModal");
 const feedbackListBody = document.getElementById("feedback-list-body");
 const feedbackNicknameInput = document.getElementById("feedback-nickname");
+const heroQrSection = document.querySelector(".hero-qr");
 const page = "main_page";
 const DEFAULT_PUBLIC_STATS = Object.freeze({
     active_users: 17362,
     uptime_percent: 93.7,
 });
 const STATS_REFRESH_INTERVAL_MS = 400;
+let heroQrParallaxEnabled = false;
+let heroQrParallaxTicking = false;
 
 function t(key, fallback) {
     const lang = window.currentLang;
@@ -79,10 +82,29 @@ function mapFeedbackSubmitError(message) {
     return message;
 }
 
-function openModal(modal) {
+function openModal(modal, trigger = null) {
     if (!modal) return;
+    modal.classList.remove("from-trigger");
+    modal.style.removeProperty("--modal-enter-dx");
+    modal.style.removeProperty("--modal-enter-dy");
     modal.style.display = "flex";
     modal.classList.remove("closing");
+
+    if (!trigger) return;
+
+    const content = modal.querySelector(".modal-content");
+    if (!content) return;
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const contentRect = content.getBoundingClientRect();
+    const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+    const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+    const contentCenterX = contentRect.left + contentRect.width / 2;
+    const contentCenterY = contentRect.top + contentRect.height / 2;
+
+    modal.style.setProperty("--modal-enter-dx", `${Math.round(triggerCenterX - contentCenterX)}px`);
+    modal.style.setProperty("--modal-enter-dy", `${Math.round(triggerCenterY - contentCenterY)}px`);
+    modal.classList.add("from-trigger");
 }
 
 function closeModal(modal) {
@@ -98,8 +120,8 @@ function closeModal(modal) {
     );
 }
 
-aboutSiteBtn.onclick = () => openModal(aboutSiteModal);
-aboutUsBtn.onclick = () => openModal(aboutUsModal);
+aboutSiteBtn.onclick = () => openModal(aboutSiteModal, aboutSiteBtn);
+aboutUsBtn.onclick = () => openModal(aboutUsModal, aboutUsBtn);
 
 closeButtons.forEach((btn) => {
     btn.onclick = () => {
@@ -623,6 +645,62 @@ function startStatsPolling() {
     }, STATS_REFRESH_INTERVAL_MS);
 }
 
+function updateHeroQrParallax() {
+    if (!heroQrSection || !heroQrParallaxEnabled) return;
+
+    const rect = heroQrSection.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+    const sectionCenter = rect.top + rect.height / 2;
+    const viewportCenter = viewportHeight / 2;
+    const normalized = Math.max(-1, Math.min(1, (sectionCenter - viewportCenter) / viewportHeight));
+
+    const textShift = Math.round(normalized * 8);
+    const mediaShift = Math.round(normalized * 14);
+
+    heroQrSection.style.setProperty("--qr-text-parallax", `${textShift}px`);
+    heroQrSection.style.setProperty("--qr-media-parallax", `${mediaShift}px`);
+}
+
+function scheduleHeroQrParallax() {
+    if (heroQrParallaxTicking) return;
+    heroQrParallaxTicking = true;
+    requestAnimationFrame(() => {
+        heroQrParallaxTicking = false;
+        updateHeroQrParallax();
+    });
+}
+
+function initHeroQrAnimation() {
+    if (!heroQrSection) return;
+
+    const forceVisible = () => {
+        heroQrParallaxEnabled = true;
+        heroQrSection.classList.add("is-visible");
+        scheduleHeroQrParallax();
+    };
+
+    if (typeof IntersectionObserver === "undefined") {
+        forceVisible();
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                forceVisible();
+                observer.disconnect();
+            });
+        },
+        { threshold: 0.25 }
+    );
+
+    observer.observe(heroQrSection);
+    window.setTimeout(forceVisible, 1200);
+    window.addEventListener("scroll", scheduleHeroQrParallax, { passive: true });
+    window.addEventListener("resize", scheduleHeroQrParallax);
+}
+
 async function initStatsSection() {
     await refreshStats();
 
@@ -634,6 +712,7 @@ async function initStatsSection() {
 }
 
 initStatsSection();
+initHeroQrAnimation();
 
 window.addEventListener("beforeunload", () => {
     if (statsPollTimer) {
