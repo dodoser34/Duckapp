@@ -67,6 +67,21 @@ def init_db():
 
     cursor.execute(
         """
+        CREATE TABLE IF NOT EXISTS user_avatar_history (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            avatar VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY uq_user_avatar_history_user_avatar (user_id, avatar),
+            INDEX idx_user_avatar_history_user_last (user_id, last_used_at),
+            FOREIGN KEY (user_id) REFERENCES registered_users(id) ON DELETE CASCADE
+        );
+        """
+    )
+
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS friends (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,

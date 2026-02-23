@@ -274,29 +274,6 @@ nav a:hover {
   flex-shrink: 0;
 }
 
-.dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(185, 206, 227, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  transition: transform 0.16s ease, background-color 0.16s ease;
-}
-
-.dot.active {
-  width: 24px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
 .features {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

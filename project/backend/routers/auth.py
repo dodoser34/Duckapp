@@ -115,6 +115,10 @@ async def register(
             "INSERT INTO user_profiles (user_id, names, status, avatar) VALUES (%s, %s, %s, %s)",
             (user_id, username, "online", "avatar_1.png"),
         )
+        cursor.execute(
+            "INSERT INTO user_avatar_history (user_id, avatar) VALUES (%s, %s)",
+            (user_id, "avatar_1.png"),
+        )
         conn.commit()
     except pymysql.err.IntegrityError as error:
         cursor.close()

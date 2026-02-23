@@ -217,6 +217,18 @@
         "profile_btn_change_avatar_error_invalid_type": "Неподдерживаемый тип файла. Используйте PNG, JPG, WEBP или GIF.",
         "profile_btn_change_avatar_error_too_large": "Файл слишком большой. Максимальный размер — 2МБ.",
         "profile_btn_change_avatar_error_update": "Не удалось обновить аватар.",
-        "profile_btn_change_avatar_error_upload": "Не удалось загрузить аватар."
+        "profile_btn_change_avatar_error_upload": "Не удалось загрузить аватар.",
+        "profile_avatar_history_title": "История аватаров",
+        "profile_avatar_history_refresh": "Обновить",
+        "profile_avatar_history_empty": "История пуста",
+        "profile_avatar_history_use": "Выбрать",
+        "profile_avatar_history_delete": "Удалить",
+        "profile_avatar_history_delete_confirm": "Удалить аватар из истории?",
+        "profile_avatar_history_current": "Текущий аватар",
+        "profile_avatar_history_uploaded": "Загруженный",
+        "profile_avatar_history_preset": "Стандартный",
+        "profile_avatar_history_error_load": "Не удалось загрузить историю аватаров.",
+        "profile_avatar_history_error_delete": "Не удалось удалить аватар.",
+        "profile_avatar_history_error_current_delete": "Текущий аватар нельзя удалить."
     }
 }

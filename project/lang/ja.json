@@ -204,6 +204,18 @@
         "profile_btn_change_avatar_error_invalid_type": "未対応のファイル形式です。PNG, JPG, WEBP, または GIF を使用してください。",
         "profile_btn_change_avatar_error_too_large": "ファイルサイズが大きすぎます。最大 2MB です。",
         "profile_btn_change_avatar_error_update": "アバターを更新できませんでした。",
-        "profile_btn_change_avatar_error_upload": "アバターをアップロードできませんでした。"
+        "profile_btn_change_avatar_error_upload": "アバターをアップロードできませんでした。",
+        "profile_avatar_history_title": "アバター履歴",
+        "profile_avatar_history_refresh": "更新",
+        "profile_avatar_history_empty": "履歴は空です",
+        "profile_avatar_history_use": "使用",
+        "profile_avatar_history_delete": "削除",
+        "profile_avatar_history_delete_confirm": "履歴からこのアバターを削除しますか？",
+        "profile_avatar_history_current": "現在のアバター",
+        "profile_avatar_history_uploaded": "アップロード済み",
+        "profile_avatar_history_preset": "標準",
+        "profile_avatar_history_error_load": "アバター履歴を読み込めませんでした。",
+        "profile_avatar_history_error_delete": "アバターを削除できませんでした。",
+        "profile_avatar_history_error_current_delete": "現在のアバターは削除できません。"
     }
 }

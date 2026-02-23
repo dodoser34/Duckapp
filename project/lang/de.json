@@ -204,6 +204,18 @@
         "profile_btn_change_avatar_error_invalid_type": "Dateityp nicht unterstützt. Nutze PNG, JPG, WEBP oder GIF.",
         "profile_btn_change_avatar_error_too_large": "Avatar ist zu groß. Maximale Größe ist 2MB.",
         "profile_btn_change_avatar_error_update": "Avatar konnte nicht aktualisiert werden.",
-        "profile_btn_change_avatar_error_upload": "Avatar konnte nicht hochgeladen werden."
+        "profile_btn_change_avatar_error_upload": "Avatar konnte nicht hochgeladen werden.",
+        "profile_avatar_history_title": "Avatar-Verlauf",
+        "profile_avatar_history_refresh": "Aktualisieren",
+        "profile_avatar_history_empty": "Verlauf ist leer",
+        "profile_avatar_history_use": "Auswählen",
+        "profile_avatar_history_delete": "Löschen",
+        "profile_avatar_history_delete_confirm": "Avatar aus dem Verlauf löschen?",
+        "profile_avatar_history_current": "Aktueller Avatar",
+        "profile_avatar_history_uploaded": "Hochgeladen",
+        "profile_avatar_history_preset": "Standard",
+        "profile_avatar_history_error_load": "Avatar-Verlauf konnte nicht geladen werden.",
+        "profile_avatar_history_error_delete": "Avatar konnte nicht gelöscht werden.",
+        "profile_avatar_history_error_current_delete": "Der aktuelle Avatar kann nicht gelöscht werden."
     }
 }

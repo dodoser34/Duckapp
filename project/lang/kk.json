@@ -204,6 +204,18 @@
         "profile_btn_change_avatar_error_invalid_type": "Қолдау көрсетілмейтін файл түрі. PNG, JPG, WEBP немесе GIF қолданыңыз.",
         "profile_btn_change_avatar_error_too_large": "Аватар тым үлкен. Максималды өлшемі — 2МБ.",
         "profile_btn_change_avatar_error_update": "Аватарды жаңарту мүмкін болмады.",
-        "profile_btn_change_avatar_error_upload": "Аватарды жүктеу мүмкін болмады."
+        "profile_btn_change_avatar_error_upload": "Аватарды жүктеу мүмкін болмады.",
+        "profile_avatar_history_title": "Аватарлар тарихы",
+        "profile_avatar_history_refresh": "Жаңарту",
+        "profile_avatar_history_empty": "Тарих бос",
+        "profile_avatar_history_use": "Таңдау",
+        "profile_avatar_history_delete": "Жою",
+        "profile_avatar_history_delete_confirm": "Бұл аватарды тарихтан жою керек пе?",
+        "profile_avatar_history_current": "Ағымдағы аватар",
+        "profile_avatar_history_uploaded": "Жүктелген",
+        "profile_avatar_history_preset": "Стандартты",
+        "profile_avatar_history_error_load": "Аватарлар тарихын жүктеу мүмкін болмады.",
+        "profile_avatar_history_error_delete": "Аватарды жою мүмкін болмады.",
+        "profile_avatar_history_error_current_delete": "Ағымдағы аватарды жоюға болмайды."
     }
 }

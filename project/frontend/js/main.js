@@ -467,32 +467,31 @@ feedbackForm?.addEventListener("input", () => {
 
 const slides = document.querySelector(".slides");
 const images = document.querySelectorAll(".slides img");
-const dotsContainer = document.querySelector(".dots");
 let index = 0;
 
-images.forEach((_, i) => {
-    const dot = document.createElement("span");
-    dot.classList.add("dot");
-    if (i === 0) dot.classList.add("active");
-    dot.onclick = () => showSlide(i);
-    dotsContainer.appendChild(dot);
-});
-const dots = document.querySelectorAll(".dot");
-
 function showSlide(i) {
-    const slideWidth = document.querySelector(".slider").clientWidth;
+    if (!slides || images.length === 0) {
+        return;
+    }
+
+    const slider = document.querySelector(".slider");
+    if (!slider) {
+        return;
+    }
+
+    const slideWidth = slider.clientWidth;
     if (i >= images.length) index = 0;
     else if (i < 0) index = images.length - 1;
     else index = i;
 
     slides.style.transform = `translateX(${-slideWidth * index}px)`;
-    dots.forEach((d) => d.classList.remove("active"));
-    dots[index].classList.add("active");
 }
 
-setInterval(() => {
-    showSlide(index + 1);
-}, 4000);
+if (images.length > 1) {
+    setInterval(() => {
+        showSlide(index + 1);
+    }, 4000);
+}
 
 initDucks();
 

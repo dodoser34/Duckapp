@@ -2,9 +2,17 @@ import { API_URL, ASSETS_PATH } from "../api.js";
 
 const avatarModal = document.getElementById("avatar-modal");
 const closeButtons = avatarModal ? avatarModal.querySelectorAll(".close") : [];
+const openAvatarModalBtn = document.getElementById("open-avatar-modal");
+const avatarHistoryTitle = document.getElementById("avatar-history-title");
+const avatarHistoryRefreshBtn = document.getElementById("avatar-history-refresh");
+const avatarHistoryList = document.getElementById("avatar-history-list");
+const avatarHistoryEmpty = document.getElementById("avatar-history-empty");
 const page = "main_chat";
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
+const DEFAULT_AVATAR = "avatar_1.png";
+let isHistoryLoading = false;
+let historyHandlersBound = false;
 
 function t(key, fallback) {
     const lang = window.currentLang;
@@ -39,26 +47,197 @@ function mapAvatarError(message, mode) {
         return t("profile_btn_change_avatar_error_upload", "Could not upload avatar");
     }
 
+    if (message === "Failed to load avatar history") {
+        return t("profile_avatar_history_error_load", "Could not load avatar history");
+    }
+
+    if (message === "Failed to delete avatar history item") {
+        return t("profile_avatar_history_error_delete", "Could not delete avatar");
+    }
+
+    if (message === "Current avatar cannot be deleted") {
+        return t("profile_avatar_history_error_current_delete", "Current avatar cannot be deleted");
+    }
+
     return message;
 }
 
-function withCacheBust(url) {
+function withCacheBust(url, marker = Date.now()) {
     if (!url) return url;
-    const marker = `v=${Date.now()}`;
-    return url.includes("?") ? `${url}&${marker}` : `${url}?${marker}`;
+    const suffix = `v=${marker}`;
+    return url.includes("?") ? `${url}&${suffix}` : `${url}?${suffix}`;
 }
 
-function buildAvatarUrl(avatar) {
-    if (!avatar) return `${ASSETS_PATH}avatar_1.png`;
-    if (avatar.startsWith("/")) return withCacheBust(avatar);
-    if (avatar.startsWith("http://") || avatar.startsWith("https://")) return withCacheBust(avatar);
-    return withCacheBust(`${ASSETS_PATH}${avatar}`);
+function normalizeAvatarUrl(avatar) {
+    const safeAvatar = avatar || DEFAULT_AVATAR;
+    if (safeAvatar.startsWith("/")) return safeAvatar;
+    if (safeAvatar.startsWith("http://") || safeAvatar.startsWith("https://")) return safeAvatar;
+    return `${ASSETS_PATH}${safeAvatar}`;
+}
+
+function buildAvatarUrl(avatar, cacheBust = false) {
+    const normalized = normalizeAvatarUrl(avatar);
+    return cacheBust ? withCacheBust(normalized) : normalized;
+}
+
+function avatarNameFromPath(avatar) {
+    const normalized = String(avatar || "").trim();
+    if (!normalized) return DEFAULT_AVATAR;
+    const parts = normalized.split("/");
+    return parts[parts.length - 1] || DEFAULT_AVATAR;
+}
+
+function avatarStateText(item) {
+    if (item?.is_current) {
+        return t("profile_avatar_history_current", "Current avatar");
+    }
+    if (item?.is_custom) {
+        return t("profile_avatar_history_uploaded", "Uploaded");
+    }
+    return t("profile_avatar_history_preset", "Preset");
+}
+
+function setAvatarHistoryLabels() {
+    if (avatarHistoryTitle) {
+        avatarHistoryTitle.textContent = t("profile_avatar_history_title", "Avatar history");
+    }
+    if (avatarHistoryRefreshBtn) {
+        avatarHistoryRefreshBtn.textContent = t("profile_avatar_history_refresh", "Refresh");
+    }
+    if (avatarHistoryEmpty) {
+        avatarHistoryEmpty.textContent = t("profile_avatar_history_empty", "History is empty");
+    }
 }
 
 function updateAvatarInUi(avatarPath) {
-    const src = buildAvatarUrl(avatarPath);
+    const src = buildAvatarUrl(avatarPath, true);
     const profileAvatar = document.getElementById("profile-avatar");
     if (profileAvatar) profileAvatar.src = src;
+}
+
+async function fetchAvatarHistory() {
+    const response = await fetch(`${API_URL}/api/users/profile/avatar/history`, {
+        credentials: "include",
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.detail || "Failed to load avatar history");
+    }
+    return data;
+}
+
+async function removeAvatarHistoryItem(historyId) {
+    const response = await fetch(`${API_URL}/api/users/profile/avatar/history/${historyId}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.detail || "Failed to delete avatar history item");
+    }
+    return data;
+}
+
+function renderAvatarHistory(items, profileAvatar) {
+    if (!avatarHistoryList || !avatarHistoryEmpty) {
+        return;
+    }
+
+    avatarHistoryList.innerHTML = "";
+    const safeItems = Array.isArray(items) ? items : [];
+    avatarHistoryEmpty.style.display = safeItems.length ? "none" : "block";
+
+    safeItems.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "avatar-history-item";
+        if (item?.is_current) {
+            row.classList.add("current");
+        }
+
+        const preview = document.createElement("img");
+        preview.className = "avatar-history-preview";
+        preview.src = buildAvatarUrl(item?.avatar, false);
+        preview.alt = avatarNameFromPath(item?.avatar);
+        preview.loading = "lazy";
+
+        const meta = document.createElement("div");
+        meta.className = "avatar-history-meta";
+
+        const name = document.createElement("div");
+        name.className = "avatar-history-name";
+        name.textContent = avatarNameFromPath(item?.avatar);
+
+        const state = document.createElement("div");
+        state.className = "avatar-history-state";
+        state.textContent = avatarStateText(item);
+
+        meta.appendChild(name);
+        meta.appendChild(state);
+
+        const actions = document.createElement("div");
+        actions.className = "avatar-history-actions";
+
+        const useBtn = document.createElement("button");
+        useBtn.type = "button";
+        useBtn.className = "avatar-history-btn";
+        useBtn.textContent = t("profile_avatar_history_use", "Use");
+        useBtn.disabled = Boolean(item?.is_current);
+        useBtn.addEventListener("click", async () => {
+            try {
+                await applyAvatarByName(item?.avatar, profileAvatar);
+                await loadAvatarHistory(profileAvatar, true);
+            } catch (error) {
+                console.error("Failed to apply avatar from history:", error);
+                alert(mapAvatarError(error?.message, "update"));
+            }
+        });
+        actions.appendChild(useBtn);
+
+        if (item?.can_delete) {
+            const deleteBtn = document.createElement("button");
+            deleteBtn.type = "button";
+            deleteBtn.className = "avatar-history-btn delete";
+            deleteBtn.textContent = t("profile_avatar_history_delete", "Delete");
+            deleteBtn.addEventListener("click", async () => {
+                const confirmed = window.confirm(
+                    t("profile_avatar_history_delete_confirm", "Delete avatar from history?")
+                );
+                if (!confirmed) return;
+
+                try {
+                    await removeAvatarHistoryItem(item?.id);
+                    await loadAvatarHistory(profileAvatar, true);
+                } catch (error) {
+                    console.error("Failed to delete avatar history item:", error);
+                    alert(mapAvatarError(error?.message, "history"));
+                }
+            });
+            actions.appendChild(deleteBtn);
+        }
+
+        row.appendChild(preview);
+        row.appendChild(meta);
+        row.appendChild(actions);
+        avatarHistoryList.appendChild(row);
+    });
+}
+
+async function loadAvatarHistory(profileAvatar, silent = false) {
+    if (isHistoryLoading) return;
+    isHistoryLoading = true;
+
+    try {
+        setAvatarHistoryLabels();
+        const data = await fetchAvatarHistory();
+        renderAvatarHistory(data?.items, profileAvatar);
+    } catch (error) {
+        console.error("Failed to load avatar history:", error);
+        if (!silent) {
+            alert(mapAvatarError(error?.message, "history"));
+        }
+    } finally {
+        isHistoryLoading = false;
+    }
 }
 
 closeButtons.forEach((btn) => {
@@ -88,7 +267,7 @@ async function applyAvatarByName(avatarName, profileAvatar) {
     const data = await response.json();
     const nextAvatar = data.avatar || avatarName;
     if (profileAvatar) {
-        profileAvatar.src = buildAvatarUrl(nextAvatar);
+        profileAvatar.src = buildAvatarUrl(nextAvatar, true);
     } else {
         updateAvatarInUi(nextAvatar);
     }
@@ -129,7 +308,7 @@ async function uploadAvatarFile(file, profileAvatar) {
 
     const nextAvatar = data.avatar || profileAvatar?.src || "";
     if (profileAvatar) {
-        profileAvatar.src = buildAvatarUrl(nextAvatar);
+        profileAvatar.src = buildAvatarUrl(nextAvatar, true);
     } else {
         updateAvatarInUi(nextAvatar);
     }
@@ -140,6 +319,26 @@ export function setupAvatarChange() {
     const avatarChoices = document.querySelectorAll(".avatar-choice");
     const profileAvatar = document.getElementById("profile-avatar");
     const avatarInput = document.getElementById("avatar-input");
+    setAvatarHistoryLabels();
+
+    if (!historyHandlersBound) {
+        historyHandlersBound = true;
+
+        openAvatarModalBtn?.addEventListener("click", () => {
+            loadAvatarHistory(profileAvatar, true);
+        });
+
+        avatarHistoryRefreshBtn?.addEventListener("click", () => {
+            loadAvatarHistory(profileAvatar, true);
+        });
+
+        window.addEventListener("duckapp:translations-ready", () => {
+            setAvatarHistoryLabels();
+            if (avatarModal?.classList.contains("open")) {
+                loadAvatarHistory(profileAvatar, true);
+            }
+        });
+    }
 
     avatarChoices.forEach((choice) => {
         if (choice.dataset.bound === "1") return;
@@ -149,6 +348,7 @@ export function setupAvatarChange() {
             const avatarFileName = (choice.src.split("/").pop() || "").split("?")[0];
             try {
                 await applyAvatarByName(avatarFileName, profileAvatar);
+                await loadAvatarHistory(profileAvatar, true);
                 avatarModal?.classList.remove("open");
             } catch (error) {
                 console.error("Failed to update avatar:", error);
@@ -165,6 +365,7 @@ export function setupAvatarChange() {
 
             try {
                 await uploadAvatarFile(file, profileAvatar);
+                await loadAvatarHistory(profileAvatar, true);
                 avatarModal?.classList.remove("open");
             } catch (error) {
                 console.error("Failed to upload avatar:", error);
@@ -174,4 +375,6 @@ export function setupAvatarChange() {
             }
         });
     }
+
+    loadAvatarHistory(profileAvatar, true);
 }
