@@ -18,7 +18,15 @@ USER_AVATARS_DIR = ASSETS_DIR / "user_avatars"
 USER_AVATARS_DIR.mkdir(parents=True, exist_ok=True)
 
 ALLOWED_STATUS = {"online", "invisible", "dnd", "offline"}
-ALLOWED_IMAGE_TYPES = {"image/png", "image/jpeg", "image/webp", "image/gif"}
+ALLOWED_IMAGE_TYPES = {
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+    "image/x-webp",
+    "image/gif",
+}
+GENERIC_IMAGE_TYPES = {"application/octet-stream", "binary/octet-stream"}
 ALLOWED_IMAGE_EXT = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
 MAX_AVATAR_BYTES = 2 * 1024 * 1024
 DETECTED_TO_EXT = {"png": ".png", "jpeg": ".jpg", "webp": ".webp", "gif": ".gif"}
@@ -32,6 +40,10 @@ AVATAR_NAME_RE = re.compile(
 class ProfileUpdate(BaseModel):
     status: str | None = None
     avatar: str | None = None
+
+
+def _normalize_content_type(content_type: str | None) -> str:
+    return str(content_type or "").split(";")[0].strip().lower()
 
 
 def _get_user_id_by_username(username: str) -> int:
@@ -300,13 +312,18 @@ async def upload_avatar(
     username: str = payload.get("sub")
     user_id = _get_user_id_by_username(username)
 
-    if file.content_type not in ALLOWED_IMAGE_TYPES:
-        raise HTTPException(status_code=400, detail="Unsupported image type")
-
     original_name = file.filename or ""
     ext = Path(original_name).suffix.lower()
     if ext not in ALLOWED_IMAGE_EXT:
         raise HTTPException(status_code=400, detail="Unsupported image extension")
+
+    content_type = _normalize_content_type(file.content_type)
+    if (
+        content_type
+        and content_type not in ALLOWED_IMAGE_TYPES
+        and content_type not in GENERIC_IMAGE_TYPES
+    ):
+        raise HTTPException(status_code=400, detail="Unsupported image type")
 
     content = await file.read()
     if not content:

@@ -8,8 +8,6 @@ const statusPanel = document.getElementById("status-panel");
 const statusBtns = document.querySelectorAll(".status-btn");
 const profileStatus = document.getElementById("profile-status");
 const statusIndicator = document.getElementById("status-indicator");
-const avatarModal = document.getElementById("avatar-modal");
-const openAvatarModal = document.getElementById("open-avatar-modal");
 const chatList = profileToggle?.closest(".chat-list") || null;
 const page = "main_chat";
 const t = tForPage(page);
@@ -65,7 +63,7 @@ statusBtn?.addEventListener("click", () => {
     statusPanel.classList.toggle("open");
 });
 
-statusBtns.forEach(btn => {
+statusBtns.forEach((btn) => {
     btn.addEventListener("click", async () => {
         const type = btn.dataset.status;
         const key = statusKeyByType[type];
@@ -89,20 +87,17 @@ statusBtns.forEach(btn => {
             const res = await fetch(`${API_URL}/api/users/profile`, {
                 method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify({ status: type })
+                body: JSON.stringify({ status: type }),
             });
 
             if (!res.ok) {
                 throw new Error("Failed to save status");
             }
-
         } catch (err) {
             console.error("Failed to update status:", err);
         }
     });
 });
-
-openAvatarModal?.addEventListener("click", () => avatarModal?.classList.add("open"));

@@ -350,6 +350,17 @@
   background: rgba(255, 189, 104, 0.2);
 }
 
+.avatar-history-refresh:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.avatar-history-refresh:disabled:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .avatar-history-list {
   display: grid;
   gap: 8px;
@@ -435,6 +446,11 @@
 
 .avatar-history-btn:hover {
   border-color: rgba(255, 192, 106, 0.55);
+}
+
+.avatar-history-btn:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
 }
 
 .avatar-history-btn.delete {

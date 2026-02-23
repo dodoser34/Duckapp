@@ -20,7 +20,7 @@ if (!document.getElementById("duck-style")) {
 }
 
 export function initDucks(count = null) {
-    if (count === null) count = Math.floor(Math.random() * (50 - 10 + 1)) + 10;
+    if (count === null) count = Math.floor(Math.random() * (30 - 6 + 1)) + 6;
 
     let container = document.getElementById("ducks");
     if (!container) {

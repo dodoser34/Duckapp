@@ -1,5 +1,6 @@
 import os
 import asyncio
+import mimetypes
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -14,6 +15,9 @@ from routers import auth, common, feedback, friends, messages, profile
 BASE_DIR = Path(__file__).resolve().parents[1]
 ASSETS_DIR = BASE_DIR / "frontend" / "html" / "assets"
 HEARTBEAT_INTERVAL_SECONDS = 30
+
+# Windows/Python environments may miss .webp mapping, which breaks image rendering with nosniff.
+mimetypes.add_type("image/webp", ".webp")
 
 
 def _parse_hosts() -> list[str]:

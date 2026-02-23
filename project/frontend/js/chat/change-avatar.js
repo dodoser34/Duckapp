@@ -9,7 +9,16 @@ const avatarHistoryList = document.getElementById("avatar-history-list");
 const avatarHistoryEmpty = document.getElementById("avatar-history-empty");
 const page = "main_chat";
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
+const ALLOWED_MIME_TYPES = new Set([
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+    "image/x-webp",
+    "image/gif",
+]);
+const ALLOWED_FILE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
+const GENERIC_UPLOAD_MIME_TYPES = new Set(["", "application/octet-stream", "binary/octet-stream"]);
 const DEFAULT_AVATAR = "avatar_1.png";
 let isHistoryLoading = false;
 let historyHandlersBound = false;
@@ -115,9 +124,40 @@ function updateAvatarInUi(avatarPath) {
     if (profileAvatar) profileAvatar.src = src;
 }
 
-async function fetchAvatarHistory() {
-    const response = await fetch(`${API_URL}/api/users/profile/avatar/history`, {
+function normalizeMimeType(typeValue) {
+    return String(typeValue || "")
+        .split(";")[0]
+        .trim()
+        .toLowerCase();
+}
+
+function avatarFileExtension(fileName) {
+    const normalized = String(fileName || "").trim().toLowerCase();
+    const ext = normalized.includes(".") ? `.${normalized.split(".").pop()}` : "";
+    return ext;
+}
+
+function isSupportedAvatarFile(file) {
+    const normalizedMimeType = normalizeMimeType(file?.type);
+    const extension = avatarFileExtension(file?.name);
+
+    if (ALLOWED_MIME_TYPES.has(normalizedMimeType)) {
+        return true;
+    }
+
+    if (ALLOWED_FILE_EXTENSIONS.has(extension) && GENERIC_UPLOAD_MIME_TYPES.has(normalizedMimeType)) {
+        return true;
+    }
+
+    return false;
+}
+
+async function fetchAvatarHistory(forceRefresh = false) {
+    const endpoint = `${API_URL}/api/users/profile/avatar/history`;
+    const url = forceRefresh ? withCacheBust(endpoint) : endpoint;
+    const response = await fetch(url, {
         credentials: "include",
+        cache: forceRefresh ? "no-store" : "default",
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
@@ -177,21 +217,22 @@ function renderAvatarHistory(items, profileAvatar) {
         const actions = document.createElement("div");
         actions.className = "avatar-history-actions";
 
-        const useBtn = document.createElement("button");
-        useBtn.type = "button";
-        useBtn.className = "avatar-history-btn";
-        useBtn.textContent = t("profile_avatar_history_use", "Use");
-        useBtn.disabled = Boolean(item?.is_current);
-        useBtn.addEventListener("click", async () => {
-            try {
-                await applyAvatarByName(item?.avatar, profileAvatar);
-                await loadAvatarHistory(profileAvatar, true);
-            } catch (error) {
-                console.error("Failed to apply avatar from history:", error);
-                alert(mapAvatarError(error?.message, "update"));
-            }
-        });
-        actions.appendChild(useBtn);
+        if (!item?.is_current) {
+            const useBtn = document.createElement("button");
+            useBtn.type = "button";
+            useBtn.className = "avatar-history-btn";
+            useBtn.textContent = t("profile_avatar_history_use", "Use");
+            useBtn.addEventListener("click", async () => {
+                try {
+                    await applyAvatarByName(item?.avatar, profileAvatar);
+                    await loadAvatarHistory(profileAvatar, true);
+                } catch (error) {
+                    console.error("Failed to apply avatar from history:", error);
+                    alert(mapAvatarError(error?.message, "update"));
+                }
+            });
+            actions.appendChild(useBtn);
+        }
 
         if (item?.can_delete) {
             const deleteBtn = document.createElement("button");
@@ -199,17 +240,15 @@ function renderAvatarHistory(items, profileAvatar) {
             deleteBtn.className = "avatar-history-btn delete";
             deleteBtn.textContent = t("profile_avatar_history_delete", "Delete");
             deleteBtn.addEventListener("click", async () => {
-                const confirmed = window.confirm(
-                    t("profile_avatar_history_delete_confirm", "Delete avatar from history?")
-                );
-                if (!confirmed) return;
-
+                if (deleteBtn.disabled) return;
+                deleteBtn.disabled = true;
                 try {
                     await removeAvatarHistoryItem(item?.id);
                     await loadAvatarHistory(profileAvatar, true);
                 } catch (error) {
                     console.error("Failed to delete avatar history item:", error);
                     alert(mapAvatarError(error?.message, "history"));
+                    deleteBtn.disabled = false;
                 }
             });
             actions.appendChild(deleteBtn);
@@ -222,13 +261,16 @@ function renderAvatarHistory(items, profileAvatar) {
     });
 }
 
-async function loadAvatarHistory(profileAvatar, silent = false) {
+async function loadAvatarHistory(profileAvatar, silent = false, { forceRefresh = false } = {}) {
     if (isHistoryLoading) return;
     isHistoryLoading = true;
+    if (avatarHistoryRefreshBtn) {
+        avatarHistoryRefreshBtn.disabled = true;
+    }
 
     try {
         setAvatarHistoryLabels();
-        const data = await fetchAvatarHistory();
+        const data = await fetchAvatarHistory(forceRefresh);
         renderAvatarHistory(data?.items, profileAvatar);
     } catch (error) {
         console.error("Failed to load avatar history:", error);
@@ -236,13 +278,16 @@ async function loadAvatarHistory(profileAvatar, silent = false) {
             alert(mapAvatarError(error?.message, "history"));
         }
     } finally {
+        if (avatarHistoryRefreshBtn) {
+            avatarHistoryRefreshBtn.disabled = false;
+        }
         isHistoryLoading = false;
     }
 }
 
 closeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
-        avatarModal.classList.remove("open");
+        avatarModal?.classList.remove("open");
     });
 });
 
@@ -275,7 +320,7 @@ async function applyAvatarByName(avatarName, profileAvatar) {
 }
 
 async function uploadAvatarFile(file, profileAvatar) {
-    if (!ALLOWED_MIME_TYPES.has(file.type)) {
+    if (!isSupportedAvatarFile(file)) {
         throw new Error(
             t(
                 "profile_btn_change_avatar_error_invalid_type",
@@ -325,11 +370,12 @@ export function setupAvatarChange() {
         historyHandlersBound = true;
 
         openAvatarModalBtn?.addEventListener("click", () => {
+            avatarModal?.classList.add("open");
             loadAvatarHistory(profileAvatar, true);
         });
 
         avatarHistoryRefreshBtn?.addEventListener("click", () => {
-            loadAvatarHistory(profileAvatar, true);
+            loadAvatarHistory(profileAvatar, false, { forceRefresh: true });
         });
 
         window.addEventListener("duckapp:translations-ready", () => {
