@@ -82,6 +82,17 @@ def init_db():
 
     cursor.execute(
         """
+        CREATE TABLE IF NOT EXISTS service_heartbeats (
+            service_name VARCHAR(32) NOT NULL,
+            slot_ts DATETIME NOT NULL,
+            PRIMARY KEY (service_name, slot_ts),
+            INDEX idx_service_heartbeats_slot (slot_ts)
+        );
+        """
+    )
+
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS friends (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,
@@ -161,3 +172,24 @@ def init_db():
     conn.commit()
     cursor.close()
     conn.close()
+
+
+def record_service_heartbeat(service_name: str = "backend") -> None:
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT INTO service_heartbeats (service_name, slot_ts)
+            VALUES (%s, DATE_FORMAT(UTC_TIMESTAMP(), '%%Y-%%m-%%d %%H:%%i:00'))
+            ON DUPLICATE KEY UPDATE slot_ts = VALUES(slot_ts)
+            """,
+            (service_name,),
+        )
+        cursor.execute(
+            "DELETE FROM service_heartbeats WHERE slot_ts < (UTC_TIMESTAMP() - INTERVAL 30 DAY)"
+        )
+        conn.commit()
+    finally:
+        cursor.close()
+        conn.close()

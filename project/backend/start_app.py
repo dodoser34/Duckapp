@@ -1,4 +1,5 @@
 import os
+import asyncio
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -12,6 +13,7 @@ from routers import auth, common, feedback, friends, messages, profile
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 ASSETS_DIR = BASE_DIR / "frontend" / "html" / "assets"
+HEARTBEAT_INTERVAL_SECONDS = 30
 
 
 def _parse_hosts() -> list[str]:
@@ -20,12 +22,36 @@ def _parse_hosts() -> list[str]:
     return hosts or ["127.0.0.1", "localhost"]
 
 
+async def _heartbeat_loop(stop_event: asyncio.Event) -> None:
+    while not stop_event.is_set():
+        try:
+            await asyncio.to_thread(db.record_service_heartbeat, "backend")
+        except Exception:
+            pass
+
+        try:
+            await asyncio.wait_for(stop_event.wait(), timeout=HEARTBEAT_INTERVAL_SECONDS)
+        except asyncio.TimeoutError:
+            continue
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if not os.getenv("JWT_KEY"):
         raise RuntimeError("JWT_KEY is required")
     db.init_db()
-    yield
+    try:
+        db.record_service_heartbeat("backend")
+    except Exception:
+        pass
+
+    stop_event = asyncio.Event()
+    heartbeat_task = asyncio.create_task(_heartbeat_loop(stop_event))
+    try:
+        yield
+    finally:
+        stop_event.set()
+        await heartbeat_task
 
 
 app = FastAPI(title="DuckApp Messenger", lifespan=lifespan)

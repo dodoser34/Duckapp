@@ -34,6 +34,7 @@ const DEFAULT_PUBLIC_STATS = Object.freeze({
     active_users: 17362,
     uptime_percent: 93.7,
 });
+const STATS_REFRESH_INTERVAL_MS = 400;
 
 function t(key, fallback) {
     const lang = window.currentLang;
@@ -496,6 +497,9 @@ if (images.length > 1) {
 initDucks();
 
 let statsPlayed = false;
+let statsLiveRenderEnabled = false;
+let statsPollTimer = null;
+let statsPollInFlight = false;
 
 function normalizePublicStats(payload) {
     const activeUsers = Number(payload?.active_users);
@@ -537,6 +541,21 @@ function applyPublicStats(stats) {
         uptimeCounter.dataset.counter = String(stats.uptime_percent);
         uptimeCounter.dataset.decimal = "true";
     }
+
+    if (statsLiveRenderEnabled) {
+        renderPublicStats(stats);
+    }
+}
+
+function renderPublicStats(stats) {
+    const locale = window.currentLang || document.documentElement.lang || navigator.language || "en";
+    if (activeUsersCounter) {
+        activeUsersCounter.textContent = Math.round(Number(stats.active_users) || 0).toLocaleString(locale);
+    }
+    if (uptimeCounter) {
+        const value = Number(stats.uptime_percent);
+        uptimeCounter.textContent = Number.isFinite(value) ? value.toFixed(1) : "0.0";
+    }
 }
 
 function animateCounter(el) {
@@ -573,22 +592,55 @@ const observer = new IntersectionObserver(
             if (entry.isIntersecting && !statsPlayed) {
                 counters.forEach(animateCounter);
                 statsPlayed = true;
+                window.setTimeout(() => {
+                    statsLiveRenderEnabled = true;
+                }, 1600);
+                if (statsSection) {
+                    observer.unobserve(statsSection);
+                }
             }
         });
     },
     { threshold: 0.5 }
 );
 
+async function refreshStats() {
+    if (statsPollInFlight) return;
+    statsPollInFlight = true;
+    try {
+        const stats = await fetchPublicStats();
+        applyPublicStats(stats);
+    } finally {
+        statsPollInFlight = false;
+    }
+}
+
+function startStatsPolling() {
+    if (statsPollTimer) return;
+    statsPollTimer = window.setInterval(() => {
+        if (document.hidden) return;
+        refreshStats();
+    }, STATS_REFRESH_INTERVAL_MS);
+}
+
 async function initStatsSection() {
-    const stats = await fetchPublicStats();
-    applyPublicStats(stats);
+    await refreshStats();
 
     if (statsSection) {
         observer.observe(statsSection);
     }
+
+    startStatsPolling();
 }
 
 initStatsSection();
+
+window.addEventListener("beforeunload", () => {
+    if (statsPollTimer) {
+        clearInterval(statsPollTimer);
+        statsPollTimer = null;
+    }
+});
 
 startChatBtn?.addEventListener("click", () => {
     window.location.href = "authorization-frame.html";
