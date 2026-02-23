@@ -496,36 +496,6 @@ setInterval(() => {
 
 initDucks();
 
-const root = document.documentElement;
-let hideTimer = null;
-const SHOW_TIMEOUT = 1500;
-const EDGE_ZONE = 100;
-
-function showScroll() {
-    if (!root.classList.contains("show-scroll")) {
-        root.classList.add("show-scroll");
-    }
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => {
-        root.classList.remove("show-scroll");
-    }, SHOW_TIMEOUT);
-}
-
-window.addEventListener("mousemove", (e) => {
-    if (window.innerWidth - e.clientX < EDGE_ZONE) {
-        showScroll();
-    }
-});
-
-window.addEventListener("wheel", () => showScroll(), { passive: true });
-
-window.addEventListener("keydown", (e) => {
-    const keys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", " "];
-    if (keys.includes(e.key)) showScroll();
-});
-
-window.addEventListener("touchstart", () => showScroll(), { passive: true });
-
 let statsPlayed = false;
 
 function normalizePublicStats(payload) {

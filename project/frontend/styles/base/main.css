@@ -39,6 +39,7 @@ body {
 
 body {
   min-height: 100vh;
+  height: 100vh;
   font-family: var(--main-font);
   color: var(--text-main);
   background:
@@ -46,6 +47,9 @@ body {
     radial-gradient(circle at 84% 76%, rgba(255, 179, 94, 0.3), transparent 46%),
     linear-gradient(140deg, var(--bg-start) 0%, var(--bg-mid) 48%, var(--bg-end) 100%);
   overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
   position: relative;
 }
 
@@ -947,35 +951,28 @@ footer {
 }
 
 html {
-  scrollbar-width: none;
-  scrollbar-color: transparent transparent;
+  height: 100%;
+  overflow: hidden;
 }
 
-html::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
-html.show-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent) transparent;
-}
-
-html.show-scroll::-webkit-scrollbar {
+body::-webkit-scrollbar {
   width: var(--scroll-width);
   height: var(--scroll-width);
+  background: transparent !important;
 }
 
-html.show-scroll::-webkit-scrollbar-track {
-  background: transparent;
+body::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track-piece,
+body::-webkit-scrollbar-corner {
+  background: transparent !important;
 }
 
-html.show-scroll::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, var(--accent), var(--accent-strong));
   border-radius: 6px;
 }
 
-html.show-scroll::-webkit-scrollbar-thumb:hover {
+body::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, var(--accent-strong), var(--accent));
 }
 
