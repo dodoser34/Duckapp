@@ -138,29 +138,61 @@ document.addEventListener("DOMContentLoaded", () => {
         wrap.className = "msg-reactions";
         wrap.dataset.messageId = String(messageId || "");
 
-        const safeReactions = (reactions || []).filter((item) => item?.emoji);
-        const totalCount = safeReactions.reduce((sum, item) => sum + Number(item?.count || 0), 0);
+        const grouped = new Map();
+        (reactions || []).forEach((item) => {
+            const emoji = typeof item?.emoji === "string" ? item.emoji.trim() : "";
+            if (!emoji) return;
 
-        if (safeReactions.length > 1 || totalCount > 1) {
-            const summary = document.createElement("button");
-            summary.type = "button";
-            summary.className = "msg-react-chip summary";
-            summary.dataset.summary = "1";
-            summary.innerHTML = `
-                <span class="emoji-pack">${safeReactions.slice(0, 3).map((item) => item.emoji).join(" ")}</span>
-            `;
-            wrap.appendChild(summary);
-        } else {
-            safeReactions.forEach((item) => {
-                const chip = document.createElement("button");
-                chip.type = "button";
-                chip.className = "msg-react-chip";
-                if (item?.mine) chip.classList.add("mine");
-                chip.dataset.emoji = item?.emoji || "";
-                chip.innerHTML = `<span class="emoji">${item?.emoji || ""}</span>`;
-                wrap.appendChild(chip);
-            });
-        }
+            const rawCount = Number(item?.count || 0);
+            const count =
+                Number.isFinite(rawCount) && rawCount > 0 ? Math.floor(rawCount) : 1;
+            const mine = Boolean(item?.mine);
+
+            const existing = grouped.get(emoji);
+            if (existing) {
+                existing.count = Math.max(existing.count, count);
+                existing.mine = existing.mine || mine;
+                return;
+            }
+
+            grouped.set(emoji, { emoji, count, mine });
+        });
+
+        const normalizedReactions = [...grouped.values()].sort((a, b) => {
+            if (a.mine !== b.mine) return a.mine ? -1 : 1;
+            if (a.count !== b.count) return b.count - a.count;
+            return a.emoji.localeCompare(b.emoji);
+        });
+
+        normalizedReactions.forEach((reaction) => {
+            const chip = document.createElement("button");
+            chip.type = "button";
+            chip.className = "msg-react-chip";
+            if (reaction.mine) chip.classList.add("mine");
+            chip.dataset.emoji = reaction.emoji;
+
+            const emojiNode = document.createElement("span");
+            emojiNode.className = "emoji";
+            emojiNode.textContent = reaction.emoji;
+            chip.appendChild(emojiNode);
+
+            if (reaction.count > 1) {
+                const countNode = document.createElement("span");
+                countNode.className = "count";
+                countNode.textContent = String(reaction.count);
+                chip.appendChild(countNode);
+            }
+
+            wrap.appendChild(chip);
+        });
+
+        const addBtn = document.createElement("button");
+        addBtn.type = "button";
+        addBtn.className = "msg-react-add";
+        addBtn.dataset.openPicker = "1";
+        addBtn.setAttribute("aria-label", t("chat_reaction_add", "Add reaction"));
+        addBtn.textContent = "+";
+        wrap.appendChild(addBtn);
 
         const picker = document.createElement("div");
         picker.className = "msg-react-picker";
@@ -241,6 +273,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function patchMessageReactions(messageId, reactions) {
+        if (!messageId) return;
+        const row = chatBody.querySelector(`.message-row[data-message-id="${String(messageId)}"]`);
+        if (!row) return;
+
+        const current = row.querySelector(".msg-reactions");
+        const next = createReactionsNode(messageId, reactions);
+        if (current) {
+            row.replaceChild(next, current);
+        } else {
+            row.appendChild(next);
+        }
+        lastRenderedMessagesKey = "";
+    }
+
     function renderMessagesList(messages) {
         const isNearBottom =
             chatBody.scrollHeight - chatBody.scrollTop - chatBody.clientHeight < 120;
@@ -265,8 +312,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function fetchMessages(friendId) {
-        const res = await fetch(`${API_URL}/api/messages/${friendId}`, {
+        const url = new URL(`${API_URL}/api/messages/${friendId}`);
+        url.searchParams.set("_", String(Date.now()));
+
+        const res = await fetch(url.toString(), {
             credentials: "include",
+            cache: "no-store",
         });
         const data = await res.json().catch(() => []);
         if (!res.ok) {
@@ -568,6 +619,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     chatBody.addEventListener("click", async (event) => {
+        const addBtn = event.target.closest(".msg-react-add");
+        if (addBtn) {
+            const wrap = addBtn.closest(".msg-reactions");
+            const picker = wrap?.querySelector(".msg-react-picker");
+            if (!picker) return;
+            const willOpen = !picker.classList.contains("open");
+            closeAllReactionPickers();
+            if (willOpen) picker.classList.add("open");
+            return;
+        }
+
         const option = event.target.closest(".msg-react-option");
         if (option) {
             const wrap = option.closest(".msg-reactions");
@@ -576,8 +638,12 @@ document.addEventListener("DOMContentLoaded", () => {
             closeAllReactionPickers();
             if (!messageId || !emoji || !state.selectedFriendId) return;
             try {
-                await toggleReaction(state.selectedFriendId, messageId, emoji);
-                await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
+                const result = await toggleReaction(state.selectedFriendId, messageId, emoji);
+                if (Array.isArray(result?.reactions)) {
+                    patchMessageReactions(messageId, result.reactions);
+                } else {
+                    await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
+                }
             } catch (err) {
                 console.error("Failed to toggle reaction:", err);
             }
@@ -587,21 +653,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const chip = event.target.closest(".msg-react-chip");
         if (chip) {
             const wrap = chip.closest(".msg-reactions");
-            const picker = wrap?.querySelector(".msg-react-picker");
-            if (chip.dataset.summary === "1") {
-                if (!picker) return;
-                const willOpen = !picker.classList.contains("open");
-                closeAllReactionPickers();
-                if (willOpen) picker.classList.add("open");
-                return;
-            }
             const messageId = Number(wrap?.dataset.messageId || "0");
             const emoji = chip.dataset.emoji || "";
             closeAllReactionPickers();
             if (!messageId || !emoji || !state.selectedFriendId) return;
             try {
-                await toggleReaction(state.selectedFriendId, messageId, emoji);
-                await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
+                const result = await toggleReaction(state.selectedFriendId, messageId, emoji);
+                if (Array.isArray(result?.reactions)) {
+                    patchMessageReactions(messageId, result.reactions);
+                } else {
+                    await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
+                }
             } catch (err) {
                 console.error("Failed to toggle reaction:", err);
             }

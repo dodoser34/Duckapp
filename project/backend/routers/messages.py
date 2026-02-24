@@ -73,13 +73,13 @@ def _fetch_reactions_for_messages(cursor, message_ids, viewer_user_id: int):
         f"""
         SELECT
             message_id,
-            emoji,
+            emoji COLLATE utf8mb4_bin AS emoji,
             COUNT(*) AS total,
             MAX(CASE WHEN user_id = %s THEN 1 ELSE 0 END) AS mine
         FROM direct_message_reactions
         WHERE message_id IN ({placeholders})
-        GROUP BY message_id, emoji
-        ORDER BY emoji ASC
+        GROUP BY message_id, emoji COLLATE utf8mb4_bin
+        ORDER BY message_id ASC, emoji COLLATE utf8mb4_bin ASC
         """,
         (viewer_user_id, *message_ids),
     )
