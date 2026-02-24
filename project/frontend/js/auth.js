@@ -5,6 +5,7 @@ import { initDucks } from "./ducks.js";
 const loginForm = document.getElementById("loginForm");
 const msg = document.getElementById("errorMsg");
 const page = document.body.getAttribute("data-page") || "authorization";
+const USERNAME_MAX_LENGTH = 32;
 const t = (key, fallback) => {
     const lang = window.currentLang;
     const defaultLang = window.__duckappLangIndex?.default || "en";
@@ -66,8 +67,13 @@ loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(loginForm);
-    const username = formData.get("username");
+    const username = String(formData.get("username") || "").trim();
     const password = formData.get("password");
+
+    if (!username || username.length > USERNAME_MAX_LENGTH) {
+        msg.textContent = `Error: Invalid username or password`;
+        return;
+    }
 
     const res = await loginUser(username, password);
 

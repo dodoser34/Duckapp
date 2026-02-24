@@ -20,8 +20,49 @@ const ALLOWED_MIME_TYPES = new Set([
 const ALLOWED_FILE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
 const GENERIC_UPLOAD_MIME_TYPES = new Set(["", "application/octet-stream", "binary/octet-stream"]);
 const DEFAULT_AVATAR = "avatar_1.png";
+const MODAL_ANIMATION_MS = 260;
 let isHistoryLoading = false;
 let historyHandlersBound = false;
+
+function prepareModalFromTrigger(modal, trigger) {
+    if (!modal || !trigger) return null;
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const viewportCenterX = window.innerWidth / 2;
+    const viewportCenterY = window.innerHeight / 2;
+    const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+    const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+
+    const dx = triggerCenterX - viewportCenterX;
+    const dy = triggerCenterY - viewportCenterY;
+    modal.style.setProperty("--modal-enter-dx", `${dx}px`);
+    modal.style.setProperty("--modal-enter-dy", `${dy}px`);
+    modal.classList.add("from-trigger");
+    return { dx, dy };
+}
+
+function openModalFromTrigger(modal, trigger) {
+    if (!modal) return;
+    prepareModalFromTrigger(modal, trigger);
+    modal.classList.remove("closing");
+    modal.classList.remove("open");
+    requestAnimationFrame(() => {
+        modal.classList.add("open");
+    });
+}
+
+function closeModalToTrigger(modal) {
+    if (!modal) return;
+    if (!modal.classList.contains("open")) {
+        modal.classList.remove("from-trigger", "closing");
+        return;
+    }
+
+    modal.classList.add("closing");
+    window.setTimeout(() => {
+        modal.classList.remove("open", "closing", "from-trigger");
+    }, MODAL_ANIMATION_MS);
+}
 
 function t(key, fallback) {
     const lang = window.currentLang;
@@ -287,13 +328,13 @@ async function loadAvatarHistory(profileAvatar, silent = false, { forceRefresh =
 
 closeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
-        avatarModal?.classList.remove("open");
+        closeModalToTrigger(avatarModal);
     });
 });
 
 avatarModal?.addEventListener("click", (event) => {
     if (event.target === avatarModal) {
-        avatarModal.classList.remove("open");
+        closeModalToTrigger(avatarModal);
     }
 });
 
@@ -370,7 +411,7 @@ export function setupAvatarChange() {
         historyHandlersBound = true;
 
         openAvatarModalBtn?.addEventListener("click", () => {
-            avatarModal?.classList.add("open");
+            openModalFromTrigger(avatarModal, openAvatarModalBtn);
             loadAvatarHistory(profileAvatar, true);
         });
 
@@ -395,7 +436,7 @@ export function setupAvatarChange() {
             try {
                 await applyAvatarByName(avatarFileName, profileAvatar);
                 await loadAvatarHistory(profileAvatar, true);
-                avatarModal?.classList.remove("open");
+                closeModalToTrigger(avatarModal);
             } catch (error) {
                 console.error("Failed to update avatar:", error);
                 alert(mapAvatarError(error?.message, "update"));
@@ -412,7 +453,7 @@ export function setupAvatarChange() {
             try {
                 await uploadAvatarFile(file, profileAvatar);
                 await loadAvatarHistory(profileAvatar, true);
-                avatarModal?.classList.remove("open");
+                closeModalToTrigger(avatarModal);
             } catch (error) {
                 console.error("Failed to upload avatar:", error);
                 alert(mapAvatarError(error?.message, "upload"));

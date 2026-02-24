@@ -123,9 +123,27 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 220px;
+  max-height: 196px;
   overflow-y: auto;
   padding-right: 4px;
+}
+
+.friend-requests-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.friend-requests-list::-webkit-scrollbar-thumb {
+  background: rgba(185, 206, 227, 0.34);
+  border-radius: 3px;
+}
+
+.friend-requests-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.friend-requests-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(185, 206, 227, 0.34) transparent;
 }
 
 .friend-request-empty {
@@ -137,9 +155,9 @@
 
 .friend-request-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px;
@@ -151,7 +169,21 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
+  width: 100%;
+}
+
+.friend-request-main .friend-info {
+  min-width: 0;
   flex: 1;
+}
+
+.friend-request-main .name {
+  display: block;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.2;
 }
 
 .friend-request-main .avatar-wrapper {
@@ -175,18 +207,36 @@
 .friend-request-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: flex-start;
+  gap: 4px;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  transition: gap 0.2s ease;
 }
 
 .request-btn {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
+  box-sizing: border-box;
   padding: 6px 10px;
+  height: 30px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: center;
+  line-height: 1;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   color: #fff;
-  transition: transform 0.14s ease, filter 0.14s ease;
+  transition: flex-grow 0.24s ease, transform 0.14s ease, filter 0.14s ease, opacity 0.2s ease, padding 0.2s ease, border-width 0.2s ease;
 }
 
 .request-btn.accept {
@@ -198,8 +248,28 @@
 }
 
 .request-btn:hover {
-  transform: translateY(-1px);
+  transform: none;
   filter: brightness(1.05);
+}
+
+.friend-request-actions.hover-accept .request-btn.accept,
+.friend-request-actions.hover-reject .request-btn.reject {
+  flex-grow: 1;
+}
+
+.friend-request-actions.hover-accept .request-btn.reject,
+.friend-request-actions.hover-reject .request-btn.accept {
+  flex-grow: 0.01;
+  opacity: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-width: 0;
+  pointer-events: none;
+}
+
+.friend-request-actions.hover-accept,
+.friend-request-actions.hover-reject {
+  gap: 0;
 }
 
 #profile-panel-friends {

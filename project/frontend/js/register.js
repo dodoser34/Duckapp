@@ -13,6 +13,7 @@ const passwordStrengthFill = document.getElementById("passwordStrengthFill");
 const passwordMatchState = document.getElementById("passwordMatchState");
 const passwordCapsLockHint = document.getElementById("passwordCapsLockHint");
 const confirmPasswordCapsLockHint = document.getElementById("confirmPasswordCapsLockHint");
+const USERNAME_MAX_LENGTH = 32;
 
 const t = (key, fallback) => {
     const lang = window.currentLang;
@@ -202,6 +203,11 @@ registerForm.addEventListener("submit", async (e) => {
     const password = registerForm.password.value;
     const confirmPassword = registerForm.confirmPassword.value;
     updatePasswordAssistant();
+
+    if (!username || username.length > USERNAME_MAX_LENGTH) {
+        msg.textContent = `Error: Username must be at most ${USERNAME_MAX_LENGTH} characters long`;
+        return;
+    }
 
     if (password !== confirmPassword) {
         msg.textContent = "Error: " + t("password_mismatch_error", "Passwords do not match");

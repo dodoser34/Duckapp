@@ -3,6 +3,7 @@ import { loadFriends } from "./load-friend.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const page = "main_chat";
+    const MODAL_ANIMATION_MS = 260;
     const menuToggle = document.getElementById("menu-toggle");
     const chatMenu = document.getElementById("chat-menu");
 
@@ -41,9 +42,53 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function closeModals() {
-        renameModal?.classList.remove("open");
-        deleteModal?.classList.remove("open");
-        deleteFriendModal?.classList.remove("open");
+        [renameModal, deleteModal, deleteFriendModal].forEach((modal) => {
+            modal?.classList.remove("open", "closing", "from-trigger");
+        });
+    }
+
+    function prepareModalFromTrigger(modal, triggerSelector) {
+        if (!modal) return null;
+        const trigger = typeof triggerSelector === "string"
+            ? document.querySelector(triggerSelector)
+            : triggerSelector;
+        if (!trigger) return null;
+
+        const triggerRect = trigger.getBoundingClientRect();
+        const viewportCenterX = window.innerWidth / 2;
+        const viewportCenterY = window.innerHeight / 2;
+        const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+        const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+
+        const dx = triggerCenterX - viewportCenterX;
+        const dy = triggerCenterY - viewportCenterY;
+        modal.style.setProperty("--modal-enter-dx", `${dx}px`);
+        modal.style.setProperty("--modal-enter-dy", `${dy}px`);
+        modal.classList.add("from-trigger");
+        return { dx, dy };
+    }
+
+    function openModalFromTrigger(modal, triggerSelector) {
+        if (!modal) return;
+        prepareModalFromTrigger(modal, triggerSelector);
+        modal.classList.remove("closing");
+        modal.classList.remove("open");
+        requestAnimationFrame(() => {
+            modal.classList.add("open");
+        });
+    }
+
+    function closeModalToTrigger(modal) {
+        if (!modal) return;
+        if (!modal.classList.contains("open")) {
+            modal.classList.remove("from-trigger", "closing");
+            return;
+        }
+
+        modal.classList.add("closing");
+        window.setTimeout(() => {
+            modal.classList.remove("open", "closing", "from-trigger");
+        }, MODAL_ANIMATION_MS);
     }
 
     menuToggle?.addEventListener("click", () => {
@@ -63,12 +108,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         renameInput.value = selected.name || "";
-        renameModal.classList.add("open");
+        openModalFromTrigger(renameModal, renameBtn);
         closeMenu();
     });
 
     renameCancel?.addEventListener("click", () => {
-        renameModal.classList.remove("open");
+        closeModalToTrigger(renameModal);
     });
 
     renameConfirm?.addEventListener("click", () => {
@@ -77,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(t("chat_enter_new_name", "Enter a new friend name"));
             return;
         }
-        renameModal.classList.remove("open");
+        closeModalToTrigger(renameModal);
     });
 
     deleteBtn?.addEventListener("click", () => {
@@ -85,17 +130,17 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(t("chat_select_friend_first", "Select a friend first"));
             return;
         }
-        deleteModal.classList.add("open");
+        openModalFromTrigger(deleteModal, deleteBtn);
         closeMenu();
     });
 
     deleteCancel?.addEventListener("click", () => {
-        deleteModal.classList.remove("open");
+        closeModalToTrigger(deleteModal);
     });
 
     deleteConfirm?.addEventListener("click", async () => {
         await window.ChatUI?.clearSelectedChat?.();
-        deleteModal.classList.remove("open");
+        closeModalToTrigger(deleteModal);
     });
 
     deleteFriendBtn?.addEventListener("click", () => {
@@ -103,12 +148,12 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(t("chat_select_friend_first", "Select a friend first"));
             return;
         }
-        deleteFriendModal.classList.add("open");
+        openModalFromTrigger(deleteFriendModal, deleteFriendBtn);
         closeMenu();
     });
 
     deleteFriendCancel?.addEventListener("click", () => {
-        deleteFriendModal.classList.remove("open");
+        closeModalToTrigger(deleteFriendModal);
     });
 
     deleteFriendConfirm?.addEventListener("click", async () => {
@@ -128,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             window.ChatUI?.removeSelectedFriendFromUI?.(selected.id);
             await loadFriends();
-            deleteFriendModal.classList.remove("open");
+            closeModalToTrigger(deleteFriendModal);
         } catch (err) {
             console.error("Failed to remove friend:", err);
             alert(t("friend_remove_error", "Failed to remove friend"));
@@ -137,7 +182,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     [renameModal, deleteModal, deleteFriendModal].forEach((modal) => {
         modal?.addEventListener("click", (e) => {
-            if (e.target === modal) modal.classList.remove("open");
+            if (e.target === modal) {
+                closeModalToTrigger(modal);
+            }
         });
     });
 

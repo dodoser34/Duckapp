@@ -19,6 +19,7 @@ SECRET_KEY: str = str(os.getenv("JWT_KEY"))
 ALGORITHM = "HS256"
 TOKEN_TTL_SECONDS = 2 * 60 * 60
 USE_SECURE_COOKIES = os.getenv("DUCKAPP_SECURE_COOKIES", "0").strip().lower() in {"1", "true", "yes"}
+USERNAME_MAX_LENGTH = 32
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 FRONTEND_HTML_DIR = BASE_DIR / "frontend" / "html"
@@ -96,6 +97,16 @@ async def register(
     email: str = Form(...),
     password: str = Form(...),
 ):
+    username = username.strip()
+    email = email.strip()
+
+    if not username:
+        raise HTTPException(status_code=400, detail="Username is required")
+    if len(username) > USERNAME_MAX_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Username must be at most {USERNAME_MAX_LENGTH} characters long",
+        )
     conn = db.get_connection()
     cursor = conn.cursor()
 
@@ -221,6 +232,10 @@ async def login_api(
     username: str = Form(...),
     password: str = Form(...),
 ):
+    username = username.strip()
+    if not username or len(username) > USERNAME_MAX_LENGTH:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
     conn = db.get_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(

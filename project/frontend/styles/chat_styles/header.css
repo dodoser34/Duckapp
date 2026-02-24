@@ -159,6 +159,8 @@
 .rename-modal,
 .delete-modal,
 .delete-friend-modal {
+  --modal-enter-dx: 0px;
+  --modal-enter-dy: 0px;
   position: fixed;
   inset: 0;
   display: flex;
@@ -173,7 +175,7 @@
 .delete-friend-modal {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.32s ease;
+  transition: opacity 0.26s ease;
 }
 
 .delete-modal.open,
@@ -197,15 +199,65 @@
 
 .delete-content,
 .delete-friend-content {
-  transform: scale(0.88);
+  transform: scale(0.96);
   opacity: 0;
-  transition: transform 0.28s ease, opacity 0.28s ease;
+  transition: transform 0.26s ease, opacity 0.26s ease;
 }
 
 .delete-modal.open .delete-content,
 .delete-friend-modal.open .delete-friend-content {
   transform: scale(1);
   opacity: 1;
+}
+
+.delete-modal.from-trigger .delete-content,
+.delete-friend-modal.from-trigger .delete-friend-content {
+  transform: translate(var(--modal-enter-dx), var(--modal-enter-dy)) scale(0.2);
+  opacity: 0;
+}
+
+.delete-modal.from-trigger.open .delete-content,
+.delete-friend-modal.from-trigger.open .delete-friend-content {
+  transform: translate(0, 0) scale(1);
+  opacity: 1;
+  animation: modalFromTriggerInHeader 0.26s cubic-bezier(0.2, 0.82, 0.24, 1) both;
+}
+
+.delete-modal.open.closing,
+.delete-friend-modal.open.closing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.delete-modal.from-trigger.open.closing .delete-content,
+.delete-friend-modal.from-trigger.open.closing .delete-friend-content {
+  transform: translate(var(--modal-enter-dx), var(--modal-enter-dy)) scale(0.2);
+  opacity: 0;
+  animation: modalToTriggerOutHeader 0.26s cubic-bezier(0.3, 0.1, 0.7, 0.25) both;
+}
+
+@keyframes modalFromTriggerInHeader {
+  from {
+    transform: translate(var(--modal-enter-dx), var(--modal-enter-dy)) scale(0.2);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes modalToTriggerOutHeader {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(var(--modal-enter-dx), var(--modal-enter-dy)) scale(0.2);
+    opacity: 0;
+  }
 }
 
 .rename-content h3,

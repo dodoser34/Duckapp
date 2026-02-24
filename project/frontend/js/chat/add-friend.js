@@ -124,6 +124,7 @@ async function searchFriend(query) {
         const name = document.createElement("div");
         name.className = "name";
         name.textContent = data.names || "Friend";
+        name.title = data.names || "Friend";
 
         const status = document.createElement("div");
         status.className = "status muted";
@@ -244,6 +245,7 @@ function renderIncomingRequests(requests) {
         const name = document.createElement("div");
         name.className = "name";
         name.textContent = req.names || "Friend";
+        name.title = req.names || "Friend";
         info.appendChild(name);
 
         main.appendChild(avatarWrap);
@@ -297,6 +299,51 @@ async function respondToRequest(requestId, action) {
 }
 
 if (requestsList) {
+    const clearActionHover = (actions) => {
+        if (!actions) return;
+        actions.classList.remove("hover-accept", "hover-reject");
+    };
+
+    const setActionHover = (btn) => {
+        const actions = btn?.closest(".friend-request-actions");
+        if (!actions) return;
+
+        const isAccept = btn.dataset.action === "accept";
+        actions.classList.toggle("hover-accept", isAccept);
+        actions.classList.toggle("hover-reject", !isAccept);
+    };
+
+    requestsList.addEventListener("mousemove", (event) => {
+        const actions = event.target.closest(".friend-request-actions");
+        if (!actions || !requestsList.contains(actions)) return;
+
+        const rect = actions.getBoundingClientRect();
+        const middleX = rect.left + rect.width / 2;
+        const isAcceptSide = event.clientX <= middleX;
+        actions.classList.toggle("hover-accept", isAcceptSide);
+        actions.classList.toggle("hover-reject", !isAcceptSide);
+    });
+
+    requestsList.addEventListener("mouseout", (event) => {
+        const actions = event.target.closest(".friend-request-actions");
+        if (!actions) return;
+        if (actions.contains(event.relatedTarget)) return;
+        clearActionHover(actions);
+    });
+
+    requestsList.addEventListener("focusin", (event) => {
+        const btn = event.target.closest(".request-btn");
+        if (!btn || !requestsList.contains(btn)) return;
+        setActionHover(btn);
+    });
+
+    requestsList.addEventListener("focusout", (event) => {
+        const actions = event.target.closest(".friend-request-actions");
+        if (!actions) return;
+        if (actions.contains(event.relatedTarget)) return;
+        clearActionHover(actions);
+    });
+
     requestsList.addEventListener("click", async (event) => {
         const btn = event.target.closest(".request-btn");
         if (!btn) return;
