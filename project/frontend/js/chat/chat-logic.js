@@ -4,6 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const page = "main_chat";
     const ALIASES_KEY = "duckapp_chat_aliases";
     const MESSAGES_POLL_INTERVAL_MS = 2000;
+    const REACTION_EMOJIS = [
+        "\u{1F44D}",
+        "\u{2764}\u{FE0F}",
+        "\u{1F602}",
+        "\u{1F62E}",
+        "\u{1F622}",
+        "\u{1F44E}",
+    ];
 
     const chatBody = document.getElementById("chat-body");
     const messageInput = document.getElementById("message-input");
@@ -31,6 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let pollTimer = null;
     let pollInFlight = false;
     let lastRenderedMessagesKey = "";
+    let chatSessionToken = 0;
+
+    function nextChatSessionToken() {
+        chatSessionToken += 1;
+        return chatSessionToken;
+    }
 
     function t(key, fallback) {
         const lang = window.currentLang;
@@ -119,9 +133,54 @@ document.addEventListener("DOMContentLoaded", () => {
         chatSubtitle.textContent = statusLabel(state.selectedFriendStatus);
     }
 
-    function createTextMessageBubble(text, side, time) {
+    function createReactionsNode(messageId, reactions = []) {
+        const wrap = document.createElement("div");
+        wrap.className = "msg-reactions";
+        wrap.dataset.messageId = String(messageId || "");
+
+        const safeReactions = (reactions || []).filter((item) => item?.emoji);
+        const totalCount = safeReactions.reduce((sum, item) => sum + Number(item?.count || 0), 0);
+
+        if (safeReactions.length > 1 || totalCount > 1) {
+            const summary = document.createElement("button");
+            summary.type = "button";
+            summary.className = "msg-react-chip summary";
+            summary.dataset.summary = "1";
+            summary.innerHTML = `
+                <span class="emoji-pack">${safeReactions.slice(0, 3).map((item) => item.emoji).join(" ")}</span>
+            `;
+            wrap.appendChild(summary);
+        } else {
+            safeReactions.forEach((item) => {
+                const chip = document.createElement("button");
+                chip.type = "button";
+                chip.className = "msg-react-chip";
+                if (item?.mine) chip.classList.add("mine");
+                chip.dataset.emoji = item?.emoji || "";
+                chip.innerHTML = `<span class="emoji">${item?.emoji || ""}</span>`;
+                wrap.appendChild(chip);
+            });
+        }
+
+        const picker = document.createElement("div");
+        picker.className = "msg-react-picker";
+        REACTION_EMOJIS.forEach((emoji) => {
+            const option = document.createElement("button");
+            option.type = "button";
+            option.className = "msg-react-option";
+            option.dataset.emoji = emoji;
+            option.textContent = emoji;
+            picker.appendChild(option);
+        });
+        wrap.appendChild(picker);
+
+        return wrap;
+    }
+
+    function createTextMessageBubble(text, side, time, messageId, reactions) {
         const row = document.createElement("div");
         row.classList.add("message-row", side);
+        row.dataset.messageId = String(messageId || "");
 
         const bubble = document.createElement("div");
         bubble.classList.add("msg-bubble");
@@ -137,12 +196,14 @@ document.addEventListener("DOMContentLoaded", () => {
         bubble.appendChild(timeNode);
 
         row.appendChild(bubble);
+        row.appendChild(createReactionsNode(messageId, reactions));
         return row;
     }
 
-    function createGifMessageBubble(url, side, time) {
+    function createGifMessageBubble(url, side, time, messageId, reactions) {
         const row = document.createElement("div");
         row.classList.add("message-row", side);
+        row.dataset.messageId = String(messageId || "");
 
         const bubble = document.createElement("div");
         bubble.classList.add("msg-bubble");
@@ -159,13 +220,25 @@ document.addEventListener("DOMContentLoaded", () => {
         bubble.appendChild(timeNode);
 
         row.appendChild(bubble);
+        row.appendChild(createReactionsNode(messageId, reactions));
         return row;
     }
 
     function buildMessagesKey(messages) {
         return messages
-            .map((msg) => `${msg.side || ""}|${msg.type || ""}|${msg.content || ""}|${msg.created_at_ms || ""}|${msg.created_at || ""}`)
+            .map((msg) => {
+                const reactionsKey = (msg.reactions || [])
+                    .map((r) => `${r.emoji || ""}:${Number(r.count || 0)}:${r.mine ? 1 : 0}`)
+                    .join(",");
+                return `${msg.id || ""}|${msg.side || ""}|${msg.type || ""}|${msg.content || ""}|${msg.created_at_ms || ""}|${msg.created_at || ""}|${reactionsKey}`;
+            })
             .join("||");
+    }
+
+    function closeAllReactionPickers() {
+        chatBody.querySelectorAll(".msg-react-picker.open").forEach((el) => {
+            el.classList.remove("open");
+        });
     }
 
     function renderMessagesList(messages) {
@@ -181,9 +254,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const side = msg.side || "user";
             const time = formatTime(msg.created_at, msg.created_at_ms);
             if (msg.type === "gif") {
-                chatBody.appendChild(createGifMessageBubble(msg.content, side, time));
+                chatBody.appendChild(createGifMessageBubble(msg.content, side, time, msg.id, msg.reactions || []));
             } else {
-                chatBody.appendChild(createTextMessageBubble(msg.content, side, time));
+                chatBody.appendChild(createTextMessageBubble(msg.content, side, time, msg.id, msg.reactions || []));
             }
         });
         if (isNearBottom) {
@@ -203,12 +276,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function renderMessages(friendId, options = {}) {
-        const { showLoading = true, skipIfUnchanged = false } = options;
+        const { showLoading = true, skipIfUnchanged = false, expectedSessionToken = chatSessionToken } = options;
         if (showLoading) {
             chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_loading", "Loading...")}</div>`;
         }
         try {
             const messages = await fetchMessages(friendId);
+            if (
+                expectedSessionToken !== chatSessionToken ||
+                state.selectedFriendId !== String(friendId)
+            ) {
+                return;
+            }
             const currentKey = buildMessagesKey(messages);
             if (skipIfUnchanged && currentKey === lastRenderedMessagesKey) {
                 return;
@@ -216,6 +295,12 @@ document.addEventListener("DOMContentLoaded", () => {
             lastRenderedMessagesKey = currentKey;
             renderMessagesList(messages);
         } catch (err) {
+            if (
+                expectedSessionToken !== chatSessionToken ||
+                state.selectedFriendId !== String(friendId)
+            ) {
+                return;
+            }
             console.error("Failed to load messages:", err);
             chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_load_error", "Failed to load messages")}</div>`;
         }
@@ -234,10 +319,13 @@ document.addEventListener("DOMContentLoaded", () => {
         pollTimer = setInterval(async () => {
             if (!state.selectedFriendId || pollInFlight) return;
             pollInFlight = true;
+            const friendId = state.selectedFriendId;
+            const expectedSessionToken = chatSessionToken;
             try {
-                await renderMessages(state.selectedFriendId, {
+                await renderMessages(friendId, {
                     showLoading: false,
                     skipIfUnchanged: true,
+                    expectedSessionToken,
                 });
             } finally {
                 pollInFlight = false;
@@ -261,6 +349,24 @@ document.addEventListener("DOMContentLoaded", () => {
             throw new Error(data.detail || "Failed to send message");
         }
         return data.message;
+    }
+
+    async function toggleReaction(friendId, messageId, emoji) {
+        const res = await fetch(`${API_URL}/api/messages/reactions/toggle`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                friend_id: Number(friendId),
+                message_id: Number(messageId),
+                emoji,
+            }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            throw new Error(data.detail || "Failed to update reaction");
+        }
+        return data;
     }
 
     async function clearMessages(friendId) {
@@ -302,12 +408,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!friendItem) return;
 
         state.selectedFriendId = String(friendItem.dataset.id || "");
+        const expectedSessionToken = nextChatSessionToken();
         syncSelectedFriendMeta(friendItem);
         chatHeaderLeft?.classList.remove("peer-hidden");
         chatHeaderActions?.classList.remove("peer-hidden");
         setComposerEnabled(true);
 
-        await renderMessages(state.selectedFriendId, { showLoading: true, skipIfUnchanged: false });
+        await renderMessages(state.selectedFriendId, {
+            showLoading: true,
+            skipIfUnchanged: false,
+            expectedSessionToken,
+        });
         startMessagesPolling();
     }
 
@@ -334,6 +445,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function resetActiveChatState() {
+        nextChatSessionToken();
+        state.selectedFriendId = null;
+        state.selectedFriendName = "";
+        state.selectedFriendStatus = "";
+        state.selectedFriendAvatar = "";
+        lastRenderedMessagesKey = "";
+        stopMessagesPolling();
+        friendsContainer?.querySelectorAll(".chat-list-item.active").forEach((item) => {
+            item.classList.remove("active");
+        });
+        setDefaultHeader();
+        renderEmptyChat();
+    }
+
     function restoreSelectionAfterFriendsReload() {
         if (!state.selectedFriendId || !friendsContainer) return;
         const item = friendsContainer.querySelector(`.chat-list-item[data-id="${state.selectedFriendId}"]`);
@@ -341,15 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
             syncSelectedFriendMeta(item);
             return;
         }
-
-        state.selectedFriendId = null;
-        state.selectedFriendName = "";
-        state.selectedFriendStatus = "";
-        state.selectedFriendAvatar = "";
-        lastRenderedMessagesKey = "";
-        stopMessagesPolling();
-        setDefaultHeader();
-        renderEmptyChat();
+        resetActiveChatState();
     }
 
     function initExistingFriendNamesFromAliases() {
@@ -403,6 +521,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 return false;
             }
         },
+        closeCurrentChat() {
+            if (!state.selectedFriendId) return false;
+            resetActiveChatState();
+            return true;
+        },
         removeSelectedFriendFromUI(friendId) {
             if (!friendsContainer) return;
             const item = friendsContainer.querySelector(`.chat-list-item[data-id="${friendId}"]`);
@@ -413,14 +536,7 @@ document.addEventListener("DOMContentLoaded", () => {
             saveAliases(aliases);
 
             if (state.selectedFriendId === String(friendId)) {
-                state.selectedFriendId = null;
-                state.selectedFriendName = "";
-                state.selectedFriendStatus = "";
-                state.selectedFriendAvatar = "";
-                lastRenderedMessagesKey = "";
-                stopMessagesPolling();
-                setDefaultHeader();
-                renderEmptyChat();
+                resetActiveChatState();
             }
         },
     };
@@ -437,6 +553,65 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     sendBtn.addEventListener("click", sendTextMessage);
+
+    chatBody.addEventListener("dblclick", (event) => {
+        const bubble = event.target.closest(".msg-bubble");
+        if (!bubble) return;
+        const row = bubble.closest(".message-row");
+        const wrap = row?.querySelector(".msg-reactions");
+        const picker = wrap?.querySelector(".msg-react-picker");
+        if (!picker) return;
+
+        const willOpen = !picker.classList.contains("open");
+        closeAllReactionPickers();
+        if (willOpen) picker.classList.add("open");
+    });
+
+    chatBody.addEventListener("click", async (event) => {
+        const option = event.target.closest(".msg-react-option");
+        if (option) {
+            const wrap = option.closest(".msg-reactions");
+            const messageId = Number(wrap?.dataset.messageId || "0");
+            const emoji = option.dataset.emoji || "";
+            closeAllReactionPickers();
+            if (!messageId || !emoji || !state.selectedFriendId) return;
+            try {
+                await toggleReaction(state.selectedFriendId, messageId, emoji);
+                await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
+            } catch (err) {
+                console.error("Failed to toggle reaction:", err);
+            }
+            return;
+        }
+
+        const chip = event.target.closest(".msg-react-chip");
+        if (chip) {
+            const wrap = chip.closest(".msg-reactions");
+            const picker = wrap?.querySelector(".msg-react-picker");
+            if (chip.dataset.summary === "1") {
+                if (!picker) return;
+                const willOpen = !picker.classList.contains("open");
+                closeAllReactionPickers();
+                if (willOpen) picker.classList.add("open");
+                return;
+            }
+            const messageId = Number(wrap?.dataset.messageId || "0");
+            const emoji = chip.dataset.emoji || "";
+            closeAllReactionPickers();
+            if (!messageId || !emoji || !state.selectedFriendId) return;
+            try {
+                await toggleReaction(state.selectedFriendId, messageId, emoji);
+                await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
+            } catch (err) {
+                console.error("Failed to toggle reaction:", err);
+            }
+            return;
+        }
+
+        if (!event.target.closest(".msg-reactions")) {
+            closeAllReactionPickers();
+        }
+    });
     messageInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();

@@ -157,6 +157,22 @@ def init_db():
 
     cursor.execute(
         """
+        CREATE TABLE IF NOT EXISTS direct_message_reactions (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            message_id INT NOT NULL,
+            user_id INT NOT NULL,
+            emoji VARCHAR(16) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY uq_dm_reaction_user (message_id, user_id),
+            INDEX idx_dm_reaction_message (message_id),
+            FOREIGN KEY (message_id) REFERENCES direct_messages(id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES registered_users(id) ON DELETE CASCADE
+        )
+        """
+    )
+
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS site_feedback (
             id INT AUTO_INCREMENT PRIMARY KEY,
             nickname VARCHAR(30) NOT NULL,

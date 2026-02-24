@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const page = "main_chat";
     const MODAL_ANIMATION_MS = 260;
     const menuToggle = document.getElementById("menu-toggle");
+    const closeChatViewBtn = document.getElementById("close-chat-view");
     const chatMenu = document.getElementById("chat-menu");
 
     const renameBtn = document.getElementById("rename-chat");
@@ -93,6 +94,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     menuToggle?.addEventListener("click", () => {
         chatMenu?.classList.toggle("open");
+    });
+
+    closeChatViewBtn?.addEventListener("click", () => {
+        window.ChatUI?.closeCurrentChat?.();
+        closeMenu();
     });
 
     document.addEventListener("click", (e) => {

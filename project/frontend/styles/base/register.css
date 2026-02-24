@@ -79,9 +79,11 @@ body::after {
   text-align: center;
   position: relative;
   z-index: 2;
+  overflow: hidden;
   opacity: 0;
-  transform: translateY(10px);
-  animation: cardIn 0.48s ease forwards;
+  transform: translateY(18px) scale(0.08);
+  transform-origin: center center;
+  animation: authCardAssemble 1.45s cubic-bezier(0.22, 0.78, 0.22, 1) forwards;
 }
 
 .authorization-container::after,
@@ -118,6 +120,16 @@ body::after {
   transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease, border-color 0.14s ease;
 }
 
+.authorization-container .logo,
+.register-container .logo {
+  opacity: 0;
+  filter: blur(1px);
+  transform: translateY(14px) scale(0.92);
+  animation:
+    logoDuckBounce 1.8s ease-in-out 1.35s infinite,
+    authItemIn 0.56s cubic-bezier(0.2, 0.78, 0.22, 1) 1.08s forwards;
+}
+
 .logo:hover,
 .logo:focus,
 .logo:focus-visible {
@@ -139,13 +151,46 @@ body::after {
   color: var(--text-main);
   font-size: clamp(24px, 4.2vw, 30px);
   line-height: 1.15;
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(1px);
+  animation: authItemIn 0.52s cubic-bezier(0.2, 0.78, 0.22, 1) 1.18s forwards;
 }
 
 #loginForm,
 #registerForm {
   display: grid;
   gap: 2px;
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(1px);
+  animation: authItemIn 0.56s cubic-bezier(0.2, 0.78, 0.22, 1) 1.28s forwards;
 }
+
+#loginForm > *,
+#registerForm > * {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(1px);
+  animation: authItemIn 0.4s cubic-bezier(0.2, 0.78, 0.22, 1) forwards;
+}
+
+#loginForm > *:nth-child(1),
+#registerForm > *:nth-child(1) { animation-delay: 1.36s; }
+#loginForm > *:nth-child(2),
+#registerForm > *:nth-child(2) { animation-delay: 1.46s; }
+#loginForm > *:nth-child(3),
+#registerForm > *:nth-child(3) { animation-delay: 1.56s; }
+#loginForm > *:nth-child(4),
+#registerForm > *:nth-child(4) { animation-delay: 1.66s; }
+#loginForm > *:nth-child(5),
+#registerForm > *:nth-child(5) { animation-delay: 1.76s; }
+#loginForm > *:nth-child(6),
+#registerForm > *:nth-child(6) { animation-delay: 1.86s; }
+#loginForm > *:nth-child(7),
+#registerForm > *:nth-child(7) { animation-delay: 1.96s; }
+#loginForm > *:nth-child(8),
+#registerForm > *:nth-child(8) { animation-delay: 2.06s; }
 
 .input-group {
   position: relative;
@@ -414,6 +459,10 @@ body::after {
   color: var(--text-soft);
   display: block;
   line-height: 1.45;
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(1px);
+  animation: authItemIn 0.5s cubic-bezier(0.2, 0.78, 0.22, 1) 1.9s forwards;
 }
 
 .authorization-container a,
@@ -446,6 +495,10 @@ body::after {
   margin-top: 10px;
   font-size: 14px;
   color: #ff9da5;
+  opacity: 0;
+  transform: translateY(8px);
+  filter: blur(1px);
+  animation: authItemIn 0.5s cubic-bezier(0.2, 0.78, 0.22, 1) 1.82s forwards;
 }
 
 footer {
@@ -478,15 +531,35 @@ footer {
   transition: transform 0.3s ease;
 }
 
-@keyframes cardIn {
-  from {
+@keyframes authCardAssemble {
+  0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(18px) scaleX(0.08) scaleY(0.08);
+    filter: blur(2px);
   }
 
+  55% {
+    opacity: 1;
+    transform: translateY(0) scaleX(1.28) scaleY(0.16);
+    filter: blur(0);
+  }
+
+  78% {
+    transform: translateY(0) scaleX(0.88) scaleY(1.05);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleX(1) scaleY(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes authItemIn {
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 
