@@ -9,6 +9,7 @@ const friendResult = document.getElementById("friend-result");
 const errorMessage = document.getElementById("error-message");
 const requestsList = document.getElementById("friend-requests-list");
 const requestsCount = document.getElementById("friend-requests-count");
+const AVATAR_NAME_RE = /^(avatar_[0-9]{1,2}\.png|user_avatars\/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$/;
 const closeButtons = addFriendModal
     ? addFriendModal.querySelectorAll(".close")
     : [];
@@ -57,21 +58,30 @@ friendSearchInput?.addEventListener("input", () => {
 });
 
 function normalizeAvatarPath(avatar) {
-    if (!avatar) return `${ASSETS_PATH}avatar_2.png`;
-    if (avatar.startsWith("http://") || avatar.startsWith("https://")) return avatar;
-    return `${ASSETS_PATH}${avatar}`;
+    const normalized = String(avatar || "").trim();
+    if (!AVATAR_NAME_RE.test(normalized)) {
+        return `${ASSETS_PATH}avatar_2.png`;
+    }
+    return `${ASSETS_PATH}${normalized}`;
+}
+
+function normalizePeerStatus(status) {
+    if (status === "online") return "online";
+    if (status === "dnd") return "dnd";
+    return "offline";
 }
 
 function statusClass(status) {
-    if (status === "dnd") return "dnd";
-    if (status === "invisible" || status === "offline") return "offline";
-    return "online";
+    const normalizedStatus = normalizePeerStatus(status);
+    if (normalizedStatus === "online") return "online";
+    if (normalizedStatus === "dnd") return "dnd";
+    return "offline";
 }
 
 function statusLabel(status) {
-    if (status === "online") return t("profile_status_online", "Online");
-    if (status === "invisible") return t("profile_status_invisible", "Invisible");
-    if (status === "dnd") return t("profile_status_dnd", "Do Not Disturb");
+    const normalizedStatus = normalizePeerStatus(status);
+    if (normalizedStatus === "online") return t("profile_status_online", "Online");
+    if (normalizedStatus === "dnd") return t("profile_status_dnd", "Do Not Disturb");
     return t("friend_status_offline", "Offline");
 }
 
@@ -218,7 +228,11 @@ function renderIncomingRequests(requests) {
     requestsCount.textContent = String(requests.length);
 
     if (!requests.length) {
-        requestsList.innerHTML = `<div class="friend-request-empty">${t("friend_requests_empty", "No new requests")}</div>`;
+        requestsList.innerHTML = "";
+        const empty = document.createElement("div");
+        empty.className = "friend-request-empty";
+        empty.textContent = t("friend_requests_empty", "No new requests");
+        requestsList.appendChild(empty);
         return;
     }
 

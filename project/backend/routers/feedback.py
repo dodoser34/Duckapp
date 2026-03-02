@@ -1,9 +1,13 @@
 import asyncio
 import datetime
+import os
+import time
+from collections import deque
+from threading import Lock
 from typing import Literal
 
 import pymysql
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, field_validator
 
 from databases.db_manager import get_connection
@@ -11,6 +15,30 @@ from databases.db_manager import get_connection
 router = APIRouter(prefix="/api", tags=["feedback"])
 
 ALLOWED_PROBLEM_TYPES = {"bug", "ui", "performance", "security", "other"}
+FEEDBACK_WRITE_WINDOW_SECONDS = 600
+FEEDBACK_READ_WINDOW_SECONDS = 60
+_FEEDBACK_RATE_BUCKETS: dict[str, deque[float]] = {}
+_FEEDBACK_RATE_LOCK = Lock()
+
+
+def _env_positive_int(name: str, default: int) -> int:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    try:
+        value = int(str(raw).strip())
+    except (TypeError, ValueError):
+        return default
+    return max(1, value)
+
+
+FEEDBACK_WRITE_MAX_REQUESTS = _env_positive_int("DUCKAPP_FEEDBACK_WRITE_MAX", 20)
+FEEDBACK_READ_MAX_REQUESTS = _env_positive_int("DUCKAPP_FEEDBACK_READ_MAX", 60)
+FEEDBACK_TRUST_PROXY_HEADERS = os.getenv("DUCKAPP_TRUST_PROXY_HEADERS", "0").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+}
 
 
 class FeedbackCreate(BaseModel):
@@ -59,8 +87,43 @@ def _to_utc_iso(value):
     return value.astimezone(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _client_ip(request: Request) -> str:
+    if FEEDBACK_TRUST_PROXY_HEADERS:
+        forwarded_for = (request.headers.get("x-forwarded-for") or "").strip()
+        if forwarded_for:
+            return forwarded_for.split(",")[0].strip() or "unknown"
+    if request.client and request.client.host:
+        return request.client.host
+    return "unknown"
+
+
+def _enforce_feedback_rate_limit(
+    request: Request, action: str, window_seconds: int, max_requests: int
+) -> None:
+    if max_requests <= 0 or window_seconds <= 0:
+        return
+
+    now = time.monotonic()
+    key = f"{action}:{_client_ip(request)}"
+
+    with _FEEDBACK_RATE_LOCK:
+        bucket = _FEEDBACK_RATE_BUCKETS.setdefault(key, deque())
+        while bucket and now - bucket[0] > window_seconds:
+            bucket.popleft()
+        if len(bucket) >= max_requests:
+            raise HTTPException(status_code=429, detail="Too many feedback requests")
+        bucket.append(now)
+
+
 @router.post("/feedback")
-async def submit_feedback(payload: FeedbackCreate):
+async def submit_feedback(payload: FeedbackCreate, request: Request):
+    _enforce_feedback_rate_limit(
+        request,
+        action="feedback_write",
+        window_seconds=FEEDBACK_WRITE_WINDOW_SECONDS,
+        max_requests=FEEDBACK_WRITE_MAX_REQUESTS,
+    )
+
     def insert_feedback():
         conn = get_connection()
         try:
@@ -120,7 +183,13 @@ async def submit_feedback(payload: FeedbackCreate):
 
 
 @router.get("/feedback")
-async def list_feedback(limit: int = 50):
+async def list_feedback(request: Request, limit: int = 50):
+    _enforce_feedback_rate_limit(
+        request,
+        action="feedback_read",
+        window_seconds=FEEDBACK_READ_WINDOW_SECONDS,
+        max_requests=FEEDBACK_READ_MAX_REQUESTS,
+    )
     safe_limit = max(1, min(int(limit or 50), 200))
 
     def fetch_feedback():

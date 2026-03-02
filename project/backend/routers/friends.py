@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 import pymysql
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,6 +10,10 @@ from routers.auth import get_current_user
 from routers.common import extract_user_id
 
 router = APIRouter(prefix="/api/friends", tags=["friends"])
+DEFAULT_AVATAR = "avatar_1.png"
+PUBLIC_AVATAR_RE = re.compile(
+    r"^(avatar_[0-9]{1,2}\.png|user_avatars/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$"
+)
 
 
 class FriendAddRequest(BaseModel):
@@ -18,6 +23,22 @@ class FriendAddRequest(BaseModel):
 class FriendRequestRespond(BaseModel):
     request_id: int
     action: str
+
+
+def _public_status(status: str | None) -> str:
+    value = (status or "").strip().lower()
+    if value == "online":
+        return "online"
+    if value == "dnd":
+        return "dnd"
+    return "offline"
+
+
+def _public_avatar(avatar: str | None) -> str:
+    value = (avatar or "").strip()
+    if PUBLIC_AVATAR_RE.match(value):
+        return value
+    return DEFAULT_AVATAR
 
 
 @router.get("/search")
@@ -50,8 +71,8 @@ async def search_friend(names: str, current_user=Depends(get_current_user)):
     return {
         "id": result["id"],
         "names": result["names"],
-        "avatar": result["avatar"],
-        "status": result["status"],
+        "avatar": _public_avatar(result.get("avatar")),
+        "status": _public_status(result.get("status")),
     }
 
 
@@ -146,7 +167,11 @@ async def get_incoming_requests(current_user=Depends(get_current_user)):
         finally:
             conn.close()
 
-    return await asyncio.to_thread(load_requests)
+    rows = await asyncio.to_thread(load_requests)
+    for row in rows:
+        row["status"] = _public_status(row.get("status"))
+        row["avatar"] = _public_avatar(row.get("avatar"))
+    return rows
 
 
 @router.post("/requests/respond")
@@ -272,6 +297,10 @@ async def get_friends(current_user=Depends(get_current_user)):
                 """,
                 (user_id, user_id, user_id),
             )
-            return cursor.fetchall()
+            rows = cursor.fetchall() or []
+            for row in rows:
+                row["status"] = _public_status(row.get("status"))
+                row["avatar"] = _public_avatar(row.get("avatar"))
+            return rows
     finally:
         conn.close()

@@ -3,6 +3,7 @@ import { API_URL, ASSETS_PATH } from "../api.js";
 const page = "main_chat";
 const ALIASES_KEY = "duckapp_chat_aliases";
 const FRIENDS_POLL_INTERVAL_MS = 10000;
+const AVATAR_NAME_RE = /^(avatar_[0-9]{1,2}\.png|user_avatars\/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$/;
 const friendsContainer = document.querySelector(".chat-list-items");
 let friendsLoadInFlight = false;
 let friendsPollTimer = null;
@@ -26,23 +27,32 @@ function getAliases() {
     }
 }
 
+function normalizePeerStatus(status) {
+    if (status === "online") return "online";
+    if (status === "dnd") return "dnd";
+    return "offline";
+}
+
 function statusText(status) {
-    if (status === "online") return t("profile_status_online", "Online");
-    if (status === "invisible") return t("profile_status_invisible", "Invisible");
-    if (status === "dnd") return t("profile_status_dnd", "Do Not Disturb");
+    const normalizedStatus = normalizePeerStatus(status);
+    if (normalizedStatus === "online") return t("profile_status_online", "Online");
+    if (normalizedStatus === "dnd") return t("profile_status_dnd", "Do Not Disturb");
     return t("friend_status_offline", "Offline");
 }
 
 function statusColor(status) {
-    if (status === "online") return "#2ecc71";
-    if (status === "dnd") return "#e74c3c";
+    const normalizedStatus = normalizePeerStatus(status);
+    if (normalizedStatus === "online") return "#2ecc71";
+    if (normalizedStatus === "dnd") return "#e74c3c";
     return "#888";
 }
 
 function normalizeAvatarPath(avatar) {
-    if (!avatar) return `${ASSETS_PATH}avatar_2.png`;
-    if (avatar.startsWith("http://") || avatar.startsWith("https://")) return avatar;
-    return `${ASSETS_PATH}${avatar}`;
+    const normalized = String(avatar || "").trim();
+    if (!AVATAR_NAME_RE.test(normalized)) {
+        return `${ASSETS_PATH}avatar_2.png`;
+    }
+    return `${ASSETS_PATH}${normalized}`;
 }
 
 function createFriendListItem(friend, displayName, avatarSrc, status) {
@@ -113,7 +123,7 @@ export async function loadFriends() {
 
         friends.forEach((friend) => {
             const avatarSrc = normalizeAvatarPath(friend.avatar);
-            const status = friend.status || "offline";
+            const status = normalizePeerStatus(friend.status);
             const displayName = aliases[String(friend.id)] || friend.names || "Friend";
             friendsContainer.appendChild(
                 createFriendListItem(friend, displayName, avatarSrc, status)

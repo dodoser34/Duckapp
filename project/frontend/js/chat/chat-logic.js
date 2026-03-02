@@ -69,10 +69,16 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem(ALIASES_KEY, JSON.stringify(aliases));
     }
 
+    function normalizePeerStatus(status) {
+        if (status === "online") return "online";
+        if (status === "dnd") return "dnd";
+        return "offline";
+    }
+
     function statusLabel(status) {
-        if (status === "online") return t("profile_status_online", "Online");
-        if (status === "invisible") return t("profile_status_invisible", "Invisible");
-        if (status === "dnd") return t("profile_status_dnd", "Do Not Disturb");
+        const normalizedStatus = normalizePeerStatus(status);
+        if (normalizedStatus === "online") return t("profile_status_online", "Online");
+        if (normalizedStatus === "dnd") return t("profile_status_dnd", "Do Not Disturb");
         return t("friend_status_offline", "Offline");
     }
 
@@ -120,8 +126,20 @@ document.addEventListener("DOMContentLoaded", () => {
             emojiPanel?.classList.remove("open");
         }
     }
+
+    function renderEmptyState(text, withI18nAttr = false) {
+        chatBody.innerHTML = "";
+        const node = document.createElement("div");
+        node.className = "empty-chat muted";
+        if (withI18nAttr) {
+            node.setAttribute("data-i18n", "chat_main_window_text");
+        }
+        node.textContent = text;
+        chatBody.appendChild(node);
+    }
+
     function renderEmptyChat() {
-        chatBody.innerHTML = `<div class="empty-chat muted" data-i18n="chat_main_window_text">${t("chat_main_window_text", "Choose a chat on the right")}</div>`;
+        renderEmptyState(t("chat_main_window_text", "Choose a chat on the right"), true);
     }
 
     function refreshLocalizedChatState() {
@@ -293,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
             chatBody.scrollHeight - chatBody.scrollTop - chatBody.clientHeight < 120;
         chatBody.innerHTML = "";
         if (!messages.length) {
-            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_empty_for_friend", "No messages yet")}</div>`;
+            renderEmptyState(t("chat_empty_for_friend", "No messages yet"));
             return;
         }
 
@@ -329,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function renderMessages(friendId, options = {}) {
         const { showLoading = true, skipIfUnchanged = false, expectedSessionToken = chatSessionToken } = options;
         if (showLoading) {
-            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_loading", "Loading...")}</div>`;
+            renderEmptyState(t("chat_loading", "Loading..."));
         }
         try {
             const messages = await fetchMessages(friendId);
@@ -353,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             console.error("Failed to load messages:", err);
-            chatBody.innerHTML = `<div class="empty-chat muted">${t("chat_load_error", "Failed to load messages")}</div>`;
+            renderEmptyState(t("chat_load_error", "Failed to load messages"));
         }
     }
 
@@ -442,7 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function syncSelectedFriendMeta(friendItem) {
         state.selectedFriendName = friendItem.dataset.name || friendItem.dataset.originalName || "Friend";
-        state.selectedFriendStatus = friendItem.dataset.status || "offline";
+        state.selectedFriendStatus = normalizePeerStatus(friendItem.dataset.status || "offline");
         state.selectedFriendAvatar = friendItem.dataset.avatar || "../html/assets/avatar_1.png";
 
         chatTitle.textContent = state.selectedFriendName;

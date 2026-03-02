@@ -26,13 +26,30 @@ function getNestedValue(source, dottedKey) {
     }, source);
 }
 
+function applyTextWithAllowedBreaks(el, text) {
+    const value = String(text ?? "");
+    if (!value.includes("<br")) {
+        el.textContent = value;
+        return;
+    }
+
+    el.textContent = "";
+    const chunks = value.split(/<br\s*\/?>/gi);
+    chunks.forEach((chunk, index) => {
+        if (index > 0) {
+            el.appendChild(document.createElement("br"));
+        }
+        el.appendChild(document.createTextNode(chunk));
+    });
+}
+
 function applyValueToElement(el, text) {
     const tag = el.tagName.toLowerCase();
     if (tag === "input" || tag === "textarea") {
         el.placeholder = String(text);
         return;
     }
-    el.innerHTML = String(text);
+    applyTextWithAllowedBreaks(el, text);
 }
 
 async function loadLanguageIndex() {

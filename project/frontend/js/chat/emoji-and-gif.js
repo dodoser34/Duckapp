@@ -35,6 +35,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         resetGifPanel();
     }
 
+    function renderGifMessage(text) {
+        gifResults.innerHTML = "";
+        const message = document.createElement("p");
+        message.textContent = text;
+        gifResults.appendChild(message);
+    }
+
     let emojiData = {};
     try {
         const res = await fetch("../../emoji/emoji.json");
@@ -181,7 +188,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             gifResults.innerHTML = "";
 
             if (!data.data || data.data.length === 0) {
-                gifResults.innerHTML = `<p>${t("gif_no_results", "No results found")}</p>`;
+                renderGifMessage(t("gif_no_results", "No results found"));
                 return;
             }
 
@@ -201,7 +208,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         } catch (err) {
             console.error("GIF search error:", err);
-            gifResults.innerHTML = `<p>${t("gif_load_error", "Error loading GIFs")}</p>`;
+            renderGifMessage(t("gif_load_error", "Error loading GIFs"));
         }
     }
 

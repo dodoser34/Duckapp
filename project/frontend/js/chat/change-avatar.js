@@ -21,6 +21,7 @@ const ALLOWED_FILE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif
 const GENERIC_UPLOAD_MIME_TYPES = new Set(["", "application/octet-stream", "binary/octet-stream"]);
 const DEFAULT_AVATAR = "avatar_1.png";
 const MODAL_ANIMATION_MS = 260;
+const AVATAR_NAME_RE = /^(avatar_[0-9]{1,2}\.png|user_avatars\/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$/;
 let isHistoryLoading = false;
 let historyHandlersBound = false;
 
@@ -119,9 +120,10 @@ function withCacheBust(url, marker = Date.now()) {
 }
 
 function normalizeAvatarUrl(avatar) {
-    const safeAvatar = avatar || DEFAULT_AVATAR;
-    if (safeAvatar.startsWith("/")) return safeAvatar;
-    if (safeAvatar.startsWith("http://") || safeAvatar.startsWith("https://")) return safeAvatar;
+    const safeAvatar = String(avatar || "").trim();
+    if (!AVATAR_NAME_RE.test(safeAvatar)) {
+        return `${ASSETS_PATH}${DEFAULT_AVATAR}`;
+    }
     return `${ASSETS_PATH}${safeAvatar}`;
 }
 

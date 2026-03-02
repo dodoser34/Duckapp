@@ -37,7 +37,7 @@ const DEFAULT_PUBLIC_STATS = Object.freeze({
     active_users: 17362,
     uptime_percent: 93.7,
 });
-const STATS_REFRESH_INTERVAL_MS = 400;
+const STATS_REFRESH_INTERVAL_MS = 10000;
 let heroQrParallaxEnabled = false;
 let heroQrParallaxTicking = false;
 
