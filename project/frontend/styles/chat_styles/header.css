@@ -332,24 +332,3 @@
   color: #fff;
 }
 
-@media (max-width: 600px) {
-  .chat-header {
-    padding: 10px 14px;
-  }
-
-  .chat-header .avatar {
-    width: 44px;
-    height: 44px;
-  }
-
-  .chat-header-left .avatar-wrapper {
-    width: 44px;
-    height: 44px;
-  }
-
-  .chat-title,
-  .chat-subtitle {
-    max-width: 190px;
-  }
-}
-

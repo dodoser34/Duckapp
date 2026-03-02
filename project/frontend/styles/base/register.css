@@ -531,6 +531,17 @@ footer {
   transition: transform 0.3s ease;
 }
 
+.duck::before {
+  content: "🦆";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  transform: scaleY(-1);
+  opacity: 0.12;
+  filter: blur(2px);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+}
+
 @keyframes authCardAssemble {
   0% {
     opacity: 0;
@@ -583,54 +594,5 @@ footer {
   70% {
     translate: 0 -4px;
     rotate: 1deg;
-  }
-}
-
-@media (max-width: 520px) {
-  body {
-    padding: 12px;
-    padding-bottom: 42px;
-  }
-
-  .authorization-container,
-  .register-container {
-    width: min(430px, calc(100vw - 12px));
-    border-radius: 18px;
-    padding: 20px 14px 16px;
-  }
-
-  .logo {
-    width: 82px;
-    height: 82px;
-    font-size: 46px;
-    margin-bottom: 10px;
-  }
-
-  .authorization-container h2,
-  .register-container h2 {
-    margin-bottom: 14px;
-  }
-
-  .input-group {
-    margin: 8px 0;
-  }
-
-  .input-group input {
-    min-height: 46px;
-    font-size: 14px;
-  }
-
-  .password-assistant {
-    padding: 9px 10px 10px;
-  }
-
-  .authorization-container button[type="submit"],
-  .register-container button[type="submit"] {
-    min-height: 48px;
-    font-size: 15px;
-  }
-
-  footer {
-    font-size: 10px;
   }
 }

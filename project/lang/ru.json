@@ -88,7 +88,7 @@
         "feedback_view_title": "Заявки пользователей",
         "feedback_view_subtitle": "Здесь отображаются последние отчеты об ошибках.",
         "feedback_view_loading": "Загрузка заявок...",
-        "feedback_view_error": "Не удалось загрузить заявки.ㅤㅤ(Возможно, их просто нет!).",
+        "feedback_view_error": "Не удалось загрузить заявки.",
         "feedback_view_empty": "Заявок пока нет.",
         "feedback_view_user": "Пользователь"
     },

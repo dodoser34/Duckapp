@@ -394,38 +394,3 @@
   animation: emojiFadeIn 0.28s forwards;
   animation-delay: calc(0.02s * var(--n));
 }
-
-@media (max-width: 900px) {
-  .gif-inline-panel {
-    left: 50%;
-    min-width: 0;
-    width: min(620px, 95vw);
-  }
-
-  .emoji-panel {
-    left: 50%;
-    width: min(390px, 92vw);
-  }
-}
-
-@media (max-width: 520px) {
-  .chat-input {
-    gap: 8px;
-    padding: 10px;
-  }
-
-  .chat-input button {
-    min-width: 44px;
-    height: 44px;
-    padding: 0 10px;
-  }
-
-  #send-btn {
-    min-width: 56px;
-  }
-
-  .gif-inline-panel,
-  .emoji-panel {
-    bottom: 64px;
-  }
-}
