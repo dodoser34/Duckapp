@@ -180,10 +180,20 @@ def init_db():
             description TEXT NOT NULL,
             reproduction TEXT NOT NULL,
             recommendation TEXT NOT NULL,
+            status VARCHAR(64) NOT NULL DEFAULT 'new',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """
     )
+
+    cursor.execute("SHOW COLUMNS FROM site_feedback LIKE 'status'")
+    if not cursor.fetchone():
+        cursor.execute(
+            """
+            ALTER TABLE site_feedback
+            ADD COLUMN status VARCHAR(64) NOT NULL DEFAULT 'new'
+            """
+        )
 
     conn.commit()
     cursor.close()

@@ -209,6 +209,177 @@
   line-height: 1.45;
 }
 
+.feedback-list-status-badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #16304e;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.feedback-list-status-badge.status-new {
+  background: linear-gradient(135deg, #7ecbff, #9ad7ff);
+}
+
+.feedback-list-status-badge.status-attention {
+  background: linear-gradient(135deg, #ffd58e, #ffc06a);
+}
+
+.feedback-list-status-badge.status-rejected_not_enough_info {
+  background: linear-gradient(135deg, #ff9ca3, #ff7f89);
+}
+
+.feedback-list-status-badge.status-approved {
+  background: linear-gradient(135deg, #76e2a1, #55cb85);
+}
+
+.feedback-list-status-badge.status-resolved {
+  background: linear-gradient(135deg, #6fd5ff, #5bb7ff);
+}
+
+.feedback-admin-item-controls {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 10px;
+}
+
+.feedback-admin-item-select {
+  position: relative;
+}
+
+.feedback-admin-item-select .feedback-select-trigger {
+  min-height: 40px;
+  padding: 8px 40px 8px 10px;
+  font-size: 14px;
+}
+
+.feedback-admin-item-select .feedback-select-menu {
+  top: calc(100% + 6px);
+  max-height: 190px;
+}
+
+.feedback-admin-item-select.is-disabled {
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.feedback-admin-item-save {
+  min-height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  color: #16304e;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+}
+
+.feedback-admin-item-save:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+.feedback-admin-item-note {
+  min-height: 16px;
+  font-size: 12px;
+  color: #8ddfb2;
+}
+
+.feedback-admin-item-note.error {
+  color: #ff9da5;
+}
+
+.feedback-admin-panel {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.feedback-admin-panel h3 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 18px;
+}
+
+.feedback-admin-subtitle {
+  margin: 6px 0 10px;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.feedback-admin-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.feedback-admin-code {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 42px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.feedback-admin-actions button {
+  min-height: 42px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #16304e;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+}
+
+.feedback-admin-actions button:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+.feedback-admin-actions .feedback-admin-logout {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.feedback-admin-status {
+  min-height: 18px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.feedback-admin-status.success {
+  color: #76e2a1;
+}
+
+.feedback-admin-status.error {
+  color: #ff9da5;
+}
+
+@media (max-width: 720px) {
+  .feedback-admin-panel {
+    padding: 12px;
+  }
+
+  .feedback-list-meta {
+    gap: 8px;
+  }
+
+  .feedback-list-time {
+    width: 100%;
+  }
+}
+
 .modal.closing {
   animation: modalFadeOut 0.2s forwards;
 }

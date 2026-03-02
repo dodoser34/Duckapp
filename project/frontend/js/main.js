@@ -28,11 +28,23 @@ const feedbackProblemTypeTrigger = document.getElementById("feedback-problem-typ
 const feedbackProblemTypeMenu = document.getElementById("feedback-problem-type-menu");
 const feedbackListModal = document.getElementById("feedbackListModal");
 const feedbackListBody = document.getElementById("feedback-list-body");
+const feedbackAdminPanel = document.getElementById("feedback-admin-panel");
+const feedbackAdminCodeInput = document.getElementById("feedback-admin-code");
+const feedbackAdminLoginBtn = document.getElementById("feedback-admin-login");
+const feedbackAdminLogoutBtn = document.getElementById("feedback-admin-logout");
+const feedbackAdminStatus = document.getElementById("feedback-admin-status");
 const feedbackNicknameInput = document.getElementById("feedback-nickname");
 const heroQrSection = document.querySelector(".hero-qr");
 const featuresSection = document.querySelector(".features.features-classic-animated");
 const footerSection = document.querySelector("footer");
 const page = "main_page";
+const FEEDBACK_STATUS_OPTIONS = Object.freeze([
+    "new",
+    "attention",
+    "rejected_not_enough_info",
+    "approved",
+    "resolved",
+]);
 const DEFAULT_PUBLIC_STATS = Object.freeze({
     active_users: 17362,
     uptime_percent: 93.7,
@@ -40,6 +52,7 @@ const DEFAULT_PUBLIC_STATS = Object.freeze({
 const STATS_REFRESH_INTERVAL_MS = 10000;
 let heroQrParallaxEnabled = false;
 let heroQrParallaxTicking = false;
+let isFeedbackAdmin = false;
 
 function t(key, fallback) {
     const lang = window.currentLang;
@@ -58,6 +71,107 @@ function setFeedbackStatus(text, kind = "") {
     if (kind) {
         feedbackStatus.classList.add(kind);
     }
+}
+
+function setFeedbackAdminStatus(text, kind = "") {
+    if (!feedbackAdminStatus) return;
+    feedbackAdminStatus.textContent = text || "";
+    feedbackAdminStatus.classList.remove("success", "error");
+    if (kind) {
+        feedbackAdminStatus.classList.add(kind);
+    }
+}
+
+function normalizeFeedbackRequestStatus(value) {
+    const normalized = String(value || "").trim().toLowerCase();
+    if (FEEDBACK_STATUS_OPTIONS.includes(normalized)) {
+        return normalized;
+    }
+    return "new";
+}
+
+function feedbackStatusLabel(value) {
+    const normalized = normalizeFeedbackRequestStatus(value);
+    const labels = {
+        new: t("feedback_status_new", "Новая"),
+        attention: t("feedback_status_attention", "Обратим внимание"),
+        rejected_not_enough_info: t(
+            "feedback_status_rejected_not_enough_info",
+            "Отклонена: недостаточно инфы"
+        ),
+        approved: t("feedback_status_approved", "Одобрена"),
+        resolved: t("feedback_status_resolved", "Решена"),
+    };
+    return labels[normalized] || labels.new;
+}
+
+function feedbackStatusBadgeClass(value) {
+    return `feedback-list-status-badge status-${normalizeFeedbackRequestStatus(value)}`;
+}
+
+function syncFeedbackAdminUi() {
+    feedbackAdminPanel?.classList.toggle("is-admin", isFeedbackAdmin);
+    if (feedbackAdminCodeInput) {
+        feedbackAdminCodeInput.disabled = isFeedbackAdmin;
+        if (isFeedbackAdmin) {
+            feedbackAdminCodeInput.value = "";
+        }
+    }
+    if (feedbackAdminLoginBtn) {
+        feedbackAdminLoginBtn.hidden = isFeedbackAdmin;
+    }
+    if (feedbackAdminLogoutBtn) {
+        feedbackAdminLogoutBtn.hidden = !isFeedbackAdmin;
+    }
+}
+
+function mapFeedbackAdminError(message) {
+    if (!message || message === "Failed to fetch") {
+        return t("feedback_admin_error_common", "Ошибка входа администратора.");
+    }
+
+    if (message === "Invalid admin code") {
+        return t("feedback_admin_error_invalid_code", "Неверный спец-код администратора.");
+    }
+
+    if (
+        message === "Feedback admin code is not configured" ||
+        message === "Admin auth secret is not configured"
+    ) {
+        return t(
+            "feedback_admin_error_not_configured",
+            "Админ-вход не настроен на сервере."
+        );
+    }
+
+    return message;
+}
+
+function mapFeedbackStatusUpdateError(message) {
+    if (!message || message === "Failed to fetch") {
+        return t("feedback_status_update_error", "Не удалось обновить статус заявки.");
+    }
+
+    if (
+        message === "Admin authentication required" ||
+        message === "Admin session is invalid" ||
+        message === "Admin session has expired"
+    ) {
+        return t(
+            "feedback_status_update_auth_required",
+            "Войдите как админ, чтобы менять статусы."
+        );
+    }
+
+    if (message === "Feedback request not found") {
+        return t("feedback_status_update_not_found", "Заявка не найдена.");
+    }
+
+    if (message === "Could not update feedback status") {
+        return t("feedback_status_update_error", "Не удалось обновить статус заявки.");
+    }
+
+    return message;
 }
 
 function mapFeedbackLoadError(message) {
@@ -170,8 +284,7 @@ helperOpenFeedbackFormBtn?.addEventListener("click", () => {
 
 helperOpenFeedbackListBtn?.addEventListener("click", async () => {
     toggleHelperPanel(false);
-    openModal(feedbackListModal, helperOpenFeedbackListBtn);
-    await loadFeedbackList();
+    await openFeedbackListModalAndLoad(helperOpenFeedbackListBtn);
 });
 
 function closeFeedbackProblemTypeMenu() {
@@ -335,6 +448,209 @@ function createFeedbackField(labelText, value) {
     return wrapper;
 }
 
+async function checkFeedbackAdminSession() {
+    try {
+        const response = await fetch(`${API_URL}/api/feedback/admin/session`, {
+            credentials: "include",
+        });
+        const data = await response.json().catch(() => ({}));
+        isFeedbackAdmin = Boolean(response.ok && data?.is_admin);
+    } catch {
+        isFeedbackAdmin = false;
+    }
+    syncFeedbackAdminUi();
+}
+
+async function updateFeedbackRequestStatus(feedbackId, statusValue) {
+    const response = await fetch(`${API_URL}/api/feedback/${encodeURIComponent(feedbackId)}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: statusValue }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data?.detail || mapFeedbackStatusUpdateError(""));
+    }
+    return data?.feedback || null;
+}
+
+let feedbackAdminStatusMenuListenersBound = false;
+
+function closeFeedbackAdminStatusMenu(selectWrap) {
+    if (!selectWrap) return;
+    selectWrap.classList.remove("open");
+    const trigger = selectWrap.querySelector(".feedback-select-trigger");
+    trigger?.setAttribute("aria-expanded", "false");
+}
+
+function closeAllFeedbackAdminStatusMenus(exceptWrap = null) {
+    document.querySelectorAll(".feedback-admin-item-select.open").forEach((node) => {
+        if (node !== exceptWrap) {
+            closeFeedbackAdminStatusMenu(node);
+        }
+    });
+}
+
+function bindFeedbackAdminStatusMenuListeners() {
+    if (feedbackAdminStatusMenuListenersBound) return;
+    feedbackAdminStatusMenuListenersBound = true;
+
+    document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) {
+            closeAllFeedbackAdminStatusMenus();
+            return;
+        }
+        if (!target.closest(".feedback-admin-item-select")) {
+            closeAllFeedbackAdminStatusMenus();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closeAllFeedbackAdminStatusMenus();
+        }
+    });
+}
+
+function createFeedbackAdminStatusSelect(initialStatus) {
+    bindFeedbackAdminStatusMenuListeners();
+
+    const selectWrap = document.createElement("div");
+    selectWrap.className = "feedback-select-wrap feedback-admin-item-select";
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "feedback-select-trigger";
+    trigger.setAttribute("aria-haspopup", "listbox");
+    trigger.setAttribute("aria-expanded", "false");
+
+    const menu = document.createElement("ul");
+    menu.className = "feedback-select-menu";
+    menu.setAttribute("role", "listbox");
+
+    let currentValue = normalizeFeedbackRequestStatus(initialStatus);
+
+    function updateTrigger() {
+        trigger.textContent = feedbackStatusLabel(currentValue);
+        trigger.classList.remove("is-placeholder");
+    }
+
+    function renderMenu() {
+        menu.innerHTML = "";
+
+        FEEDBACK_STATUS_OPTIONS.forEach((statusValue) => {
+            const item = document.createElement("li");
+            item.className = "feedback-select-option";
+            item.setAttribute("role", "option");
+            item.dataset.value = statusValue;
+            item.textContent = feedbackStatusLabel(statusValue);
+
+            const isSelected = currentValue === statusValue;
+            item.setAttribute("aria-selected", isSelected ? "true" : "false");
+            if (isSelected) {
+                item.classList.add("selected");
+            }
+
+            item.addEventListener("click", () => {
+                currentValue = statusValue;
+                updateTrigger();
+                renderMenu();
+                closeFeedbackAdminStatusMenu(selectWrap);
+            });
+
+            menu.appendChild(item);
+        });
+    }
+
+    trigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const willOpen = !selectWrap.classList.contains("open");
+        closeAllFeedbackAdminStatusMenus(selectWrap);
+        selectWrap.classList.toggle("open", willOpen);
+        trigger.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        if (willOpen) {
+            renderMenu();
+        }
+    });
+
+    updateTrigger();
+    renderMenu();
+
+    selectWrap.appendChild(trigger);
+    selectWrap.appendChild(menu);
+
+    return {
+        element: selectWrap,
+        getValue: () => currentValue,
+        setValue: (nextValue) => {
+            currentValue = normalizeFeedbackRequestStatus(nextValue);
+            updateTrigger();
+            renderMenu();
+        },
+        setDisabled: (disabled) => {
+            trigger.disabled = Boolean(disabled);
+            selectWrap.classList.toggle("is-disabled", Boolean(disabled));
+            if (disabled) {
+                closeFeedbackAdminStatusMenu(selectWrap);
+            }
+        },
+    };
+}
+
+function createFeedbackAdminControls(item, statusBadge) {
+    const controls = document.createElement("div");
+    controls.className = "feedback-admin-item-controls";
+
+    let currentStatus = normalizeFeedbackRequestStatus(item.status);
+    const statusSelect = createFeedbackAdminStatusSelect(currentStatus);
+
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "feedback-admin-item-save";
+    saveBtn.textContent = t("feedback_status_save_btn", "Сохранить статус");
+
+    const note = document.createElement("div");
+    note.className = "feedback-admin-item-note";
+
+    saveBtn.addEventListener("click", async () => {
+        const nextStatus = normalizeFeedbackRequestStatus(statusSelect.getValue());
+
+        if (nextStatus === currentStatus) {
+            note.classList.remove("error");
+            note.textContent = t("feedback_status_no_changes", "Статус не изменен.");
+            return;
+        }
+
+        saveBtn.disabled = true;
+        statusSelect.setDisabled(true);
+        note.classList.remove("error");
+        note.textContent = t("feedback_status_saving", "Сохраняем...");
+
+        try {
+            const updatedFeedback = await updateFeedbackRequestStatus(item.id, nextStatus);
+            currentStatus = normalizeFeedbackRequestStatus(updatedFeedback?.status || nextStatus);
+            item.status = currentStatus;
+            statusBadge.className = feedbackStatusBadgeClass(currentStatus);
+            statusBadge.textContent = feedbackStatusLabel(currentStatus);
+            statusSelect.setValue(currentStatus);
+            note.textContent = t("feedback_status_saved", "Статус сохранен.");
+        } catch (error) {
+            note.classList.add("error");
+            note.textContent = mapFeedbackStatusUpdateError(error?.message);
+        } finally {
+            saveBtn.disabled = false;
+            statusSelect.setDisabled(false);
+        }
+    });
+
+    controls.appendChild(statusSelect.element);
+    controls.appendChild(saveBtn);
+    controls.appendChild(note);
+    return controls;
+}
+
 function renderFeedbackList(items) {
     if (!feedbackListBody) return;
     feedbackListBody.innerHTML = "";
@@ -350,6 +666,7 @@ function renderFeedbackList(items) {
     items.forEach((item) => {
         const card = document.createElement("article");
         card.className = "feedback-list-item";
+        const statusValue = normalizeFeedbackRequestStatus(item.status);
 
         const meta = document.createElement("div");
         meta.className = "feedback-list-meta";
@@ -366,8 +683,13 @@ function renderFeedbackList(items) {
         time.className = "feedback-list-time";
         time.textContent = formatFeedbackDate(item.created_at, item.created_at_ms);
 
+        const statusBadge = document.createElement("div");
+        statusBadge.className = feedbackStatusBadgeClass(statusValue);
+        statusBadge.textContent = feedbackStatusLabel(statusValue);
+
         meta.appendChild(author);
         meta.appendChild(typeBadge);
+        meta.appendChild(statusBadge);
         meta.appendChild(time);
         card.appendChild(meta);
 
@@ -389,6 +711,10 @@ function renderFeedbackList(items) {
                 item.recommendation
             )
         );
+
+        if (isFeedbackAdmin) {
+            card.appendChild(createFeedbackAdminControls(item, statusBadge));
+        }
 
         feedbackListBody.appendChild(card);
     });
@@ -423,10 +749,96 @@ async function loadFeedbackList() {
     }
 }
 
-feedbackOpenListBtn?.addEventListener("click", async () => {
-    openModal(feedbackListModal, feedbackOpenListBtn);
+async function openFeedbackListModalAndLoad(triggerButton = null) {
+    openModal(feedbackListModal, triggerButton);
+    await checkFeedbackAdminSession();
     await loadFeedbackList();
+}
+
+feedbackOpenListBtn?.addEventListener("click", async () => {
+    await openFeedbackListModalAndLoad(feedbackOpenListBtn);
 });
+
+feedbackAdminLoginBtn?.addEventListener("click", async () => {
+    const code = feedbackAdminCodeInput?.value.trim() || "";
+    if (!code) {
+        setFeedbackAdminStatus(t("feedback_admin_code_required", "Введите спец-код."), "error");
+        feedbackAdminCodeInput?.focus();
+        return;
+    }
+
+    feedbackAdminLoginBtn.disabled = true;
+    setFeedbackAdminStatus(t("feedback_admin_login_loading", "Выполняется вход..."));
+
+    try {
+        const response = await fetch(`${API_URL}/api/feedback/admin/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ code }),
+        });
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(mapFeedbackAdminError(data?.detail));
+        }
+
+        isFeedbackAdmin = true;
+        syncFeedbackAdminUi();
+        setFeedbackAdminStatus(
+            t("feedback_admin_login_success", "Вход выполнен. Теперь можно менять статусы."),
+            "success"
+        );
+        await loadFeedbackList();
+    } catch (error) {
+        setFeedbackAdminStatus(mapFeedbackAdminError(error?.message), "error");
+    } finally {
+        feedbackAdminLoginBtn.disabled = false;
+    }
+});
+
+feedbackAdminCodeInput?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    feedbackAdminLoginBtn?.click();
+});
+
+feedbackAdminCodeInput?.addEventListener("input", () => {
+    if (feedbackAdminStatus?.textContent) {
+        setFeedbackAdminStatus("");
+    }
+});
+
+feedbackAdminLogoutBtn?.addEventListener("click", async () => {
+    feedbackAdminLogoutBtn.disabled = true;
+    setFeedbackAdminStatus(t("feedback_admin_logout_loading", "Выходим из админа..."));
+
+    try {
+        const response = await fetch(`${API_URL}/api/feedback/admin/logout`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(mapFeedbackAdminError(data?.detail));
+        }
+
+        isFeedbackAdmin = false;
+        syncFeedbackAdminUi();
+        setFeedbackAdminStatus(
+            t("feedback_admin_logout_success", "Админ-сессия завершена."),
+            "success"
+        );
+        await loadFeedbackList();
+    } catch (error) {
+        setFeedbackAdminStatus(mapFeedbackAdminError(error?.message), "error");
+    } finally {
+        feedbackAdminLogoutBtn.disabled = false;
+    }
+});
+
+syncFeedbackAdminUi();
 
 feedbackForm?.addEventListener("submit", async (event) => {
     event.preventDefault();

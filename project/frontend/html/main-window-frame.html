@@ -241,6 +241,25 @@
         <h2 data-i18n="feedback_view_title"></h2>
         <p class="feedback-list-subtitle" data-i18n="feedback_view_subtitle"></p>
         <div id="feedback-list-body" class="feedback-list-body"></div>
+        <section id="feedback-admin-panel" class="feedback-admin-panel">
+            <h3>Войти как админ</h3>
+            <p class="feedback-admin-subtitle">Введите спец-код из .env, чтобы менять статусы заявок.</p>
+            <div class="feedback-admin-actions">
+                <input
+                    id="feedback-admin-code"
+                    class="feedback-admin-code"
+                    type="password"
+                    maxlength="512"
+                    autocomplete="off"
+                    placeholder="Спец-код администратора"
+                >
+                <button id="feedback-admin-login" type="button">Войти как админ</button>
+                <button id="feedback-admin-logout" type="button" class="feedback-admin-logout" hidden>
+                    Выйти из админа
+                </button>
+            </div>
+            <div id="feedback-admin-status" class="feedback-admin-status" aria-live="polite"></div>
+        </section>
     </div>
 </div>
 
