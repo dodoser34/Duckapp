@@ -18,14 +18,8 @@ idna==3.11
 packaging==25.0
 passlib==1.7.4
 pyasn1==0.6.2
-pydantic==2.11.7
-pydantic_core==2.33.2
-pygame==2.6.1
 PyJWT==2.10.1
 PyMySQL==1.1.2
-PyQt6==6.10.1
-PyQt6-Qt6==6.10.1
-PyQt6_sip==13.10.3
 python-dotenv==1.1.1
 python-jose==3.5.0
 python-multipart==0.0.12
@@ -38,3 +32,4 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.5.0
 uvicorn==0.35.0
+standard-imghdr==3.13.0

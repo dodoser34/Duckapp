@@ -209,6 +209,11 @@ registerForm.addEventListener("submit", async (e) => {
         return;
     }
 
+    if (!registerForm.email.checkValidity()) {
+        msg.textContent = "Error: " + t("invalid_email_error", "Enter a valid email");
+        return;
+    }
+
     if (password !== confirmPassword) {
         msg.textContent = "Error: " + t("password_mismatch_error", "Passwords do not match");
         return;

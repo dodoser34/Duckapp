@@ -1,9 +1,14 @@
-import { loginUser } from "./api.js";
+import { loginUser, requestAccountRecovery, resetAccountCredentials } from "./api.js";
 import { getSession } from "./check-session.js";
 import { initDucks } from "./ducks.js";
 
 const loginForm = document.getElementById("loginForm");
 const msg = document.getElementById("errorMsg");
+const recoveryToggle = document.getElementById("recoveryToggle");
+const recoveryForm = document.getElementById("recoveryForm");
+const recoverySendCode = document.getElementById("recoverySendCode");
+const recoveryCodeStep = document.getElementById("recoveryCodeStep");
+const recoveryMsg = document.getElementById("recoveryMsg");
 const page = document.body.getAttribute("data-page") || "authorization";
 const USERNAME_MAX_LENGTH = 32;
 const t = (key, fallback) => {
@@ -51,8 +56,181 @@ function setupPasswordToggles() {
     });
 }
 
+function setRecoveryMessage(text, state = "info") {
+    if (!recoveryMsg) return;
+    recoveryMsg.dataset.state = state;
+    recoveryMsg.textContent = text;
+}
+
+function setLoading(button, isLoading, loadingText, idleText) {
+    if (!button) return;
+    button.disabled = isLoading;
+    button.textContent = isLoading ? loadingText : idleText;
+}
+
+function recoveryErrorText(detail) {
+    const messages = {
+        "Email delivery is not configured": t(
+            "recovery_delivery_missing",
+            "Email delivery is not configured"
+        ),
+        "Could not send recovery email": t(
+            "recovery_delivery_failed",
+            "Could not send recovery email"
+        ),
+        "Invalid or expired recovery code": t(
+            "recovery_invalid_or_expired_code",
+            "Invalid or expired recovery code"
+        ),
+        "Username is already taken": t(
+            "recovery_username_taken",
+            "Username is already taken"
+        ),
+        "Invalid email address": t("recovery_invalid_email", "Enter a valid email"),
+        "Password must be at least 8 characters long": t(
+            "recovery_password_too_short",
+            "Password must be at least 8 characters long"
+        ),
+    };
+    return messages[detail] || detail || t("recovery_error", "Recovery error");
+}
+
+function setupRecoveryPanel() {
+    if (!recoveryToggle || !recoveryForm) return;
+
+    const emailInput = document.getElementById("recoveryEmail");
+    const codeInput = document.getElementById("recoveryCode");
+    const usernameInput = document.getElementById("recoveryUsername");
+    const passwordInput = document.getElementById("recoveryPassword");
+    const confirmPasswordInput = document.getElementById("recoveryConfirmPassword");
+    const codeStepControls = recoveryCodeStep
+        ? Array.from(recoveryCodeStep.querySelectorAll("input, button"))
+        : [];
+    const setCodeStepEnabled = (enabled) => {
+        if (recoveryCodeStep) {
+            recoveryCodeStep.hidden = !enabled;
+        }
+        codeStepControls.forEach((control) => {
+            control.disabled = !enabled;
+        });
+    };
+
+    setCodeStepEnabled(false);
+
+    recoveryToggle.addEventListener("click", () => {
+        const willOpen = recoveryForm.hidden;
+        recoveryForm.hidden = !willOpen;
+        recoveryToggle.setAttribute("aria-expanded", String(willOpen));
+        if (willOpen) {
+            setRecoveryMessage("");
+            emailInput?.focus();
+        }
+    });
+
+    codeInput?.addEventListener("input", () => {
+        codeInput.value = codeInput.value.replace(/\D/g, "").slice(0, 6);
+    });
+
+    recoverySendCode?.addEventListener("click", async () => {
+        const email = String(emailInput?.value || "").trim();
+        if (!emailInput || !email || !emailInput.checkValidity()) {
+            setRecoveryMessage(t("recovery_invalid_email", "Enter a valid email"), "error");
+            emailInput?.focus();
+            return;
+        }
+
+        setLoading(
+            recoverySendCode,
+            true,
+            t("recovery_sending", "Sending..."),
+            t("recovery_send_code", "Send code")
+        );
+        setRecoveryMessage("");
+
+        const res = await requestAccountRecovery(email);
+        setLoading(
+            recoverySendCode,
+            false,
+            t("recovery_sending", "Sending..."),
+            t("recovery_send_code", "Send code")
+        );
+
+        if (res.ok) {
+            setCodeStepEnabled(true);
+            setRecoveryMessage(t("recovery_code_sent", "Code sent to email"), "success");
+            codeInput?.focus();
+        } else {
+            setRecoveryMessage(recoveryErrorText(res.detail), "error");
+        }
+    });
+
+    recoveryForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = String(emailInput?.value || "").trim();
+        const code = String(codeInput?.value || "").trim();
+        const username = String(usernameInput?.value || "").trim();
+        const password = String(passwordInput?.value || "");
+        const confirmPassword = String(confirmPasswordInput?.value || "");
+
+        if (!emailInput || !email || !emailInput.checkValidity()) {
+            setRecoveryMessage(t("recovery_invalid_email", "Enter a valid email"), "error");
+            emailInput?.focus();
+            return;
+        }
+        if (!/^\d{6}$/.test(code)) {
+            setRecoveryMessage(t("recovery_invalid_code", "Enter the 6-digit code"), "error");
+            codeInput?.focus();
+            return;
+        }
+        if (!username || username.length > USERNAME_MAX_LENGTH) {
+            setRecoveryMessage(`Error: Username must be at most ${USERNAME_MAX_LENGTH} characters long`, "error");
+            usernameInput?.focus();
+            return;
+        }
+        if (password !== confirmPassword) {
+            setRecoveryMessage(
+                t("recovery_password_mismatch", "Passwords do not match"),
+                "error"
+            );
+            confirmPasswordInput?.focus();
+            return;
+        }
+
+        const submitButton = recoveryForm.querySelector('button[type="submit"]');
+        setLoading(
+            submitButton,
+            true,
+            t("recovery_saving", "Saving..."),
+            t("recovery_apply", "Change login and password")
+        );
+
+        const res = await resetAccountCredentials(email, code, username, password);
+        setLoading(
+            submitButton,
+            false,
+            t("recovery_saving", "Saving..."),
+            t("recovery_apply", "Change login and password")
+        );
+
+        if (res.ok) {
+            loginForm.username.value = res.username || username;
+            loginForm.password.value = "";
+            recoveryForm.reset();
+            setCodeStepEnabled(false);
+            setRecoveryMessage(
+                t("recovery_reset_success", "Account updated. You can sign in now."),
+                "success"
+            );
+        } else {
+            setRecoveryMessage(recoveryErrorText(res.detail), "error");
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     setupPasswordToggles();
+    setupRecoveryPanel();
     const res = await getSession();
     if (res.ok) {
         window.location.replace("main-chat.html");

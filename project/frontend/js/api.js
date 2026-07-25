@@ -46,3 +46,36 @@ export async function loginUser(username, password) {
     const data = await res.json().catch(() => ({}));
     return { ok: res.ok, ...data };
 }
+
+export async function requestAccountRecovery(email) {
+    const formData = new URLSearchParams();
+    formData.append("email", email);
+
+    const res = await fetch(`${API_URL}/api/auth/recovery/request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData,
+        credentials: "include"
+    });
+
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, ...data };
+}
+
+export async function resetAccountCredentials(email, code, username, password) {
+    const formData = new URLSearchParams();
+    formData.append("email", email);
+    formData.append("code", code);
+    formData.append("username", username);
+    formData.append("password", password);
+
+    const res = await fetch(`${API_URL}/api/auth/recovery/reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData,
+        credentials: "include"
+    });
+
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, ...data };
+}

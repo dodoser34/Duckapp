@@ -1,8 +1,12 @@
 import datetime
+import html
 import os
 import re
+import secrets
+import smtplib
 import time
 from collections import deque
+from email.message import EmailMessage
 from pathlib import Path
 from threading import Lock
 
@@ -10,6 +14,7 @@ import bcrypt
 import jwt
 import pymysql
 from dotenv import load_dotenv
+from email_validator import EmailNotValidError, validate_email
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 
@@ -31,10 +36,17 @@ def _env_positive_int(name: str, default: int) -> int:
     return max(1, value)
 
 
+def _env_bool(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return str(raw).strip().lower() in {"1", "true", "yes", "on"}
+
+
 SECRET_KEY: str = str(os.getenv("JWT_KEY"))
 ALGORITHM = "HS256"
 TOKEN_TTL_SECONDS = 2 * 60 * 60
-USE_SECURE_COOKIES = os.getenv("DUCKAPP_SECURE_COOKIES", "0").strip().lower() in {"1", "true", "yes"}
+USE_SECURE_COOKIES = _env_bool("DUCKAPP_SECURE_COOKIES")
 COOKIE_NAME = "access_token"
 COOKIE_PATH = os.getenv("DUCKAPP_COOKIE_PATH", "/").strip() or "/"
 COOKIE_DOMAIN = (os.getenv("DUCKAPP_COOKIE_DOMAIN") or "").strip() or None
@@ -54,6 +66,10 @@ AUTH_TRUST_PROXY_HEADERS = os.getenv("DUCKAPP_TRUST_PROXY_HEADERS", "0").strip()
     "yes",
 }
 USERNAME_MAX_LENGTH = 32
+EMAIL_MAX_LENGTH = 100
+RECOVERY_CODE_LENGTH = 6
+RECOVERY_CODE_TTL_MINUTES = _env_positive_int("DUCKAPP_RECOVERY_CODE_TTL_MINUTES", 20)
+RECOVERY_CODE_MAX_ATTEMPTS = _env_positive_int("DUCKAPP_RECOVERY_CODE_MAX_ATTEMPTS", 5)
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 FRONTEND_HTML_DIR = BASE_DIR / "frontend" / "html"
@@ -126,6 +142,119 @@ def _enforce_auth_rate_limit(request: Request, username: str | None = None) -> N
         for key in keys:
             bucket = _AUTH_RATE_BUCKETS.setdefault(key, deque())
             bucket.append(now)
+
+
+def _normalize_email_or_400(email: str) -> str:
+    value = str(email or "").strip()
+    if not value or len(value) > EMAIL_MAX_LENGTH:
+        raise HTTPException(status_code=400, detail="Invalid email address")
+
+    try:
+        normalized = validate_email(value, check_deliverability=False).normalized
+    except EmailNotValidError:
+        raise HTTPException(status_code=400, detail="Invalid email address")
+
+    if len(normalized) > EMAIL_MAX_LENGTH:
+        raise HTTPException(status_code=400, detail="Invalid email address")
+    return normalized
+
+
+def _generate_recovery_code() -> str:
+    upper_bound = 10 ** RECOVERY_CODE_LENGTH
+    return f"{secrets.randbelow(upper_bound):0{RECOVERY_CODE_LENGTH}d}"
+
+
+def _hash_secret(value: str) -> str:
+    return bcrypt.hashpw(value.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+
+def _verify_secret(value: str, hashed_value: str) -> bool:
+    try:
+        return bcrypt.checkpw(value.encode("utf-8"), hashed_value.encode("utf-8"))
+    except (TypeError, ValueError):
+        return False
+
+
+def _smtp_host() -> str:
+    return (os.getenv("DUCKAPP_SMTP_HOST") or "").strip()
+
+
+def _recovery_delivery_available() -> bool:
+    if not _smtp_host():
+        return False
+    sender = (os.getenv("DUCKAPP_SMTP_FROM") or os.getenv("DUCKAPP_SMTP_USER") or "").strip()
+    return bool(sender)
+
+
+def _send_recovery_email(email: str, username: str, code: str) -> None:
+    host = _smtp_host()
+    if not host:
+        raise HTTPException(status_code=503, detail="Email delivery is not configured")
+
+    port = _env_positive_int("DUCKAPP_SMTP_PORT", 587)
+    sender = (os.getenv("DUCKAPP_SMTP_FROM") or os.getenv("DUCKAPP_SMTP_USER") or "").strip()
+    username_env = (os.getenv("DUCKAPP_SMTP_USER") or "").strip()
+    password_env = os.getenv("DUCKAPP_SMTP_PASSWORD") or ""
+    use_ssl = _env_bool("DUCKAPP_SMTP_SSL", port == 465)
+    use_starttls = _env_bool("DUCKAPP_SMTP_STARTTLS", not use_ssl)
+
+    if not sender:
+        raise HTTPException(status_code=503, detail="Email delivery is not configured")
+
+    message = EmailMessage()
+    message["From"] = sender
+    message["To"] = email
+    message["Subject"] = "DuckApp account recovery code"
+    text_body = "\n".join(
+        [
+            f"Hello, {username}.",
+            "",
+            f"Your DuckApp recovery code is: {code}",
+            f"The code expires in {RECOVERY_CODE_TTL_MINUTES} minutes.",
+            "",
+            "If you did not request this code, ignore this email.",
+        ]
+    )
+    html_body = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #172033;">
+        <h2>DuckApp account recovery</h2>
+        <p>Hello, {html.escape(username)}.</p>
+        <p>Your recovery code:</p>
+        <p style="font-size: 28px; font-weight: 700; letter-spacing: 6px;">{code}</p>
+        <p>The code expires in {RECOVERY_CODE_TTL_MINUTES} minutes.</p>
+        <p>If you did not request this code, ignore this email.</p>
+      </body>
+    </html>
+    """
+    message.set_content(text_body)
+    message.add_alternative(html_body, subtype="html")
+
+    try:
+        if use_ssl:
+            with smtplib.SMTP_SSL(host, port, timeout=12) as smtp:
+                if username_env:
+                    smtp.login(username_env, password_env)
+                smtp.send_message(message)
+        else:
+            with smtplib.SMTP(host, port, timeout=12) as smtp:
+                if use_starttls:
+                    smtp.starttls()
+                if username_env:
+                    smtp.login(username_env, password_env)
+                smtp.send_message(message)
+    except (OSError, smtplib.SMTPException):
+        raise HTTPException(status_code=503, detail="Could not send recovery email")
+
+
+def _cleanup_recovery_codes(cursor) -> None:
+    cursor.execute(
+        """
+        DELETE FROM account_recovery_codes
+        WHERE expires_at < (UTC_TIMESTAMP() - INTERVAL 1 DAY)
+            OR (used_at IS NOT NULL AND used_at < (UTC_TIMESTAMP() - INTERVAL 1 DAY))
+        """
+    )
 
 
 def _public_avatar(avatar: str | None) -> str:
@@ -202,7 +331,7 @@ async def register(
     password: str = Form(...),
 ):
     username = username.strip()
-    email = email.strip()
+    email = _normalize_email_or_400(email)
 
     if not username:
         raise HTTPException(status_code=400, detail="Username is required")
@@ -217,7 +346,7 @@ async def register(
 
     conn = db.get_connection()
     cursor = conn.cursor()
-    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    hashed = _hash_secret(password)
 
     try:
         cursor.execute(
@@ -317,6 +446,199 @@ def get_me(token: str = Depends(get_token_from_cookie)):
     }
 
 
+@router.post("/recovery/request")
+async def request_account_recovery(
+    request: Request,
+    email: str = Form(...),
+):
+    email = _normalize_email_or_400(email)
+    _enforce_auth_rate_limit(request, email)
+
+    if not _recovery_delivery_available():
+        raise HTTPException(status_code=503, detail="Email delivery is not configured")
+
+    try:
+        conn = db.get_connection()
+    except pymysql.MySQLError:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    code = ""
+    code_id = None
+    user = None
+
+    try:
+        _cleanup_recovery_codes(cursor)
+        cursor.execute(
+            "SELECT id, username, email FROM registered_users WHERE email = %s",
+            (email,),
+        )
+        user = cursor.fetchone()
+
+        if user:
+            code = _generate_recovery_code()
+            expires_at = datetime.datetime.utcnow() + datetime.timedelta(
+                minutes=RECOVERY_CODE_TTL_MINUTES
+            )
+            cursor.execute(
+                """
+                UPDATE account_recovery_codes
+                SET used_at = UTC_TIMESTAMP()
+                WHERE user_id = %s AND used_at IS NULL
+                """,
+                (user["id"],),
+            )
+            cursor.execute(
+                """
+                INSERT INTO account_recovery_codes (user_id, email, code_hash, expires_at)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (user["id"], user["email"], _hash_secret(code), expires_at),
+            )
+            code_id = cursor.lastrowid
+
+        conn.commit()
+    finally:
+        cursor.close()
+        conn.close()
+
+    if user and code:
+        try:
+            _send_recovery_email(user["email"], user["username"], code)
+        except HTTPException:
+            if code_id:
+                cleanup_conn = db.get_connection()
+                cleanup_cursor = cleanup_conn.cursor()
+                try:
+                    cleanup_cursor.execute(
+                        "UPDATE account_recovery_codes SET used_at = UTC_TIMESTAMP() WHERE id = %s",
+                        (code_id,),
+                    )
+                    cleanup_conn.commit()
+                finally:
+                    cleanup_cursor.close()
+                    cleanup_conn.close()
+            raise
+
+    return {
+        "ok": True,
+        "message": "If an account with this email exists, a recovery code has been sent",
+    }
+
+
+@router.post("/recovery/reset")
+async def reset_account_credentials(
+    request: Request,
+    email: str = Form(...),
+    code: str = Form(...),
+    username: str = Form(...),
+    password: str = Form(...),
+):
+    email = _normalize_email_or_400(email)
+    code = str(code or "").strip()
+    username = username.strip()
+
+    if not re.fullmatch(rf"\d{{{RECOVERY_CODE_LENGTH}}}", code):
+        raise HTTPException(status_code=400, detail="Invalid or expired recovery code")
+    if not username:
+        raise HTTPException(status_code=400, detail="Username is required")
+    if len(username) > USERNAME_MAX_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Username must be at most {USERNAME_MAX_LENGTH} characters long",
+        )
+    if len(password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters long")
+
+    _enforce_auth_rate_limit(request, email)
+
+    try:
+        conn = db.get_connection()
+    except pymysql.MySQLError:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    try:
+        _cleanup_recovery_codes(cursor)
+        cursor.execute(
+            """
+            SELECT
+                arc.id,
+                arc.user_id,
+                arc.code_hash,
+                arc.attempts,
+                ru.username AS old_username
+            FROM account_recovery_codes arc
+            JOIN registered_users ru ON ru.id = arc.user_id
+            WHERE arc.email = %s
+                AND arc.used_at IS NULL
+                AND arc.expires_at > UTC_TIMESTAMP()
+            ORDER BY arc.created_at DESC, arc.id DESC
+            LIMIT 1
+            """,
+            (email,),
+        )
+        recovery = cursor.fetchone()
+
+        if not recovery:
+            raise HTTPException(status_code=400, detail="Invalid or expired recovery code")
+
+        if int(recovery["attempts"]) >= RECOVERY_CODE_MAX_ATTEMPTS:
+            cursor.execute(
+                "UPDATE account_recovery_codes SET used_at = UTC_TIMESTAMP() WHERE id = %s",
+                (recovery["id"],),
+            )
+            conn.commit()
+            raise HTTPException(status_code=400, detail="Invalid or expired recovery code")
+
+        if not _verify_secret(code, recovery["code_hash"]):
+            next_attempts = int(recovery["attempts"]) + 1
+            if next_attempts >= RECOVERY_CODE_MAX_ATTEMPTS:
+                cursor.execute(
+                    """
+                    UPDATE account_recovery_codes
+                    SET attempts = %s, used_at = UTC_TIMESTAMP()
+                    WHERE id = %s
+                    """,
+                    (next_attempts, recovery["id"]),
+                )
+            else:
+                cursor.execute(
+                    "UPDATE account_recovery_codes SET attempts = %s WHERE id = %s",
+                    (next_attempts, recovery["id"]),
+                )
+            conn.commit()
+            raise HTTPException(status_code=400, detail="Invalid or expired recovery code")
+
+        hashed = _hash_secret(password)
+        try:
+            cursor.execute(
+                """
+                UPDATE registered_users
+                SET username = %s, hashed_password = %s
+                WHERE id = %s
+                """,
+                (username, hashed, recovery["user_id"]),
+            )
+            cursor.execute(
+                "UPDATE user_profiles SET names = %s WHERE user_id = %s",
+                (username, recovery["user_id"]),
+            )
+            cursor.execute(
+                "UPDATE account_recovery_codes SET used_at = UTC_TIMESTAMP() WHERE id = %s",
+                (recovery["id"],),
+            )
+            conn.commit()
+        except pymysql.err.IntegrityError:
+            conn.rollback()
+            raise HTTPException(status_code=400, detail="Username is already taken")
+    finally:
+        cursor.close()
+        conn.close()
+
+    return {"ok": True, "username": username}
+
+
 @router.get("/login", response_class=HTMLResponse)
 async def login_page():
     return HTMLResponse(read_html_file("authorization-frame.html"))
@@ -346,7 +668,7 @@ async def login_api(
 
     if not user:
         raise HTTPException(status_code=401, detail="Invalid username or password")
-    if not bcrypt.checkpw(password.encode(), user["hashed_password"].encode()):
+    if not _verify_secret(password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
     _set_profile_status_by_username(user["username"], "online")

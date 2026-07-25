@@ -30,6 +30,7 @@ async function fetchProfile() {
 
 export async function getProfile() {
     const profileName = document.getElementById("profile-name");
+    const profileEmail = document.getElementById("profile-email");
     const profileAvatar = document.getElementById("profile-avatar");
     const statusIndicator = document.getElementById("status-indicator");
 
@@ -40,6 +41,11 @@ export async function getProfile() {
         const result = await fetchProfile();
 
         profileName.textContent = result.names;
+        if (profileEmail) {
+            profileEmail.textContent = result.email || "";
+            profileEmail.title = result.email || "";
+            profileEmail.hidden = !result.email;
+        }
         updateStatus(result.status);
 
         profileAvatar.src = result.avatar
@@ -54,6 +60,11 @@ export async function getProfile() {
         }
 
         profileName.textContent = "";
+        if (profileEmail) {
+            profileEmail.textContent = "";
+            profileEmail.title = "";
+            profileEmail.hidden = true;
+        }
         profileAvatar.src = ASSETS_PATH + "avatar_1.png";
         updateStatus("offline");
     }

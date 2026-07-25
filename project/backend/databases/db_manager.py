@@ -54,6 +54,24 @@ def init_db():
 
     cursor.execute(
         """
+        CREATE TABLE IF NOT EXISTS account_recovery_codes (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            code_hash VARCHAR(255) NOT NULL,
+            attempts INT NOT NULL DEFAULT 0,
+            expires_at DATETIME NOT NULL,
+            used_at DATETIME NULL DEFAULT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_account_recovery_email_created (email, created_at),
+            INDEX idx_account_recovery_user_active (user_id, used_at, expires_at),
+            FOREIGN KEY (user_id) REFERENCES registered_users(id) ON DELETE CASCADE
+        )
+        """
+    )
+
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS user_profiles (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,

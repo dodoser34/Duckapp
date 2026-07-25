@@ -30,15 +30,44 @@
   position: relative;
 }
 
+.profile-info {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
 .name {
   font-size: 15px;
   font-weight: 700;
   color: var(--text-main);
+  max-width: 165px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.email {
+  max-width: 165px;
+  margin-top: 1px;
+  overflow: hidden;
+  color: rgba(185, 206, 227, 0.76);
+  font-size: 10px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(3px);
+  animation: profileTextIn 0.28s ease forwards;
+}
+
+.email[hidden] {
+  display: none;
 }
 
 .status {
   font-size: 12px;
   color: var(--text-soft);
+  min-height: 15px;
 }
 
 .profile-panel {
@@ -522,6 +551,19 @@
 .logout-btn {
   background: linear-gradient(135deg, #dc5464, #f17986);
   color: #fff;
+}
+
+@keyframes profileTextIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .email {
+    animation-duration: 0.01ms;
+  }
 }
 
 

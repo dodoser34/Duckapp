@@ -39,6 +39,47 @@
 
         <div class="error" id="errorMsg" data-i18n="error-text"></div>
 
+        <button type="button" class="forgot-link" id="recoveryToggle" aria-expanded="false" data-i18n="forgot_link"></button>
+
+        <form id="recoveryForm" class="recovery-panel" autocomplete="on" hidden>
+            <div class="recovery-title" data-i18n="recovery_title"></div>
+
+            <div class="input-group">
+                <input type="email" id="recoveryEmail" name="recoveryEmail" data-i18n="recovery_email_input" required>
+                <label for="recoveryEmail" data-i18n="recovery_email"></label>
+            </div>
+
+            <button type="button" class="secondary-action" id="recoverySendCode" data-i18n="recovery_send_code"></button>
+
+            <div class="recovery-code-step" id="recoveryCodeStep" hidden>
+                <div class="input-group">
+                    <input type="text" id="recoveryCode" name="recoveryCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" data-i18n="recovery_code_input" required>
+                    <label for="recoveryCode" data-i18n="recovery_code"></label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="recoveryUsername" name="recoveryUsername" maxlength="32" data-i18n="recovery_new_username_input" required>
+                    <label for="recoveryUsername" data-i18n="recovery_new_username"></label>
+                </div>
+
+                <div class="input-group password-group">
+                    <input type="password" id="recoveryPassword" name="recoveryPassword" minlength="8" data-i18n="recovery_new_password_input" required>
+                    <label for="recoveryPassword" data-i18n="recovery_new_password"></label>
+                    <button type="button" class="password-toggle" data-target="recoveryPassword" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
+                </div>
+
+                <div class="input-group password-group">
+                    <input type="password" id="recoveryConfirmPassword" name="recoveryConfirmPassword" minlength="8" data-i18n="recovery_confirm_password_input" required>
+                    <label for="recoveryConfirmPassword" data-i18n="recovery_confirm_password"></label>
+                    <button type="button" class="password-toggle" data-target="recoveryConfirmPassword" aria-label="Toggle password visibility" title="Toggle password visibility"></button>
+                </div>
+
+                <button type="submit" data-i18n="recovery_apply"></button>
+            </div>
+
+            <div class="recovery-message" id="recoveryMsg" aria-live="polite"></div>
+        </form>
+
         <span class="noAccountToRegister">
             <span data-i18n="noAccount"></span>
             <a href="register-frame.html" data-i18n="noAccount_link"></a>

@@ -37,7 +37,8 @@ body {
     radial-gradient(circle at 84% 76%, rgba(255, 179, 94, 0.3), transparent 46%),
     linear-gradient(140deg, var(--bg-start) 0%, var(--bg-mid) 48%, var(--bg-end) 100%);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body::before,
@@ -311,6 +312,131 @@ body::after {
   gap: 6px;
 }
 
+.forgot-link {
+  margin: 8px auto 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-strong);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(8px);
+  filter: blur(1px);
+  animation: authItemIn 0.5s cubic-bezier(0.2, 0.78, 0.22, 1) 1.86s forwards;
+}
+
+.forgot-link:hover,
+.forgot-link:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+.recovery-panel {
+  display: grid;
+  gap: 4px;
+  margin-top: 14px;
+  padding: 13px 12px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(8, 22, 39, 0.42);
+  text-align: left;
+  overflow: hidden;
+  transform-origin: top center;
+  animation: recoveryPanelIn 0.34s cubic-bezier(0.2, 0.78, 0.22, 1) both;
+}
+
+.recovery-panel[hidden],
+.recovery-code-step[hidden] {
+  display: none;
+}
+
+.recovery-title {
+  margin: 0 2px 2px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.recovery-panel .input-group {
+  margin: 8px 0;
+}
+
+.recovery-panel > *,
+.recovery-code-step > * {
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(7px);
+  filter: blur(1px);
+  animation: authItemIn 0.32s cubic-bezier(0.2, 0.78, 0.22, 1) both;
+}
+
+.recovery-panel > *:nth-child(1) { animation-delay: 0.04s; }
+.recovery-panel > *:nth-child(2) { animation-delay: 0.08s; }
+.recovery-panel > *:nth-child(3) { animation-delay: 0.12s; }
+.recovery-panel > *:nth-child(4) { animation-delay: 0.16s; }
+.recovery-panel > *:nth-child(5) { animation-delay: 0.2s; }
+.recovery-code-step > *:nth-child(1) { animation-delay: 0.04s; }
+.recovery-code-step > *:nth-child(2) { animation-delay: 0.08s; }
+.recovery-code-step > *:nth-child(3) { animation-delay: 0.12s; }
+.recovery-code-step > *:nth-child(4) { animation-delay: 0.16s; }
+.recovery-code-step > *:nth-child(5) { animation-delay: 0.2s; }
+
+.secondary-action {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid rgba(255, 192, 106, 0.46);
+  border-radius: 12px;
+  background: rgba(255, 189, 104, 0.12);
+  color: var(--accent-strong);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+  transition: transform 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.secondary-action:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(255, 192, 106, 0.68);
+  background: rgba(255, 189, 104, 0.2);
+}
+
+.secondary-action:disabled,
+.recovery-panel button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+  transform: none;
+}
+
+.recovery-code-step {
+  display: grid;
+  gap: 2px;
+  margin-top: 6px;
+  overflow: hidden;
+  transform-origin: top center;
+  animation: recoveryPanelIn 0.3s cubic-bezier(0.2, 0.78, 0.22, 1) both;
+}
+
+.recovery-message {
+  min-height: 18px;
+  margin-top: 6px;
+  color: var(--text-soft);
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.recovery-message[data-state="success"] {
+  color: #8cf0b7;
+}
+
+.recovery-message[data-state="error"] {
+  color: #ff9da5;
+}
+
 .noAccountToRegister,
 .haveAnAccountLogin {
   margin-top: 16px;
@@ -433,6 +559,20 @@ footer {
   }
 }
 
+@keyframes recoveryPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scaleY(0.96);
+    filter: blur(1px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    filter: blur(0);
+  }
+}
+
 @keyframes logoDuckBounce {
   0%,
   100% {
@@ -453,5 +593,26 @@ footer {
   70% {
     translate: 0 -4px;
     rotate: 1deg;
+  }
+}
+
+@media (max-height: 760px) {
+  body {
+    place-items: start center;
+  }
+
+  .authorization-container {
+    margin-top: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forgot-link,
+  .recovery-panel,
+  .recovery-panel > *,
+  .recovery-code-step,
+  .recovery-code-step > * {
+    animation-duration: 0.01ms;
+    animation-delay: 0ms;
   }
 }
