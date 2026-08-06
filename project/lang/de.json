@@ -17,7 +17,7 @@
         "3hero-text_h3": "Eine Ente in jedem Chat",
         "3hero-text_p": "Bei Duck App geht es nicht um unterkühlte Anrufe. Es ist einfache, freundliche Kommunikation. Manchmal mit einem leichten „Quak“.",
         "qhero-text_p": "Scanne unseren QR-Code, \num mehr über die Funktionen von DuckApp zu erfahren.",
-        "Auhero-text": "Aktive Nutzer",
+        "Auhero-text": "Registrierte Nutzer",
         "Uphero-text": "Uptime (%)",
         "footer": "© 2026 Duck App. Alle Rechte vorbehalten.",
         "modal_close": "✖",
@@ -90,7 +90,8 @@
         "feedback_view_loading": "Anfragen werden geladen...",
         "feedback_view_error": "Anfragen konnten nicht geladen werden. (Vielleicht gibt es einfach keine!).",
         "feedback_view_empty": "Noch keine Anfragen vorhanden.",
-        "feedback_view_user": "Benutzer"
+        "feedback_view_user": "Benutzer",
+        "feedback_view_details_hidden": "Details sind nur für Moderatoren sichtbar"
     },
     "authorization": {
         "title": "Login bei DuckApp",
@@ -106,7 +107,34 @@
         "auth_error": "Autorisierungsfehler",
         "noAccount": "Kein Account?",
         "noAccount_link": "Registrieren",
-        "footer": "© 2026 Duck App. Alle Rechte vorbehalten."
+        "footer": "© 2026 Duck App. Alle Rechte vorbehalten.",
+        "forgot_link": "Login oder Passwort vergessen?",
+        "recovery_title": "Kontowiederherstellung per E-Mail",
+        "recovery_email_input": "E-Mail des Kontos eingeben",
+        "recovery_email": "E-Mail",
+        "recovery_send_code": "Code senden",
+        "recovery_sending": "Wird gesendet...",
+        "recovery_code_input": "Code eingeben",
+        "recovery_code": "Code",
+        "recovery_new_username_input": "Neuen Login eingeben",
+        "recovery_new_username": "Neuer Login",
+        "recovery_new_password_input": "Neues Passwort eingeben",
+        "recovery_new_password": "Neues Passwort",
+        "recovery_confirm_password_input": "Neues Passwort bestätigen",
+        "recovery_confirm_password": "Passwort bestätigen",
+        "recovery_apply": "Login und Passwort ändern",
+        "recovery_saving": "Wird gespeichert...",
+        "recovery_invalid_email": "Gültige E-Mail eingeben",
+        "recovery_code_sent": "Code an die E-Mail gesendet",
+        "recovery_reset_success": "Konto aktualisiert. Du kannst dich jetzt anmelden.",
+        "recovery_password_mismatch": "Passwörter stimmen nicht überein",
+        "recovery_invalid_code": "6-stelligen Code eingeben",
+        "recovery_invalid_or_expired_code": "Code ungültig oder abgelaufen",
+        "recovery_delivery_missing": "E-Mail-Versand ist nicht konfiguriert",
+        "recovery_delivery_failed": "Wiederherstellungs-E-Mail konnte nicht gesendet werden",
+        "recovery_username_taken": "Dieser Login ist bereits vergeben",
+        "recovery_password_too_short": "Das Passwort muss mindestens 8 Zeichen lang sein",
+        "recovery_error": "Fehler bei der Wiederherstellung"
     },
     "register": {
         "title": "Registrierung bei DuckApp",
@@ -141,7 +169,8 @@
         "password_mismatch_error": "Passwörter stimmen nicht überein",
         "session_check_error": "Fehler bei der Sitzungsprüfung",
         "unknown_error": "Unbekannter Fehler",
-        "footer": "© 2026 Duck App. Alle Rechte vorbehalten"
+        "footer": "© 2026 Duck App. Alle Rechte vorbehalten",
+        "invalid_email_error": "Gültige E-Mail eingeben"
     },
     "main_chat": {
         "title": "DuckApp Chat",
@@ -229,6 +258,10 @@
         "profile_avatar_history_preset": "Standard",
         "profile_avatar_history_error_load": "Verlauf konnte nicht geladen werden.",
         "profile_avatar_history_error_delete": "Avatar konnte nicht gelöscht werden.",
-        "profile_avatar_history_error_current_delete": "Der aktuelle Avatar kann nicht gelöscht werden."
+        "profile_avatar_history_error_current_delete": "Der aktuelle Avatar kann nicht gelöscht werden.",
+        "chat_load_older": "Ältere Nachrichten anzeigen",
+        "chat_gif_alt": "GIF",
+        "profile_avatar_history_quota_hint": "Hochgeladene Avatare vom erlaubten Limit",
+        "profile_avatar_history_error_limit": "Upload-Limit erreicht. Lösche zuerst einen hochgeladenen Avatar."
     }
 }

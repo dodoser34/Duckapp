@@ -1,59 +1,19 @@
-import { API_URL, ASSETS_PATH } from "../api.js";
+import { API_URL } from "../api.js";
+import { createTranslator } from "../shared/i18n-helpers.js";
+import { initAliases, loadAliases } from "../shared/aliases.js";
+import {
+    FALLBACK_PEER_AVATAR,
+    avatarUrl,
+    normalizePeerStatus,
+    statusColor,
+    statusLabel,
+} from "../shared/peer.js";
 
-const page = "main_chat";
-const ALIASES_KEY = "duckapp_chat_aliases";
+const t = createTranslator("main_chat");
 const FRIENDS_POLL_INTERVAL_MS = 10000;
-const AVATAR_NAME_RE = /^(avatar_[0-9]{1,2}\.png|user_avatars\/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$/;
 const friendsContainer = document.querySelector(".chat-list-items");
 let friendsLoadInFlight = false;
 let friendsPollTimer = null;
-
-function t(key, fallback) {
-    const lang = window.currentLang;
-    const defaultLang = window.__duckappLangIndex?.default || "en";
-    return (
-        window.translations?.[lang]?.[page]?.[key] ??
-        window.translations?.[defaultLang]?.[page]?.[key] ??
-        fallback
-    );
-}
-
-function getAliases() {
-    try {
-        const raw = localStorage.getItem(ALIASES_KEY);
-        return raw ? JSON.parse(raw) : {};
-    } catch {
-        return {};
-    }
-}
-
-function normalizePeerStatus(status) {
-    if (status === "online") return "online";
-    if (status === "dnd") return "dnd";
-    return "offline";
-}
-
-function statusText(status) {
-    const normalizedStatus = normalizePeerStatus(status);
-    if (normalizedStatus === "online") return t("profile_status_online", "Online");
-    if (normalizedStatus === "dnd") return t("profile_status_dnd", "Do Not Disturb");
-    return t("friend_status_offline", "Offline");
-}
-
-function statusColor(status) {
-    const normalizedStatus = normalizePeerStatus(status);
-    if (normalizedStatus === "online") return "#2ecc71";
-    if (normalizedStatus === "dnd") return "#e74c3c";
-    return "#888";
-}
-
-function normalizeAvatarPath(avatar) {
-    const normalized = String(avatar || "").trim();
-    if (!AVATAR_NAME_RE.test(normalized)) {
-        return `${ASSETS_PATH}avatar_2.png`;
-    }
-    return `${ASSETS_PATH}${normalized}`;
-}
 
 function createFriendListItem(friend, displayName, avatarSrc, status) {
     const friendEl = document.createElement("div");
@@ -71,6 +31,7 @@ function createFriendListItem(friend, displayName, avatarSrc, status) {
     avatarImg.src = avatarSrc;
     avatarImg.className = "avatar";
     avatarImg.alt = displayName;
+    avatarImg.loading = "lazy";
 
     const statusIndicator = document.createElement("span");
     statusIndicator.className = "status-indicator-2";
@@ -87,7 +48,7 @@ function createFriendListItem(friend, displayName, avatarSrc, status) {
 
     const statusEl = document.createElement("div");
     statusEl.className = "status muted";
-    statusEl.textContent = statusText(status);
+    statusEl.textContent = statusLabel(status, t);
 
     infoWrapper.appendChild(nameEl);
     infoWrapper.appendChild(statusEl);
@@ -99,37 +60,33 @@ function createFriendListItem(friend, displayName, avatarSrc, status) {
 }
 
 export async function loadFriends() {
-    if (!friendsContainer) return;
-    if (friendsLoadInFlight) return;
+    if (!friendsContainer || friendsLoadInFlight) return;
     friendsLoadInFlight = true;
 
     try {
-        const res = await fetch(`${API_URL}/api/friends/list`, {
-            credentials: "include",
-        });
+        const res = await fetch(`${API_URL}/api/friends/list`, { credentials: "include" });
+        const friends = await res.json().catch(() => []);
 
-        const friends = await res.json();
         if (!res.ok) {
             const detail = friends?.detail || friends;
             console.error("Error while loading friends:", detail);
-            if (res.status === 401 || (res.status === 404 && detail === "User not found")) {
+            if (res.status === 401) {
                 window.location.replace("./authorization-frame.html");
             }
             return;
         }
 
-        const aliases = getAliases();
-        friendsContainer.innerHTML = "";
+        const aliases = loadAliases();
+        const fragment = document.createDocumentFragment();
 
-        friends.forEach((friend) => {
-            const avatarSrc = normalizeAvatarPath(friend.avatar);
+        (Array.isArray(friends) ? friends : []).forEach((friend) => {
+            const avatarSrc = avatarUrl(friend.avatar, { fallback: FALLBACK_PEER_AVATAR });
             const status = normalizePeerStatus(friend.status);
             const displayName = aliases[String(friend.id)] || friend.names || "Friend";
-            friendsContainer.appendChild(
-                createFriendListItem(friend, displayName, avatarSrc, status)
-            );
+            fragment.appendChild(createFriendListItem(friend, displayName, avatarSrc, status));
         });
 
+        friendsContainer.replaceChildren(fragment);
         window.dispatchEvent(new Event("duckapp:friends-updated"));
     } catch (err) {
         console.error("Failed to load friends:", err);
@@ -163,5 +120,4 @@ window.addEventListener("beforeunload", () => {
     }
 });
 
-startFriendsPolling();
-
+initAliases().then(startFriendsPolling);

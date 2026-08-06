@@ -17,7 +17,7 @@
         "3hero-text_h3": "A Duck in Every Chat",
         "3hero-text_p": "Duck App isn't about cold calls. It's about simple, friendly communication. Sometimes with a little \"quack\".",
         "qhero-text_p": "Scan our QR code \nto learn more about DuckApp features.",
-        "Auhero-text": "Active Users",
+        "Auhero-text": "Registered users",
         "Uphero-text": "Uptime (%)",
         "footer": "© 2026 Duck App. All rights reserved.",
         "modal_close": "✖",
@@ -90,7 +90,8 @@
         "feedback_view_loading": "Loading requests...",
         "feedback_view_error": "Failed to load requests. (Maybe there are none!).",
         "feedback_view_empty": "No requests yet.",
-        "feedback_view_user": "User"
+        "feedback_view_user": "User",
+        "feedback_view_details_hidden": "Details are visible to moderators only"
     },
     "authorization": {
         "title": "Login to DuckApp",
@@ -257,6 +258,10 @@
         "profile_avatar_history_preset": "Standard",
         "profile_avatar_history_error_load": "Failed to load history.",
         "profile_avatar_history_error_delete": "Failed to delete avatar.",
-        "profile_avatar_history_error_current_delete": "Cannot delete the current avatar."
+        "profile_avatar_history_error_current_delete": "Cannot delete the current avatar.",
+        "chat_load_older": "Show earlier messages",
+        "chat_gif_alt": "GIF",
+        "profile_avatar_history_quota_hint": "Uploaded avatars used out of the allowed limit",
+        "profile_avatar_history_error_limit": "Upload limit reached. Delete an uploaded avatar first."
     }
 }

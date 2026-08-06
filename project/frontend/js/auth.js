@@ -1,6 +1,7 @@
 import { loginUser, requestAccountRecovery, resetAccountCredentials } from "./api.js";
 import { getSession } from "./check-session.js";
 import { initDucks } from "./ducks.js";
+import { createTranslator } from "./shared/i18n-helpers.js";
 
 const loginForm = document.getElementById("loginForm");
 const msg = document.getElementById("errorMsg");
@@ -11,15 +12,7 @@ const recoveryCodeStep = document.getElementById("recoveryCodeStep");
 const recoveryMsg = document.getElementById("recoveryMsg");
 const page = document.body.getAttribute("data-page") || "authorization";
 const USERNAME_MAX_LENGTH = 32;
-const t = (key, fallback) => {
-    const lang = window.currentLang;
-    const defaultLang = window.__duckappLangIndex?.default || "en";
-    return (
-        window.translations?.[lang]?.[page]?.[key] ??
-        window.translations?.[defaultLang]?.[page]?.[key] ??
-        fallback
-    );
-};
+const t = createTranslator(page);
 
 function setupPasswordToggles() {
     const icons = {

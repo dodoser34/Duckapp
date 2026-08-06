@@ -1,79 +1,87 @@
 import asyncio
-import re
 
 import pymysql
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel, Field
 
-from databases.db_manager import get_connection
+from core.config import env_positive_int, public_avatar, public_status
+from core.logging_config import get_logger
+from core.ratelimit import RateLimiter
+from core.web import client_ip
+from databases import db_manager as db
 from routers.auth import get_current_user
 from routers.common import extract_user_id
 
 router = APIRouter(prefix="/api/friends", tags=["friends"])
-DEFAULT_AVATAR = "avatar_1.png"
-PUBLIC_AVATAR_RE = re.compile(
-    r"^(avatar_[0-9]{1,2}\.png|user_avatars/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$"
+log = get_logger("friends")
+
+SEARCH_MIN_LENGTH = 3
+SEARCH_MAX_LENGTH = 50
+
+# Search answers "does this exact nickname exist?", so an unthrottled endpoint
+# is a username oracle. Budget is per account, not per IP alone.
+_search_limiter = RateLimiter(
+    window_seconds=env_positive_int("DUCKAPP_FRIEND_SEARCH_WINDOW_SECONDS", 60),
+    max_events=env_positive_int("DUCKAPP_FRIEND_SEARCH_MAX", 20),
 )
 
 
 class FriendAddRequest(BaseModel):
-    friend_id: int
+    friend_id: int = Field(gt=0)
 
 
 class FriendRequestRespond(BaseModel):
-    request_id: int
+    request_id: int = Field(gt=0)
     action: str
 
 
-def _public_status(status: str | None) -> str:
-    value = (status or "").strip().lower()
-    if value == "online":
-        return "online"
-    if value == "dnd":
-        return "dnd"
-    return "offline"
-
-
-def _public_avatar(avatar: str | None) -> str:
-    value = (avatar or "").strip()
-    if PUBLIC_AVATAR_RE.match(value):
-        return value
-    return DEFAULT_AVATAR
+def _public_peer(row: dict) -> dict:
+    row["status"] = public_status(row.get("status"))
+    row["avatar"] = public_avatar(row.get("avatar"))
+    return row
 
 
 @router.get("/search")
-async def search_friend(names: str, current_user=Depends(get_current_user)):
+async def search_friend(names: str, request: Request, current_user=Depends(get_current_user)):
     current_user_id = extract_user_id(current_user)
+    query = (names or "").strip()
 
-    def query():
-        conn = get_connection()
-        try:
+    if len(query) < SEARCH_MIN_LENGTH or len(query) > SEARCH_MAX_LENGTH:
+        raise HTTPException(status_code=400, detail="Invalid search query")
+
+    if not _search_limiter.check([f"search:{current_user_id}", f"search-ip:{client_ip(request)}"]):
+        raise HTTPException(status_code=429, detail="Too many search requests")
+
+    def run():
+        with db.connection() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
                     """
                     SELECT user_id AS id, names, avatar, status
                     FROM user_profiles
                     WHERE names = %s
+                    ORDER BY user_id ASC
+                    LIMIT 1
                     """,
-                    (names,),
+                    (query,),
                 )
                 return cursor.fetchone()
-        finally:
-            conn.close()
 
-    result = await asyncio.to_thread(query)
+    result = await asyncio.to_thread(run)
 
     if not result:
         raise HTTPException(status_code=404, detail="User not found")
     if result["id"] == current_user_id:
         raise HTTPException(status_code=400, detail="You cannot add yourself")
 
-    return {
-        "id": result["id"],
-        "names": result["names"],
-        "avatar": _public_avatar(result.get("avatar")),
-        "status": _public_status(result.get("status")),
-    }
+    return _public_peer(
+        {
+            "id": result["id"],
+            "names": result["names"],
+            "avatar": result.get("avatar"),
+            "status": result.get("status"),
+        }
+    )
 
 
 @router.post("/add")
@@ -85,55 +93,49 @@ async def add_friend(req: FriendAddRequest, current_user=Depends(get_current_use
         raise HTTPException(status_code=400, detail="You cannot add yourself")
 
     def insert_request():
-        conn = get_connection()
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT 1 FROM registered_users WHERE id=%s", (friend_id,))
-                if cursor.fetchone() is None:
-                    return "missing_user"
+        with db.transaction() as (conn, cursor):
+            cursor.execute("SELECT 1 FROM registered_users WHERE id = %s", (friend_id,))
+            if cursor.fetchone() is None:
+                return "missing_user"
 
-                cursor.execute(
-                    """
-                    SELECT id, user_id, friend_id, status
-                    FROM friends
-                    WHERE (user_id=%s AND friend_id=%s)
-                        OR (user_id=%s AND friend_id=%s)
-                    """,
-                    (user_id, friend_id, friend_id, user_id),
-                )
-                relations = cursor.fetchall() or []
-
-                for rel in relations:
-                    if rel["status"] == "accepted":
-                        return "already_friends"
-                    if rel["user_id"] == user_id and rel["friend_id"] == friend_id and rel["status"] == "pending":
-                        return "already_sent"
-                    if rel["user_id"] == friend_id and rel["friend_id"] == user_id and rel["status"] == "pending":
-                        return "incoming_exists"
-
-                try:
-                    cursor.execute(
-                        "INSERT INTO friends (user_id, friend_id, status) VALUES (%s, %s, 'pending')",
-                        (user_id, friend_id),
-                    )
-                    conn.commit()
-                    return "created"
-                except pymysql.err.IntegrityError:
-                    conn.rollback()
+            cursor.execute(
+                """
+                SELECT id, user_id, friend_id, status
+                FROM friends
+                WHERE (user_id = %s AND friend_id = %s)
+                    OR (user_id = %s AND friend_id = %s)
+                """,
+                (user_id, friend_id, friend_id, user_id),
+            )
+            for rel in cursor.fetchall() or []:
+                if rel["status"] == "accepted":
+                    return "already_friends"
+                if rel["user_id"] == user_id and rel["status"] == "pending":
                     return "already_sent"
-        finally:
-            conn.close()
+                if rel["user_id"] == friend_id and rel["status"] == "pending":
+                    return "incoming_exists"
+
+            try:
+                cursor.execute(
+                    "INSERT INTO friends (user_id, friend_id, status) VALUES (%s, %s, 'pending')",
+                    (user_id, friend_id),
+                )
+            except pymysql.err.IntegrityError:
+                # Lost a race against a concurrent identical request.
+                return "already_sent"
+            return "created"
 
     result = await asyncio.to_thread(insert_request)
 
-    if result == "missing_user":
-        raise HTTPException(status_code=404, detail="User not found")
-    if result == "already_friends":
-        raise HTTPException(status_code=400, detail="Already in friends")
-    if result == "already_sent":
-        raise HTTPException(status_code=400, detail="Friend request already sent")
-    if result == "incoming_exists":
-        raise HTTPException(status_code=400, detail="You already have an incoming request from this user")
+    errors = {
+        "missing_user": (404, "User not found"),
+        "already_friends": (400, "Already in friends"),
+        "already_sent": (400, "Friend request already sent"),
+        "incoming_exists": (400, "You already have an incoming request from this user"),
+    }
+    if result in errors:
+        status_code, detail = errors[result]
+        raise HTTPException(status_code=status_code, detail=detail)
 
     return {"ok": True, "message": "Friend request sent"}
 
@@ -143,8 +145,7 @@ async def get_incoming_requests(current_user=Depends(get_current_user)):
     user_id = extract_user_id(current_user)
 
     def load_requests():
-        conn = get_connection()
-        try:
+        with db.connection() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
                     """
@@ -157,21 +158,16 @@ async def get_incoming_requests(current_user=Depends(get_current_user)):
                     FROM friends f
                     JOIN registered_users ru ON ru.id = f.user_id
                     LEFT JOIN user_profiles up ON up.user_id = ru.id
-                    WHERE f.friend_id = %s
-                        AND f.status = 'pending'
+                    WHERE f.friend_id = %s AND f.status = 'pending'
                     ORDER BY f.id DESC
+                    LIMIT 200
                     """,
                     (user_id,),
                 )
                 return cursor.fetchall() or []
-        finally:
-            conn.close()
 
     rows = await asyncio.to_thread(load_requests)
-    for row in rows:
-        row["status"] = _public_status(row.get("status"))
-        row["avatar"] = _public_avatar(row.get("avatar"))
-    return rows
+    return [_public_peer(row) for row in rows]
 
 
 @router.post("/requests/respond")
@@ -183,49 +179,43 @@ async def respond_to_request(req: FriendRequestRespond, current_user=Depends(get
         raise HTTPException(status_code=400, detail="Invalid action")
 
     def handle_request():
-        conn = get_connection()
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    """
-                    SELECT id, user_id, friend_id, status
-                    FROM friends
-                    WHERE id = %s AND friend_id = %s
-                    """,
-                    (req.request_id, user_id),
-                )
-                request_row = cursor.fetchone()
-                if not request_row:
-                    return "not_found"
-                if request_row["status"] != "pending":
-                    return "already_processed"
+        with db.transaction() as (conn, cursor):
+            cursor.execute(
+                """
+                SELECT id, user_id, friend_id, status
+                FROM friends
+                WHERE id = %s AND friend_id = %s
+                FOR UPDATE
+                """,
+                (req.request_id, user_id),
+            )
+            request_row = cursor.fetchone()
+            if not request_row:
+                return "not_found"
+            if request_row["status"] != "pending":
+                return "already_processed"
 
-                requester_id = request_row["user_id"]
+            requester_id = request_row["user_id"]
 
-                if action == "reject":
-                    cursor.execute("DELETE FROM friends WHERE id = %s", (req.request_id,))
-                    conn.commit()
-                    return "rejected"
+            if action == "reject":
+                cursor.execute("DELETE FROM friends WHERE id = %s", (req.request_id,))
+                return "rejected"
 
-                cursor.execute("UPDATE friends SET status = 'accepted' WHERE id = %s", (req.request_id,))
-                cursor.execute(
-                    "SELECT id, status FROM friends WHERE user_id = %s AND friend_id = %s",
-                    (user_id, requester_id),
-                )
-                reverse = cursor.fetchone()
-                if reverse:
-                    if reverse["status"] != "accepted":
-                        cursor.execute("UPDATE friends SET status = 'accepted' WHERE id = %s", (reverse["id"],))
-                else:
-                    cursor.execute(
-                        "INSERT INTO friends (user_id, friend_id, status) VALUES (%s, %s, 'accepted')",
-                        (user_id, requester_id),
-                    )
-
-                conn.commit()
-                return "accepted"
-        finally:
-            conn.close()
+            cursor.execute(
+                "UPDATE friends SET status = 'accepted' WHERE id = %s", (req.request_id,)
+            )
+            # Mirror row so both directions read as accepted. INSERT..ON
+            # DUPLICATE avoids the 500 the previous select-then-insert hit
+            # when two accepts raced.
+            cursor.execute(
+                """
+                INSERT INTO friends (user_id, friend_id, status)
+                VALUES (%s, %s, 'accepted')
+                ON DUPLICATE KEY UPDATE status = 'accepted'
+                """,
+                (user_id, requester_id),
+            )
+            return "accepted"
 
     result = await asyncio.to_thread(handle_request)
 
@@ -245,22 +235,16 @@ async def remove_friend(friend_id: int, current_user=Depends(get_current_user)):
         raise HTTPException(status_code=400, detail="You cannot remove yourself")
 
     def delete_relation():
-        conn = get_connection()
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    """
-                    DELETE FROM friends
-                    WHERE (user_id = %s AND friend_id = %s)
-                        OR (user_id = %s AND friend_id = %s)
-                    """,
-                    (user_id, friend_id, friend_id, user_id),
-                )
-                affected = cursor.rowcount
-                conn.commit()
-                return affected
-        finally:
-            conn.close()
+        with db.transaction() as (conn, cursor):
+            cursor.execute(
+                """
+                DELETE FROM friends
+                WHERE (user_id = %s AND friend_id = %s)
+                    OR (user_id = %s AND friend_id = %s)
+                """,
+                (user_id, friend_id, friend_id, user_id),
+            )
+            return cursor.rowcount
 
     affected = await asyncio.to_thread(delete_relation)
 
@@ -274,33 +258,30 @@ async def remove_friend(friend_id: int, current_user=Depends(get_current_user)):
 async def get_friends(current_user=Depends(get_current_user)):
     user_id = extract_user_id(current_user)
 
-    conn = get_connection()
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT DISTINCT
-                    ru.id AS id,
-                    COALESCE(up.names, ru.username) AS names,
-                    up.avatar AS avatar,
-                    up.status AS status
-                FROM friends f
-                JOIN registered_users ru
-                    ON ru.id = CASE
-                        WHEN f.user_id = %s THEN f.friend_id
-                        ELSE f.user_id
-                    END
-                LEFT JOIN user_profiles up ON up.user_id = ru.id
-                WHERE (f.user_id = %s OR f.friend_id = %s)
-                    AND f.status = 'accepted'
-                ORDER BY names
-                """,
-                (user_id, user_id, user_id),
-            )
-            rows = cursor.fetchall() or []
-            for row in rows:
-                row["status"] = _public_status(row.get("status"))
-                row["avatar"] = _public_avatar(row.get("avatar"))
-            return rows
-    finally:
-        conn.close()
+    # This was the one handler in the file that ran its query directly on the
+    # event loop, stalling every other request while MySQL answered.
+    def load():
+        with db.connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT DISTINCT
+                        ru.id AS id,
+                        COALESCE(up.names, ru.username) AS names,
+                        up.avatar AS avatar,
+                        up.status AS status
+                    FROM friends f
+                    JOIN registered_users ru
+                        ON ru.id = CASE WHEN f.user_id = %s THEN f.friend_id ELSE f.user_id END
+                    LEFT JOIN user_profiles up ON up.user_id = ru.id
+                    WHERE (f.user_id = %s OR f.friend_id = %s)
+                        AND f.status = 'accepted'
+                    ORDER BY names
+                    LIMIT 500
+                    """,
+                    (user_id, user_id, user_id),
+                )
+                return cursor.fetchall() or []
+
+    rows = await asyncio.to_thread(load)
+    return [_public_peer(row) for row in rows]

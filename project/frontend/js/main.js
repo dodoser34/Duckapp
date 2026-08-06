@@ -1,5 +1,6 @@
 import { initDucks } from "./ducks.js";
 import { API_URL } from "./api.js";
+import { createTranslator } from "./shared/i18n-helpers.js";
 
 const aboutSiteBtn = document.getElementById("aboutSiteBtn");
 const aboutUsBtn = document.getElementById("aboutUsBtn");
@@ -38,6 +39,7 @@ const heroQrSection = document.querySelector(".hero-qr");
 const featuresSection = document.querySelector(".features.features-classic-animated");
 const footerSection = document.querySelector("footer");
 const page = "main_page";
+const t = createTranslator(page);
 const FEEDBACK_STATUS_OPTIONS = Object.freeze([
     "new",
     "attention",
@@ -45,24 +47,10 @@ const FEEDBACK_STATUS_OPTIONS = Object.freeze([
     "approved",
     "resolved",
 ]);
-const DEFAULT_PUBLIC_STATS = Object.freeze({
-    active_users: 17362,
-    uptime_percent: 93.7,
-});
 const STATS_REFRESH_INTERVAL_MS = 10000;
 let heroQrParallaxEnabled = false;
 let heroQrParallaxTicking = false;
 let isFeedbackAdmin = false;
-
-function t(key, fallback) {
-    const lang = window.currentLang;
-    const defaultLang = window.__duckappLangIndex?.default || "en";
-    return (
-        window.translations?.[lang]?.[page]?.[key] ??
-        window.translations?.[defaultLang]?.[page]?.[key] ??
-        fallback
-    );
-}
 
 function setFeedbackStatus(text, kind = "") {
     if (!feedbackStatus) return;
@@ -236,21 +224,20 @@ function closeModal(modal) {
     );
 }
 
-aboutSiteBtn.onclick = () => openModal(aboutSiteModal, aboutSiteBtn);
-aboutUsBtn.onclick = () => openModal(aboutUsModal, aboutUsBtn);
+aboutSiteBtn?.addEventListener("click", () => openModal(aboutSiteModal, aboutSiteBtn));
+aboutUsBtn?.addEventListener("click", () => openModal(aboutUsModal, aboutUsBtn));
 
 closeButtons.forEach((btn) => {
-    btn.onclick = () => {
-        const modal = btn.closest(".modal");
-        closeModal(modal);
-    };
+    btn.addEventListener("click", () => closeModal(btn.closest(".modal")));
 });
 
-window.onclick = (event) => {
-    if (event.target.classList.contains("modal")) {
+// addEventListener rather than window.onclick, which silently replaced any
+// other handler another module might have installed.
+window.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.classList.contains("modal")) {
         closeModal(event.target);
     }
-};
+});
 
 function toggleHelperPanel(forceOpen) {
     if (!helperPanel) return;
@@ -310,7 +297,7 @@ function updateFeedbackProblemTypeTrigger() {
 function renderFeedbackProblemTypeMenu() {
     if (!feedbackProblemTypeSelect || !feedbackProblemTypeMenu) return;
 
-    feedbackProblemTypeMenu.innerHTML = "";
+    feedbackProblemTypeMenu.replaceChildren();
     Array.from(feedbackProblemTypeSelect.options).forEach((option) => {
         if (!option.value) return;
 
@@ -538,7 +525,7 @@ function createFeedbackAdminStatusSelect(initialStatus) {
     }
 
     function renderMenu() {
-        menu.innerHTML = "";
+        menu.replaceChildren();
 
         FEEDBACK_STATUS_OPTIONS.forEach((statusValue) => {
             const item = document.createElement("li");
@@ -653,7 +640,7 @@ function createFeedbackAdminControls(item, statusBadge) {
 
 function renderFeedbackList(items) {
     if (!feedbackListBody) return;
-    feedbackListBody.innerHTML = "";
+    feedbackListBody.replaceChildren();
 
     if (!items.length) {
         const empty = document.createElement("div");
@@ -693,24 +680,25 @@ function renderFeedbackList(items) {
         meta.appendChild(time);
         card.appendChild(meta);
 
-        card.appendChild(
-            createFeedbackField(
-                t("feedback_description_label", "Issue description"),
-                item.description
-            )
-        );
-        card.appendChild(
-            createFeedbackField(
-                t("feedback_reproduce_label", "How it happens"),
-                item.reproduction
-            )
-        );
-        card.appendChild(
-            createFeedbackField(
-                t("feedback_recommendation_label", "Fix recommendations"),
-                item.recommendation
-            )
-        );
+        const details = [
+            [t("feedback_description_label", "Issue description"), item.description],
+            [t("feedback_reproduce_label", "How it happens"), item.reproduction],
+            [t("feedback_recommendation_label", "Fix recommendations"), item.recommendation],
+        ].filter(([, value]) => typeof value === "string" && value.length > 0);
+
+        if (details.length) {
+            details.forEach(([label, value]) => {
+                card.appendChild(createFeedbackField(label, value));
+            });
+        } else if (item.has_details) {
+            const hidden = document.createElement("div");
+            hidden.className = "feedback-list-hidden-note";
+            hidden.textContent = t(
+                "feedback_view_details_hidden",
+                "Details are visible to moderators only"
+            );
+            card.appendChild(hidden);
+        }
 
         if (isFeedbackAdmin) {
             card.appendChild(createFeedbackAdminControls(item, statusBadge));
@@ -723,7 +711,7 @@ function renderFeedbackList(items) {
 async function loadFeedbackList() {
     if (!feedbackListBody) return;
 
-    feedbackListBody.innerHTML = "";
+    feedbackListBody.replaceChildren();
     const loading = document.createElement("div");
     loading.className = "feedback-list-empty";
     loading.textContent = t("feedback_view_loading", "Loading requests...");
@@ -733,15 +721,19 @@ async function loadFeedbackList() {
         const response = await fetch(`${API_URL}/api/feedback?limit=100`, {
             credentials: "include",
         });
-        const data = await response.json().catch(() => []);
+        const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
             throw new Error(mapFeedbackLoadError(data?.detail));
         }
 
-        renderFeedbackList(Array.isArray(data) ? data : []);
+        // The server is authoritative about admin status; trust it over the
+        // local flag so a stale session cannot unlock the controls.
+        isFeedbackAdmin = Boolean(data?.is_admin);
+        syncFeedbackAdminUi();
+        renderFeedbackList(Array.isArray(data?.items) ? data.items : []);
     } catch (error) {
-        feedbackListBody.innerHTML = "";
+        feedbackListBody.replaceChildren();
         const errorNode = document.createElement("div");
         errorNode.className = "feedback-list-empty";
         errorNode.textContent = mapFeedbackLoadError(error?.message);
@@ -938,39 +930,53 @@ let statsPollTimer = null;
 let statsPollInFlight = false;
 
 function normalizePublicStats(payload) {
-    const activeUsers = Number(payload?.active_users);
-    const uptimePercent = Number(payload?.uptime_percent);
+    if (!payload || payload.available === false) {
+        return { available: false, registered_users: null, uptime_percent: null };
+    }
+
+    const registeredUsers = Number(payload.registered_users);
+    const uptimePercent = Number(payload.uptime_percent);
+    if (!Number.isFinite(registeredUsers) || !Number.isFinite(uptimePercent)) {
+        return { available: false, registered_users: null, uptime_percent: null };
+    }
 
     return {
-        active_users:
-            Number.isFinite(activeUsers) && activeUsers >= 0
-                ? Math.round(activeUsers)
-                : DEFAULT_PUBLIC_STATS.active_users,
-        uptime_percent:
-            Number.isFinite(uptimePercent) && uptimePercent >= 0
-                ? Math.min(100, Math.round(uptimePercent * 10) / 10)
-                : DEFAULT_PUBLIC_STATS.uptime_percent,
+        available: true,
+        registered_users: Math.max(0, Math.round(registeredUsers)),
+        uptime_percent: Math.min(100, Math.max(0, Math.round(uptimePercent * 10) / 10)),
     };
 }
 
 async function fetchPublicStats() {
+    // No fallback numbers: the page used to display a hard-coded 17362 users
+    // and 93.7% uptime whenever the API was unreachable, which was simply
+    // untrue. An unavailable stat is now hidden instead of invented.
     try {
-        const response = await fetch(`${API_URL}/api/stats`, {
-            credentials: "include",
-        });
-        const data = await response.json().catch(() => ({}));
+        const response = await fetch(`${API_URL}/api/stats`, { credentials: "include" });
         if (!response.ok) {
-            return DEFAULT_PUBLIC_STATS;
+            return { available: false, registered_users: null, uptime_percent: null };
         }
-        return normalizePublicStats(data);
+        return normalizePublicStats(await response.json().catch(() => null));
     } catch {
-        return DEFAULT_PUBLIC_STATS;
+        return { available: false, registered_users: null, uptime_percent: null };
     }
 }
 
+function setStatsVisible(visible) {
+    if (!statsSection) return;
+    statsSection.hidden = !visible;
+    statsSection.setAttribute("aria-hidden", visible ? "false" : "true");
+}
+
 function applyPublicStats(stats) {
+    if (!stats.available) {
+        setStatsVisible(false);
+        return;
+    }
+
+    setStatsVisible(true);
     if (activeUsersCounter) {
-        activeUsersCounter.dataset.counter = String(stats.active_users);
+        activeUsersCounter.dataset.counter = String(stats.registered_users);
         activeUsersCounter.dataset.decimal = "false";
     }
     if (uptimeCounter) {
@@ -986,7 +992,7 @@ function applyPublicStats(stats) {
 function renderPublicStats(stats) {
     const locale = window.currentLang || document.documentElement.lang || navigator.language || "en";
     if (activeUsersCounter) {
-        activeUsersCounter.textContent = Math.round(Number(stats.active_users) || 0).toLocaleString(locale);
+        activeUsersCounter.textContent = Number(stats.registered_users || 0).toLocaleString(locale);
     }
     if (uptimeCounter) {
         const value = Number(stats.uptime_percent);

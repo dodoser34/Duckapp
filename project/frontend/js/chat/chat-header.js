@@ -1,8 +1,9 @@
 import { API_URL } from "../api.js";
 import { loadFriends } from "./load-friend.js";
+import { createTranslator } from "../shared/i18n-helpers.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const page = "main_chat";
+    const t = createTranslator("main_chat");
     const MODAL_ANIMATION_MS = 260;
     const menuToggle = document.getElementById("menu-toggle");
     const closeChatViewBtn = document.getElementById("close-chat-view");
@@ -23,16 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteFriendModal = document.getElementById("delete-friend-modal");
     const deleteFriendCancel = document.getElementById("delete-friend-cancel");
     const deleteFriendConfirm = document.getElementById("delete-friend-confirm");
-
-    function t(key, fallback) {
-        const lang = window.currentLang;
-        const defaultLang = window.__duckappLangIndex?.default || "en";
-        return (
-            window.translations?.[lang]?.[page]?.[key] ??
-            window.translations?.[defaultLang]?.[page]?.[key] ??
-            fallback
-        );
-    }
 
     function getSelected() {
         return window.ChatUI?.getSelectedFriend?.() || null;

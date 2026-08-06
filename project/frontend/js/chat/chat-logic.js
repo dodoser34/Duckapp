@@ -1,9 +1,12 @@
 import { API_URL } from "../api.js";
+import { createTranslator } from "../shared/i18n-helpers.js";
+import { initAliases, loadAliases, removeAlias, setAlias } from "../shared/aliases.js";
+import { avatarUrl, normalizePeerStatus, statusLabel as peerStatusLabel } from "../shared/peer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const page = "main_chat";
-    const ALIASES_KEY = "duckapp_chat_aliases";
+    const t = createTranslator("main_chat");
     const MESSAGES_POLL_INTERVAL_MS = 2000;
+    const PAGE_SIZE = 50;
     const REACTION_EMOJIS = [
         "\u{1F44D}",
         "\u{2764}\u{FE0F}",
@@ -35,6 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedFriendName: "",
         selectedFriendStatus: "",
         selectedFriendAvatar: "",
+        // Messages older than the newest page, fetched on demand.
+        olderMessages: [],
+        oldestLoadedId: null,
+        hasMore: false,
+        loadingOlder: false,
     };
     let pollTimer = null;
     let pollInFlight = false;
@@ -46,40 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return chatSessionToken;
     }
 
-    function t(key, fallback) {
-        const lang = window.currentLang;
-        const defaultLang = window.__duckappLangIndex?.default || "en";
-        return (
-            window.translations?.[lang]?.[page]?.[key] ??
-            window.translations?.[defaultLang]?.[page]?.[key] ??
-            fallback
-        );
-    }
-
-    function loadAliases() {
-        try {
-            const raw = localStorage.getItem(ALIASES_KEY);
-            return raw ? JSON.parse(raw) : {};
-        } catch {
-            return {};
-        }
-    }
-
-    function saveAliases(aliases) {
-        localStorage.setItem(ALIASES_KEY, JSON.stringify(aliases));
-    }
-
-    function normalizePeerStatus(status) {
-        if (status === "online") return "online";
-        if (status === "dnd") return "dnd";
-        return "offline";
-    }
-
     function statusLabel(status) {
-        const normalizedStatus = normalizePeerStatus(status);
-        if (normalizedStatus === "online") return t("profile_status_online", "Online");
-        if (normalizedStatus === "dnd") return t("profile_status_dnd", "Do Not Disturb");
-        return t("friend_status_offline", "Offline");
+        return peerStatusLabel(status, t);
     }
 
     function formatTime(value, createdAtMs) {
@@ -105,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function setDefaultHeader() {
         chatTitle.textContent = t("chat_header_default_title", "Chat");
         chatSubtitle.textContent = t("chat_header_default_subtitle", "Choose a friend on the right");
-        headerAvatar.src = "../html/assets/avatar_1.png";
+        headerAvatar.src = avatarUrl(null);
         chatHeaderLeft?.classList.add("peer-hidden");
         chatHeaderActions?.classList.add("peer-hidden");
         chatMenu?.classList.remove("open");
@@ -127,8 +103,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function clearChatBody() {
+        chatBody.replaceChildren();
+    }
+
     function renderEmptyState(text, withI18nAttr = false) {
-        chatBody.innerHTML = "";
+        clearChatBody();
         const node = document.createElement("div");
         node.className = "empty-chat muted";
         if (withI18nAttr) {
@@ -162,8 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!emoji) return;
 
             const rawCount = Number(item?.count || 0);
-            const count =
-                Number.isFinite(rawCount) && rawCount > 0 ? Math.floor(rawCount) : 1;
+            const count = Number.isFinite(rawCount) && rawCount > 0 ? Math.floor(rawCount) : 1;
             const mine = Boolean(item?.mine);
 
             const existing = grouped.get(emoji);
@@ -227,51 +206,56 @@ document.addEventListener("DOMContentLoaded", () => {
         return wrap;
     }
 
-    function createTextMessageBubble(text, side, time, messageId, reactions) {
+    function createMessageRow(msg) {
+        const side = msg.side === "user" ? "user" : "peer";
         const row = document.createElement("div");
         row.classList.add("message-row", side);
-        row.dataset.messageId = String(messageId || "");
+        row.dataset.messageId = String(msg.id || "");
 
         const bubble = document.createElement("div");
         bubble.classList.add("msg-bubble");
 
-        const textNode = document.createElement("div");
-        textNode.classList.add("msg-text");
-        textNode.textContent = text;
-        bubble.appendChild(textNode);
+        if (msg.type === "gif") {
+            const img = document.createElement("img");
+            img.src = msg.content;
+            img.alt = t("chat_gif_alt", "GIF");
+            img.loading = "lazy";
+            img.referrerPolicy = "no-referrer";
+            img.style.maxWidth = "200px";
+            img.style.borderRadius = "8px";
+            bubble.appendChild(img);
+        } else {
+            const textNode = document.createElement("div");
+            textNode.classList.add("msg-text");
+            textNode.textContent = msg.content;
+            bubble.appendChild(textNode);
+        }
 
         const timeNode = document.createElement("div");
         timeNode.classList.add("msg-meta");
-        timeNode.textContent = time || formatTime();
+        timeNode.textContent = formatTime(msg.created_at, msg.created_at_ms) || formatTime();
         bubble.appendChild(timeNode);
 
         row.appendChild(bubble);
-        row.appendChild(createReactionsNode(messageId, reactions));
+        row.appendChild(createReactionsNode(msg.id, msg.reactions || []));
         return row;
     }
 
-    function createGifMessageBubble(url, side, time, messageId, reactions) {
-        const row = document.createElement("div");
-        row.classList.add("message-row", side);
-        row.dataset.messageId = String(messageId || "");
+    function createLoadOlderButton() {
+        const wrap = document.createElement("div");
+        wrap.className = "chat-load-older";
 
-        const bubble = document.createElement("div");
-        bubble.classList.add("msg-bubble");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "chat-load-older-btn";
+        button.textContent = state.loadingOlder
+            ? t("chat_loading", "Loading...")
+            : t("chat_load_older", "Show earlier messages");
+        button.disabled = state.loadingOlder;
+        button.addEventListener("click", loadOlderMessages);
 
-        const img = document.createElement("img");
-        img.src = url;
-        img.style.maxWidth = "200px";
-        img.style.borderRadius = "8px";
-        bubble.appendChild(img);
-
-        const timeNode = document.createElement("div");
-        timeNode.classList.add("msg-meta");
-        timeNode.textContent = time || formatTime();
-        bubble.appendChild(timeNode);
-
-        row.appendChild(bubble);
-        row.appendChild(createReactionsNode(messageId, reactions));
-        return row;
+        wrap.appendChild(button);
+        return wrap;
     }
 
     function buildMessagesKey(messages) {
@@ -307,56 +291,105 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderMessagesList(messages) {
-        const isNearBottom =
-            chatBody.scrollHeight - chatBody.scrollTop - chatBody.clientHeight < 120;
-        chatBody.innerHTML = "";
+        const previousHeight = chatBody.scrollHeight;
+        const previousScrollTop = chatBody.scrollTop;
+        const isNearBottom = previousHeight - previousScrollTop - chatBody.clientHeight < 120;
+
+        clearChatBody();
         if (!messages.length) {
             renderEmptyState(t("chat_empty_for_friend", "No messages yet"));
             return;
         }
 
-        messages.forEach((msg) => {
-            const side = msg.side || "user";
-            const time = formatTime(msg.created_at, msg.created_at_ms);
-            if (msg.type === "gif") {
-                chatBody.appendChild(createGifMessageBubble(msg.content, side, time, msg.id, msg.reactions || []));
-            } else {
-                chatBody.appendChild(createTextMessageBubble(msg.content, side, time, msg.id, msg.reactions || []));
-            }
-        });
+        if (state.hasMore) {
+            chatBody.appendChild(createLoadOlderButton());
+        }
+
+        const fragment = document.createDocumentFragment();
+        messages.forEach((msg) => fragment.appendChild(createMessageRow(msg)));
+        chatBody.appendChild(fragment);
+
         if (isNearBottom) {
             chatBody.scrollTop = chatBody.scrollHeight;
+        } else {
+            // Keep the reader's place when older messages get prepended above.
+            chatBody.scrollTop = previousScrollTop + (chatBody.scrollHeight - previousHeight);
         }
     }
 
-    async function fetchMessages(friendId) {
-        const url = new URL(`${API_URL}/api/messages/${friendId}`);
-        url.searchParams.set("_", String(Date.now()));
+    async function fetchMessagePage(friendId, { beforeId = null } = {}) {
+        const url = new URL(`${API_URL}/api/messages/${friendId}`, window.location.origin);
+        url.searchParams.set("limit", String(PAGE_SIZE));
+        if (beforeId) url.searchParams.set("before_id", String(beforeId));
 
-        const res = await fetch(url.toString(), {
-            credentials: "include",
-            cache: "no-store",
-        });
-        const data = await res.json().catch(() => []);
+        const res = await fetch(url.toString(), { credentials: "include", cache: "no-store" });
+        const data = await res.json().catch(() => ({}));
         if (!res.ok) {
             throw new Error(data.detail || "Failed to load messages");
         }
-        return Array.isArray(data) ? data : [];
+        return {
+            items: Array.isArray(data.items) ? data.items : [],
+            hasMore: Boolean(data.has_more),
+            oldestId: data.oldest_id ?? null,
+        };
+    }
+
+    async function loadOlderMessages() {
+        if (state.loadingOlder || !state.hasMore || !state.selectedFriendId) return;
+        state.loadingOlder = true;
+        const expectedSessionToken = chatSessionToken;
+
+        try {
+            const page = await fetchMessagePage(state.selectedFriendId, {
+                beforeId: state.oldestLoadedId,
+            });
+            if (expectedSessionToken !== chatSessionToken) return;
+
+            state.olderMessages = [...page.items, ...state.olderMessages];
+            state.hasMore = page.hasMore;
+            if (page.oldestId) state.oldestLoadedId = page.oldestId;
+            lastRenderedMessagesKey = "";
+            await renderMessages(state.selectedFriendId, {
+                showLoading: false,
+                skipIfUnchanged: false,
+                expectedSessionToken,
+            });
+        } catch (err) {
+            console.error("Failed to load older messages:", err);
+        } finally {
+            state.loadingOlder = false;
+        }
     }
 
     async function renderMessages(friendId, options = {}) {
-        const { showLoading = true, skipIfUnchanged = false, expectedSessionToken = chatSessionToken } = options;
+        const {
+            showLoading = true,
+            skipIfUnchanged = false,
+            expectedSessionToken = chatSessionToken,
+        } = options;
+
         if (showLoading) {
             renderEmptyState(t("chat_loading", "Loading..."));
         }
+
         try {
-            const messages = await fetchMessages(friendId);
-            if (
-                expectedSessionToken !== chatSessionToken ||
-                state.selectedFriendId !== String(friendId)
-            ) {
+            const page = await fetchMessagePage(friendId);
+            if (expectedSessionToken !== chatSessionToken || state.selectedFriendId !== String(friendId)) {
                 return;
             }
+
+            const newestId = page.items.length ? page.items[0].id : null;
+            // Drop any prefetched history that the newest page already covers.
+            const older = state.olderMessages.filter(
+                (msg) => newestId == null || msg.id < newestId
+            );
+            const messages = [...older, ...page.items];
+
+            if (!older.length) {
+                state.hasMore = page.hasMore;
+                state.oldestLoadedId = page.oldestId;
+            }
+
             const currentKey = buildMessagesKey(messages);
             if (skipIfUnchanged && currentKey === lastRenderedMessagesKey) {
                 return;
@@ -364,10 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
             lastRenderedMessagesKey = currentKey;
             renderMessagesList(messages);
         } catch (err) {
-            if (
-                expectedSessionToken !== chatSessionToken ||
-                state.selectedFriendId !== String(friendId)
-            ) {
+            if (expectedSessionToken !== chatSessionToken || state.selectedFriendId !== String(friendId)) {
                 return;
             }
             console.error("Failed to load messages:", err);
@@ -386,7 +416,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function startMessagesPolling() {
         stopMessagesPolling();
         pollTimer = setInterval(async () => {
-            if (!state.selectedFriendId || pollInFlight) return;
+            // A background tab does not need a request every two seconds.
+            if (document.hidden || !state.selectedFriendId || pollInFlight) return;
             pollInFlight = true;
             const friendId = state.selectedFriendId;
             const expectedSessionToken = chatSessionToken;
@@ -459,9 +490,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function syncSelectedFriendMeta(friendItem) {
-        state.selectedFriendName = friendItem.dataset.name || friendItem.dataset.originalName || "Friend";
+        state.selectedFriendName =
+            friendItem.dataset.name || friendItem.dataset.originalName || "Friend";
         state.selectedFriendStatus = normalizePeerStatus(friendItem.dataset.status || "offline");
-        state.selectedFriendAvatar = friendItem.dataset.avatar || "../html/assets/avatar_1.png";
+        state.selectedFriendAvatar = friendItem.dataset.avatar || avatarUrl(null);
 
         chatTitle.textContent = state.selectedFriendName;
         chatSubtitle.textContent = statusLabel(state.selectedFriendStatus);
@@ -473,10 +505,19 @@ document.addEventListener("DOMContentLoaded", () => {
         friendItem.classList.add("active");
     }
 
+    function resetPagination() {
+        state.olderMessages = [];
+        state.oldestLoadedId = null;
+        state.hasMore = false;
+        state.loadingOlder = false;
+        lastRenderedMessagesKey = "";
+    }
+
     async function setActiveFriend(friendItem) {
         if (!friendItem) return;
 
         state.selectedFriendId = String(friendItem.dataset.id || "");
+        resetPagination();
         const expectedSessionToken = nextChatSessionToken();
         syncSelectedFriendMeta(friendItem);
         chatHeaderLeft?.classList.remove("peer-hidden");
@@ -498,7 +539,10 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             await postMessage(state.selectedFriendId, "text", text);
             messageInput.value = "";
-            await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
+            await renderMessages(state.selectedFriendId, {
+                showLoading: false,
+                skipIfUnchanged: false,
+            });
         } catch (err) {
             console.error("Failed to send text message:", err);
             alert(t("chat_send_error", "Failed to send message"));
@@ -520,7 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
         state.selectedFriendName = "";
         state.selectedFriendStatus = "";
         state.selectedFriendAvatar = "";
-        lastRenderedMessagesKey = "";
+        resetPagination();
         stopMessagesPolling();
         friendsContainer?.querySelectorAll(".chat-list-item.active").forEach((item) => {
             item.classList.remove("active");
@@ -531,7 +575,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function restoreSelectionAfterFriendsReload() {
         if (!state.selectedFriendId || !friendsContainer) return;
-        const item = friendsContainer.querySelector(`.chat-list-item[data-id="${state.selectedFriendId}"]`);
+        const item = friendsContainer.querySelector(
+            `.chat-list-item[data-id="${state.selectedFriendId}"]`
+        );
         if (item) {
             syncSelectedFriendMeta(item);
             return;
@@ -539,13 +585,12 @@ document.addEventListener("DOMContentLoaded", () => {
         resetActiveChatState();
     }
 
-    function initExistingFriendNamesFromAliases() {
+    function applyAliasesToFriendList() {
         if (!friendsContainer) return;
         const aliases = loadAliases();
         friendsContainer.querySelectorAll(".chat-list-item").forEach((item) => {
             const id = String(item.dataset.id || "");
-            if (!id) return;
-            const alias = aliases[id];
+            const alias = id && aliases[id];
             if (!alias) return;
             item.dataset.name = alias;
             const nameEl = item.querySelector(".name");
@@ -567,10 +612,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!state.selectedFriendId) return false;
             const trimmed = (newName || "").trim();
             if (!trimmed) return false;
-
-            const aliases = loadAliases();
-            aliases[state.selectedFriendId] = trimmed;
-            saveAliases(aliases);
+            if (!setAlias(state.selectedFriendId, trimmed)) return false;
 
             state.selectedFriendName = trimmed;
             chatTitle.textContent = trimmed;
@@ -581,7 +623,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!state.selectedFriendId) return false;
             try {
                 await clearMessages(state.selectedFriendId);
-                await renderMessages(state.selectedFriendId, { showLoading: true, skipIfUnchanged: false });
+                resetPagination();
+                await renderMessages(state.selectedFriendId, {
+                    showLoading: true,
+                    skipIfUnchanged: false,
+                });
                 startMessagesPolling();
                 return true;
             } catch (err) {
@@ -597,12 +643,8 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         removeSelectedFriendFromUI(friendId) {
             if (!friendsContainer) return;
-            const item = friendsContainer.querySelector(`.chat-list-item[data-id="${friendId}"]`);
-            if (item) item.remove();
-
-            const aliases = loadAliases();
-            delete aliases[String(friendId)];
-            saveAliases(aliases);
+            friendsContainer.querySelector(`.chat-list-item[data-id="${friendId}"]`)?.remove();
+            removeAlias(friendId);
 
             if (state.selectedFriendId === String(friendId)) {
                 resetActiveChatState();
@@ -610,11 +652,14 @@ document.addEventListener("DOMContentLoaded", () => {
         },
     };
 
-    window.sendGifMessage = async (url, side = "user") => {
+    window.sendGifMessage = async (url) => {
         if (!state.selectedFriendId || !url) return;
         try {
             await postMessage(state.selectedFriendId, "gif", url);
-            await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
+            await renderMessages(state.selectedFriendId, {
+                showLoading: false,
+                skipIfUnchanged: false,
+            });
         } catch (err) {
             console.error("Failed to send GIF:", err);
             alert(t("chat_send_error", "Failed to send message"));
@@ -626,9 +671,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatBody.addEventListener("dblclick", (event) => {
         const bubble = event.target.closest(".msg-bubble");
         if (!bubble) return;
-        const row = bubble.closest(".message-row");
-        const wrap = row?.querySelector(".msg-reactions");
-        const picker = wrap?.querySelector(".msg-react-picker");
+        const picker = bubble.closest(".message-row")?.querySelector(".msg-react-picker");
         if (!picker) return;
 
         const willOpen = !picker.classList.contains("open");
@@ -636,11 +679,32 @@ document.addEventListener("DOMContentLoaded", () => {
         if (willOpen) picker.classList.add("open");
     });
 
+    async function handleReactionClick(element) {
+        const wrap = element.closest(".msg-reactions");
+        const messageId = Number(wrap?.dataset.messageId || "0");
+        const emoji = element.dataset.emoji || "";
+        closeAllReactionPickers();
+        if (!messageId || !emoji || !state.selectedFriendId) return;
+
+        try {
+            const result = await toggleReaction(state.selectedFriendId, messageId, emoji);
+            if (Array.isArray(result?.reactions)) {
+                patchMessageReactions(messageId, result.reactions);
+            } else {
+                await renderMessages(state.selectedFriendId, {
+                    showLoading: false,
+                    skipIfUnchanged: false,
+                });
+            }
+        } catch (err) {
+            console.error("Failed to toggle reaction:", err);
+        }
+    }
+
     chatBody.addEventListener("click", async (event) => {
         const addBtn = event.target.closest(".msg-react-add");
         if (addBtn) {
-            const wrap = addBtn.closest(".msg-reactions");
-            const picker = wrap?.querySelector(".msg-react-picker");
+            const picker = addBtn.closest(".msg-reactions")?.querySelector(".msg-react-picker");
             if (!picker) return;
             const willOpen = !picker.classList.contains("open");
             closeAllReactionPickers();
@@ -648,43 +712,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const option = event.target.closest(".msg-react-option");
-        if (option) {
-            const wrap = option.closest(".msg-reactions");
-            const messageId = Number(wrap?.dataset.messageId || "0");
-            const emoji = option.dataset.emoji || "";
-            closeAllReactionPickers();
-            if (!messageId || !emoji || !state.selectedFriendId) return;
-            try {
-                const result = await toggleReaction(state.selectedFriendId, messageId, emoji);
-                if (Array.isArray(result?.reactions)) {
-                    patchMessageReactions(messageId, result.reactions);
-                } else {
-                    await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
-                }
-            } catch (err) {
-                console.error("Failed to toggle reaction:", err);
-            }
-            return;
-        }
-
-        const chip = event.target.closest(".msg-react-chip");
-        if (chip) {
-            const wrap = chip.closest(".msg-reactions");
-            const messageId = Number(wrap?.dataset.messageId || "0");
-            const emoji = chip.dataset.emoji || "";
-            closeAllReactionPickers();
-            if (!messageId || !emoji || !state.selectedFriendId) return;
-            try {
-                const result = await toggleReaction(state.selectedFriendId, messageId, emoji);
-                if (Array.isArray(result?.reactions)) {
-                    patchMessageReactions(messageId, result.reactions);
-                } else {
-                    await renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: false });
-                }
-            } catch (err) {
-                console.error("Failed to toggle reaction:", err);
-            }
+        const reactionTarget =
+            event.target.closest(".msg-react-option") || event.target.closest(".msg-react-chip");
+        if (reactionTarget) {
+            await handleReactionClick(reactionTarget);
             return;
         }
 
@@ -692,6 +723,7 @@ document.addEventListener("DOMContentLoaded", () => {
             closeAllReactionPickers();
         }
     });
+
     messageInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -699,19 +731,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Catch up immediately when the tab comes back into view.
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden || !state.selectedFriendId) return;
+        renderMessages(state.selectedFriendId, { showLoading: false, skipIfUnchanged: true });
+    });
+
     bindFriendClicks();
-    initExistingFriendNamesFromAliases();
     setDefaultHeader();
     renderEmptyChat();
-    window.addEventListener("duckapp:translations-ready", refreshLocalizedChatState);
 
+    initAliases().then(applyAliasesToFriendList);
+
+    window.addEventListener("duckapp:translations-ready", refreshLocalizedChatState);
     window.addEventListener("duckapp:friends-updated", () => {
-        initExistingFriendNamesFromAliases();
+        applyAliasesToFriendList();
         restoreSelectionAfterFriendsReload();
     });
 
     window.dispatchEvent(new Event("duckapp:chat-ready"));
     window.addEventListener("beforeunload", stopMessagesPolling);
 });
-
-

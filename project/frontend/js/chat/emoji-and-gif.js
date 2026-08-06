@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const t = tForPage(page);
 
     function resetGifPanel() {
-        gifResults.innerHTML = "";
+        gifResults.replaceChildren();
         gifSearchInput.value = "";
     }
 
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function renderGifMessage(text) {
-        gifResults.innerHTML = "";
+        gifResults.replaceChildren();
         const message = document.createElement("p");
         message.textContent = text;
         gifResults.appendChild(message);
@@ -57,11 +57,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const tabContainer = emojiCategories;
     tabContainer.className = "emoji-tabs-horizontal";
-    tabContainer.innerHTML = "";
+    tabContainer.replaceChildren();
 
     const scrollContainer = emojiScroll;
     scrollContainer.className = "emoji-scroll";
-    scrollContainer.innerHTML = "";
+    scrollContainer.replaceChildren();
 
     const grids = {};
     let firstCategory = null;
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             const data = await res.json();
-            gifResults.innerHTML = "";
+            gifResults.replaceChildren();
 
             if (!data.data || data.data.length === 0) {
                 renderGifMessage(t("gif_no_results", "No results found"));
@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 img.addEventListener("click", () => {
                     if (window.sendGifMessage) {
-                        window.sendGifMessage(gif.url, "user");
+                        window.sendGifMessage(gif.url);
                     }
                     closeGifPanel();
                 });

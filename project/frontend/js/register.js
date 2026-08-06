@@ -1,6 +1,7 @@
 import { registerUser } from "./api.js";
 import { getSession } from "./check-session.js";
 import { initDucks } from "./ducks.js";
+import { createTranslator } from "./shared/i18n-helpers.js";
 
 const registerForm = document.getElementById("registerForm");
 const msg = document.getElementById("errorMsg");
@@ -15,15 +16,7 @@ const passwordCapsLockHint = document.getElementById("passwordCapsLockHint");
 const confirmPasswordCapsLockHint = document.getElementById("confirmPasswordCapsLockHint");
 const USERNAME_MAX_LENGTH = 32;
 
-const t = (key, fallback) => {
-    const lang = window.currentLang;
-    const defaultLang = window.__duckappLangIndex?.default || "en";
-    return (
-        window.translations?.[lang]?.[page]?.[key] ??
-        window.translations?.[defaultLang]?.[page]?.[key] ??
-        fallback
-    );
-};
+const t = createTranslator(page);
 
 function setupPasswordToggles() {
     const icons = {

@@ -17,7 +17,7 @@
         "3hero-text_h3": "Утка в каждом чате",
         "3hero-text_p": "Duck App — это не про холодные звонки. Это простое, дружелюбное общение. Иногда с легким «кря».",
         "qhero-text_p": "Отсканируйте наш QR-код, \nчтобы узнать больше о функциях DuckApp.",
-        "Auhero-text": "Активных пользователей",
+        "Auhero-text": "Зарегистрировано пользователей",
         "Uphero-text": "Аптайм (%)",
         "footer": "© 2026 Duck App. Все права защищены.",
         "modal_close": "✖",
@@ -90,7 +90,8 @@
         "feedback_view_loading": "Загрузка заявок...",
         "feedback_view_error": "Не удалось загрузить заявки.",
         "feedback_view_empty": "Заявок пока нет.",
-        "feedback_view_user": "Пользователь"
+        "feedback_view_user": "Пользователь",
+        "feedback_view_details_hidden": "Подробности видны только модераторам"
     },
     "authorization": {
         "title": "Вход в DuckApp",
@@ -257,6 +258,10 @@
         "profile_avatar_history_preset": "Стандартный",
         "profile_avatar_history_error_load": "Не удалось загрузить историю.",
         "profile_avatar_history_error_delete": "Не удалось удалить аватар.",
-        "profile_avatar_history_error_current_delete": "Нельзя удалить текущий аватар."
+        "profile_avatar_history_error_current_delete": "Нельзя удалить текущий аватар.",
+        "chat_load_older": "Показать более ранние сообщения",
+        "chat_gif_alt": "GIF",
+        "profile_avatar_history_quota_hint": "Загружено аватаров из доступного лимита",
+        "profile_avatar_history_error_limit": "Достигнут лимит загрузок. Сначала удалите загруженный аватар."
     }
 }

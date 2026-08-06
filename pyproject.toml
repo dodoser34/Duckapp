@@ -1,0 +1,32 @@
+[project]
+name = "duckapp"
+version = "0.2.0"
+description = "Lightweight web messenger built with FastAPI, MySQL and vanilla JS"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["project/backend"]
+exclude = [".venv", "__pycache__"]
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "B", "SIM", "UP", "C4", "RET", "PIE"]
+ignore = [
+    # FastAPI's whole dependency system is `Depends(...)` in argument
+    # defaults; this rule fires on every endpoint.
+    "B008",
+    # Nested `with db.connection() as conn: with conn.cursor() ...` reads
+    # better than one combined statement here.
+    "SIM117",
+    "E501",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["core", "databases", "routers"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["project/backend"]
+addopts = "-q"
+filterwarnings = ["error::DeprecationWarning:duckapp.*"]

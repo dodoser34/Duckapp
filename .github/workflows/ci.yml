@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: ruff check project/backend
+
+      - name: Test
+        run: pytest
+        env:
+          # Never the production values; the app refuses placeholders.
+          JWT_KEY: ci-only-key-9f4b2a7c1e0d8536bb99c4e12a7f6d40
+          DUCKAPP_FEEDBACK_ADMIN_CODE: ci-only-admin-code-abcdef0123456789
+          DB_HOST: 127.0.0.1
+          DB_USER: ci
+          DB_NAME: ci
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check ES module syntax
+        run: |
+          find project/frontend/js -name '*.js' -print0 \
+            | xargs -0 -I{} sh -c 'node --input-type=module --check < "{}" || exit 255'
+
+      - name: Check translation key parity
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, sys
+
+          def keys(obj, prefix=""):
+              out = set()
+              for key, value in obj.items():
+                  name = f"{prefix}.{key}" if prefix else key
+                  out |= keys(value, name) if isinstance(value, dict) else {name}
+              return out
+
+          lang_dir = pathlib.Path("project/lang")
+          reference = keys(json.loads((lang_dir / "en.json").read_text(encoding="utf-8")))
+          failed = False
+          for path in sorted(lang_dir.glob("*.json")):
+              if path.name in {"en.json", "languages.json"}:
+                  continue
+              current = keys(json.loads(path.read_text(encoding="utf-8")))
+              missing, extra = reference - current, current - reference
+              if missing or extra:
+                  failed = True
+                  print(f"{path.name}: missing={sorted(missing)} extra={sorted(extra)}")
+          sys.exit(1 if failed else 0)
+          PY

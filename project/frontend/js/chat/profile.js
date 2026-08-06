@@ -1,31 +1,19 @@
-import { API_URL, ASSETS_PATH } from "../api.js";
+import { createTranslator } from "../shared/i18n-helpers.js";
+import { STATUS_COLORS, avatarUrl } from "../shared/peer.js";
+import { fetchCurrentProfile } from "../shared/session.js";
 import { setupAvatarChange } from "./change-avatar.js";
 import { loadFriends } from "./load-friend.js";
 
-const page = "main_chat";
-const t = (key, fallback) => {
-    const lang = window.currentLang;
-    const defaultLang = window.__duckappLangIndex?.default || "en";
-    return (
-        window.translations?.[lang]?.[page]?.[key] ??
-        window.translations?.[defaultLang]?.[page]?.[key] ??
-        fallback
-    );
-};
+const t = createTranslator("main_chat");
 
-async function fetchProfile() {
-    const res = await fetch(`${API_URL}/api/auth/me`, {
-        credentials: "include",
-    });
-
-    if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        const err = new Error(data.detail || "Failed to load profile");
-        err.status = res.status;
-        throw err;
-    }
-
-    return await res.json();
+function statusText(status) {
+    const labels = {
+        online: t("profile_status_online", "Online"),
+        invisible: t("profile_status_invisible", "Invisible"),
+        dnd: t("profile_status_dnd", "Do Not Disturb"),
+        offline: t("friend_status_offline", "Offline"),
+    };
+    return labels[status] || labels.offline;
 }
 
 export async function getProfile() {
@@ -33,58 +21,45 @@ export async function getProfile() {
     const profileEmail = document.getElementById("profile-email");
     const profileAvatar = document.getElementById("profile-avatar");
     const statusIndicator = document.getElementById("status-indicator");
+    const profileStatus = document.getElementById("profile-status");
+
+    function updateStatus(status) {
+        if (profileStatus) profileStatus.textContent = statusText(status);
+        if (statusIndicator) {
+            statusIndicator.style.background = STATUS_COLORS[status] || STATUS_COLORS.offline;
+        }
+    }
 
     setupAvatarChange();
     loadFriends();
 
     try {
-        const result = await fetchProfile();
+        // Shared with shared/session.js, so the chat does not fetch /me twice.
+        const result = await fetchCurrentProfile();
 
-        profileName.textContent = result.names;
+        if (profileName) profileName.textContent = result.names || "";
         if (profileEmail) {
             profileEmail.textContent = result.email || "";
             profileEmail.title = result.email || "";
             profileEmail.hidden = !result.email;
         }
         updateStatus(result.status);
-
-        profileAvatar.src = result.avatar
-            ? ASSETS_PATH + result.avatar
-            : ASSETS_PATH + "avatar_1.png";
+        if (profileAvatar) profileAvatar.src = avatarUrl(result.avatar);
     } catch (err) {
         console.error("Profile loading error:", err);
 
-        if (err?.status === 401 || err?.status === 404) {
+        if (err?.status === 401) {
             window.location.replace("./authorization-frame.html");
             return;
         }
 
-        profileName.textContent = "";
+        if (profileName) profileName.textContent = "";
         if (profileEmail) {
             profileEmail.textContent = "";
             profileEmail.title = "";
             profileEmail.hidden = true;
         }
-        profileAvatar.src = ASSETS_PATH + "avatar_1.png";
+        if (profileAvatar) profileAvatar.src = avatarUrl(null);
         updateStatus("offline");
-    }
-
-    function updateStatus(status) {
-        const statusByType = {
-            online: t("profile_status_online", "Online"),
-            invisible: t("profile_status_invisible", "Invisible"),
-            dnd: t("profile_status_dnd", "Do Not Disturb"),
-            offline: t("friend_status_offline", "Offline"),
-        };
-
-        const colors = {
-            online: "#2ecc71",
-            invisible: "#888",
-            dnd: "#e74c3c",
-            offline: "#888",
-        };
-
-        document.getElementById("profile-status").textContent = statusByType[status] || "Unknown";
-        statusIndicator.style.background = colors[status] || "gray";
     }
 }

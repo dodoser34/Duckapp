@@ -1,4 +1,6 @@
-import { API_URL, ASSETS_PATH } from "../api.js";
+import { API_URL } from "../api.js";
+import { createTranslator } from "../shared/i18n-helpers.js";
+import { avatarFileName, avatarUrl } from "../shared/peer.js";
 
 const avatarModal = document.getElementById("avatar-modal");
 const closeButtons = avatarModal ? avatarModal.querySelectorAll(".close") : [];
@@ -19,9 +21,8 @@ const ALLOWED_MIME_TYPES = new Set([
 ]);
 const ALLOWED_FILE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
 const GENERIC_UPLOAD_MIME_TYPES = new Set(["", "application/octet-stream", "binary/octet-stream"]);
-const DEFAULT_AVATAR = "avatar_1.png";
 const MODAL_ANIMATION_MS = 260;
-const AVATAR_NAME_RE = /^(avatar_[0-9]{1,2}\.png|user_avatars\/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$/;
+const t = createTranslator(page);
 let isHistoryLoading = false;
 let historyHandlersBound = false;
 
@@ -65,16 +66,6 @@ function closeModalToTrigger(modal) {
     }, MODAL_ANIMATION_MS);
 }
 
-function t(key, fallback) {
-    const lang = window.currentLang;
-    const defaultLang = window.__duckappLangIndex?.default || "en";
-    return (
-        window.translations?.[lang]?.[page]?.[key] ??
-        window.translations?.[defaultLang]?.[page]?.[key] ??
-        fallback
-    );
-}
-
 function mapAvatarError(message, mode) {
     const isUpload = mode === "upload";
     const fallbackKey = isUpload
@@ -106,6 +97,13 @@ function mapAvatarError(message, mode) {
         return t("profile_avatar_history_error_delete", "Could not delete avatar");
     }
 
+    if (message.startsWith("Avatar limit reached")) {
+        return t(
+            "profile_avatar_history_error_limit",
+            "Upload limit reached. Delete an uploaded avatar first."
+        );
+    }
+
     if (message === "Current avatar cannot be deleted") {
         return t("profile_avatar_history_error_current_delete", "Current avatar cannot be deleted");
     }
@@ -119,24 +117,12 @@ function withCacheBust(url, marker = Date.now()) {
     return url.includes("?") ? `${url}&${suffix}` : `${url}?${suffix}`;
 }
 
-function normalizeAvatarUrl(avatar) {
-    const safeAvatar = String(avatar || "").trim();
-    if (!AVATAR_NAME_RE.test(safeAvatar)) {
-        return `${ASSETS_PATH}${DEFAULT_AVATAR}`;
-    }
-    return `${ASSETS_PATH}${safeAvatar}`;
-}
-
 function buildAvatarUrl(avatar, cacheBust = false) {
-    const normalized = normalizeAvatarUrl(avatar);
-    return cacheBust ? withCacheBust(normalized) : normalized;
+    return avatarUrl(avatar, { cacheBust });
 }
 
 function avatarNameFromPath(avatar) {
-    const normalized = String(avatar || "").trim();
-    if (!normalized) return DEFAULT_AVATAR;
-    const parts = normalized.split("/");
-    return parts[parts.length - 1] || DEFAULT_AVATAR;
+    return avatarFileName(avatar);
 }
 
 function avatarStateText(item) {
@@ -221,12 +207,27 @@ async function removeAvatarHistoryItem(historyId) {
     return data;
 }
 
+function renderAvatarQuota(data) {
+    if (!avatarHistoryTitle) return;
+    const used = Number(data?.custom_used);
+    const limit = Number(data?.custom_limit);
+    if (!Number.isFinite(used) || !Number.isFinite(limit)) {
+        avatarHistoryTitle.textContent = t("profile_avatar_history_title", "Avatar history");
+        return;
+    }
+    avatarHistoryTitle.textContent = `${t("profile_avatar_history_title", "Avatar history")} (${used}/${limit})`;
+    avatarHistoryTitle.title = t(
+        "profile_avatar_history_quota_hint",
+        "Uploaded avatars used out of the allowed limit"
+    );
+}
+
 function renderAvatarHistory(items, profileAvatar) {
     if (!avatarHistoryList || !avatarHistoryEmpty) {
         return;
     }
 
-    avatarHistoryList.innerHTML = "";
+    avatarHistoryList.replaceChildren();
     const safeItems = Array.isArray(items) ? items : [];
     avatarHistoryEmpty.style.display = safeItems.length ? "none" : "block";
 
@@ -314,6 +315,7 @@ async function loadAvatarHistory(profileAvatar, silent = false, { forceRefresh =
     try {
         setAvatarHistoryLabels();
         const data = await fetchAvatarHistory(forceRefresh);
+        renderAvatarQuota(data);
         renderAvatarHistory(data?.items, profileAvatar);
     } catch (error) {
         console.error("Failed to load avatar history:", error);

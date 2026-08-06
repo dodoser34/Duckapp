@@ -17,7 +17,7 @@
         "3hero-text_h3": "Әр чатта бір үйрек",
         "3hero-text_p": "Duck App — бұл тек ресми қоңыраулар емес. Бұл қарапайым, достық қарым-қатынас. Кейде кішкене «кря» дыбысымен.",
         "qhero-text_p": "DuckApp мүмкіндіктері туралы көбірек білу үшін \nбіздің QR-кодты сканерлеңіз.",
-        "Auhero-text": "Белсенді пайдаланушылар",
+        "Auhero-text": "Тіркелген пайдаланушылар",
         "Uphero-text": "Аптайм (%)",
         "footer": "© 2026 Duck App. Барлық құқықтар қорғалған.",
         "modal_close": "✖",
@@ -90,7 +90,8 @@
         "feedback_view_loading": "Өтінімдер жүктелуде...",
         "feedback_view_error": "Өтінімдерді жүктеу мүмкін болмады. (Мүмкін олар мүлдем жоқ шығар!).",
         "feedback_view_empty": "Әзірге өтінімдер жоқ.",
-        "feedback_view_user": "Пайдаланушы"
+        "feedback_view_user": "Пайдаланушы",
+        "feedback_view_details_hidden": "Мәліметтерді тек модераторлар көреді"
     },
     "authorization": {
         "title": "DuckApp жүйесіне кіру",
@@ -106,7 +107,34 @@
         "auth_error": "Авторизация қатесі",
         "noAccount": "Аккаунтыңыз жоқ па?",
         "noAccount_link": "Тіркелу",
-        "footer": "© 2026 Duck App. Барлық құқықтар қорғалған."
+        "footer": "© 2026 Duck App. Барлық құқықтар қорғалған.",
+        "forgot_link": "Логин немесе құпия сөзді ұмыттыңыз ба?",
+        "recovery_title": "Электрондық пошта арқылы аккаунтты қалпына келтіру",
+        "recovery_email_input": "Аккаунт поштасын енгізіңіз",
+        "recovery_email": "Электрондық пошта",
+        "recovery_send_code": "Кодты жіберу",
+        "recovery_sending": "Жіберілуде...",
+        "recovery_code_input": "Кодты енгізіңіз",
+        "recovery_code": "Код",
+        "recovery_new_username_input": "Жаңа логинді енгізіңіз",
+        "recovery_new_username": "Жаңа логин",
+        "recovery_new_password_input": "Жаңа құпия сөзді енгізіңіз",
+        "recovery_new_password": "Жаңа құпия сөз",
+        "recovery_confirm_password_input": "Жаңа құпия сөзді растаңыз",
+        "recovery_confirm_password": "Құпия сөзді растау",
+        "recovery_apply": "Логин мен құпия сөзді өзгерту",
+        "recovery_saving": "Сақталуда...",
+        "recovery_invalid_email": "Жарамды поштаны енгізіңіз",
+        "recovery_code_sent": "Код поштаға жіберілді",
+        "recovery_reset_success": "Аккаунт жаңартылды. Енді кіре аласыз.",
+        "recovery_password_mismatch": "Құпия сөздер сәйкес келмейді",
+        "recovery_invalid_code": "6 таңбалы кодты енгізіңіз",
+        "recovery_invalid_or_expired_code": "Код жарамсыз немесе мерзімі өткен",
+        "recovery_delivery_missing": "Пошта жіберу бапталмаған",
+        "recovery_delivery_failed": "Қалпына келтіру хатын жіберу мүмкін болмады",
+        "recovery_username_taken": "Бұл логин бос емес",
+        "recovery_password_too_short": "Құпия сөз кемінде 8 таңбадан тұруы керек",
+        "recovery_error": "Қалпына келтіру қатесі"
     },
     "register": {
         "title": "DuckApp-та тіркелу",
@@ -141,7 +169,8 @@
         "password_mismatch_error": "Құпия сөздер сәйкес келмейді",
         "session_check_error": "Сессияны тексеру қатесі",
         "unknown_error": "Белгісіз қате",
-        "footer": "© 2026 Duck App. Барлық құқықтар қорғалған"
+        "footer": "© 2026 Duck App. Барлық құқықтар қорғалған",
+        "invalid_email_error": "Жарамды поштаны енгізіңіз"
     },
     "main_chat": {
         "title": "DuckApp Чаты",
@@ -229,6 +258,10 @@
         "profile_avatar_history_preset": "Стандартты",
         "profile_avatar_history_error_load": "Тарихты жүктеу мүмкін болмады.",
         "profile_avatar_history_error_delete": "Аватарды өшіру мүмкін болмады.",
-        "profile_avatar_history_error_current_delete": "Қазіргі аватарды өшіруге болмайды."
+        "profile_avatar_history_error_current_delete": "Қазіргі аватарды өшіруге болмайды.",
+        "chat_load_older": "Ертерек хабарламаларды көрсету",
+        "chat_gif_alt": "GIF",
+        "profile_avatar_history_quota_hint": "Рұқсат етілген лимиттен жүктелген аватарлар",
+        "profile_avatar_history_error_limit": "Жүктеу лимитіне жеттіңіз. Алдымен жүктелген аватарды жойыңыз."
     }
 }

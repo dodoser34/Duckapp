@@ -58,7 +58,7 @@
   justify-content: flex-end;
 }
 
-.message-row.bot {
+.message-row.peer {
   justify-content: flex-start;
 }
 
@@ -81,7 +81,7 @@
   border-bottom-right-radius: 8px;
 }
 
-.message-row.bot .msg-bubble {
+.message-row.peer .msg-bubble {
   background: linear-gradient(150deg, rgba(29, 54, 82, 0.92), rgba(17, 35, 58, 0.96));
   color: var(--text-main);
   border-bottom-left-radius: 8px;
@@ -110,7 +110,7 @@
   color: rgba(23, 45, 71, 0.74);
 }
 
-.message-row.bot .msg-meta {
+.message-row.peer .msg-meta {
   color: rgba(208, 225, 243, 0.7);
 }
 
@@ -132,7 +132,7 @@
   right: 6px;
 }
 
-.message-row.bot .msg-reactions {
+.message-row.peer .msg-reactions {
   left: 6px;
 }
 
@@ -214,12 +214,12 @@
   background: rgba(8, 24, 40, 0.95);
 }
 
-.message-row.bot .msg-react-chip {
+.message-row.peer .msg-react-chip {
   background: rgba(12, 27, 44, 0.95);
 }
 
 .message-row.user .msg-react-chip.mine,
-.message-row.bot .msg-react-chip.mine {
+.message-row.peer .msg-react-chip.mine {
   border-color: rgba(255, 187, 104, 0.9);
   background: linear-gradient(145deg, rgba(255, 164, 86, 0.95), rgba(255, 197, 122, 0.92));
   color: #142740;
@@ -244,7 +244,7 @@
   right: 0;
 }
 
-.message-row.bot .msg-react-picker {
+.message-row.peer .msg-react-picker {
   left: 0;
 }
 
@@ -265,4 +265,34 @@
   align-items: center;
   justify-content: center;
   font-size: 15px;
+}
+
+/* "Show earlier messages" control for the paginated history. */
+.chat-load-older {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0 12px;
+}
+
+.chat-load-older-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border, #d9dee8);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.chat-load-older-btn:hover:not(:disabled) {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.chat-load-older-btn:disabled {
+  cursor: default;
+  opacity: 0.5;
 }

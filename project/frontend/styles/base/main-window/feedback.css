@@ -295,3 +295,11 @@
   color: #ff9da5;
 }
 
+
+/* Shown to non-moderators in place of the free-text report fields. */
+.feedback-list-hidden-note {
+  margin-top: 8px;
+  font-size: 13px;
+  font-style: italic;
+  opacity: 0.65;
+}

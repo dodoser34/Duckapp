@@ -1,7 +1,14 @@
-import { API_URL, ASSETS_PATH } from "../api.js";
+import { API_URL } from "../api.js";
 import { loadFriends } from "./load-friend.js";
+import { createTranslator } from "../shared/i18n-helpers.js";
+import {
+    FALLBACK_PEER_AVATAR,
+    avatarUrl,
+    normalizePeerStatus,
+    statusLabel as peerStatusLabel,
+} from "../shared/peer.js";
 
-const page = "main_chat";
+const t = createTranslator("main_chat");
 const profileAddFriendBtn = document.getElementById("profile-add-friend-btn");
 const addFriendModal = document.getElementById("add-friend-modal");
 const friendSearchInput = document.getElementById("friend-search");
@@ -9,27 +16,18 @@ const friendResult = document.getElementById("friend-result");
 const errorMessage = document.getElementById("error-message");
 const requestsList = document.getElementById("friend-requests-list");
 const requestsCount = document.getElementById("friend-requests-count");
-const AVATAR_NAME_RE = /^(avatar_[0-9]{1,2}\.png|user_avatars\/[a-zA-Z0-9_-]{8,64}\.(png|jpg|jpeg|webp|gif))$/;
-const closeButtons = addFriendModal
-    ? addFriendModal.querySelectorAll(".close")
-    : [];
+const INCOMING_REQUESTS_POLL_MS = 10000;
+const closeButtons = addFriendModal ? addFriendModal.querySelectorAll(".close") : [];
 let incomingRequestsTimer = null;
 
-const t = (key, fallback) => {
-    const lang = window.currentLang;
-    const defaultLang = window.__duckappLangIndex?.default || "en";
-    return (
-        window.translations?.[lang]?.[page]?.[key] ??
-        window.translations?.[defaultLang]?.[page]?.[key] ??
-        fallback
-    );
-};
+const normalizeAvatarPath = (avatar) => avatarUrl(avatar, { fallback: FALLBACK_PEER_AVATAR });
+const statusLabel = (status) => peerStatusLabel(status, t);
 
 closeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
         addFriendModal?.classList.remove("open");
         if (friendSearchInput) friendSearchInput.value = "";
-        if (friendResult) friendResult.innerHTML = "";
+        if (friendResult) friendResult.replaceChildren();
         if (errorMessage) errorMessage.textContent = "";
     });
 });
@@ -48,7 +46,7 @@ friendSearchInput?.addEventListener("input", () => {
 
     const query = friendSearchInput.value.trim();
     if (query.length < 3) {
-        friendResult.innerHTML = "";
+        friendResult.replaceChildren();
         return;
     }
 
@@ -57,32 +55,8 @@ friendSearchInput?.addEventListener("input", () => {
     }, 300);
 });
 
-function normalizeAvatarPath(avatar) {
-    const normalized = String(avatar || "").trim();
-    if (!AVATAR_NAME_RE.test(normalized)) {
-        return `${ASSETS_PATH}avatar_2.png`;
-    }
-    return `${ASSETS_PATH}${normalized}`;
-}
-
-function normalizePeerStatus(status) {
-    if (status === "online") return "online";
-    if (status === "dnd") return "dnd";
-    return "offline";
-}
-
 function statusClass(status) {
-    const normalizedStatus = normalizePeerStatus(status);
-    if (normalizedStatus === "online") return "online";
-    if (normalizedStatus === "dnd") return "dnd";
-    return "offline";
-}
-
-function statusLabel(status) {
-    const normalizedStatus = normalizePeerStatus(status);
-    if (normalizedStatus === "online") return t("profile_status_online", "Online");
-    if (normalizedStatus === "dnd") return t("profile_status_dnd", "Do Not Disturb");
-    return t("friend_status_offline", "Offline");
+    return normalizePeerStatus(status);
 }
 
 function createAvatarWrapper(avatarSrc, status) {
@@ -104,7 +78,7 @@ function createAvatarWrapper(avatarSrc, status) {
 
 async function searchFriend(query) {
     if (!query) {
-        friendResult.innerHTML = "";
+        friendResult.replaceChildren();
         return;
     }
 
@@ -117,12 +91,12 @@ async function searchFriend(query) {
         const data = await res.json();
 
         if (!res.ok) {
-            friendResult.innerHTML = "";
+            friendResult.replaceChildren();
             showError(data.detail || t("friend_error_not_found", "User not found"));
             return;
         }
 
-        friendResult.innerHTML = "";
+        friendResult.replaceChildren();
 
         const card = document.createElement("div");
         card.className = "friend-card";
@@ -180,7 +154,7 @@ async function addFriendRequest(friendId) {
         }
 
         showSuccess(t("friend_request_sent", "Request sent"));
-        friendResult.innerHTML = "";
+        friendResult.replaceChildren();
         friendSearchInput.value = "";
 
         setTimeout(() => {
@@ -228,7 +202,7 @@ function renderIncomingRequests(requests) {
     requestsCount.textContent = String(requests.length);
 
     if (!requests.length) {
-        requestsList.innerHTML = "";
+        requestsList.replaceChildren();
         const empty = document.createElement("div");
         empty.className = "friend-request-empty";
         empty.textContent = t("friend_requests_empty", "No new requests");
@@ -236,7 +210,7 @@ function renderIncomingRequests(requests) {
         return;
     }
 
-    requestsList.innerHTML = "";
+    requestsList.replaceChildren();
 
     requests.forEach((req) => {
         const item = document.createElement("div");
@@ -385,7 +359,17 @@ function showSuccess(msg) {
 }
 
 loadIncomingRequests();
-incomingRequestsTimer = setInterval(loadIncomingRequests, 10000);
+incomingRequestsTimer = setInterval(() => {
+    if (document.hidden) return;
+    loadIncomingRequests();
+}, INCOMING_REQUESTS_POLL_MS);
+
+window.addEventListener("beforeunload", () => {
+    if (incomingRequestsTimer) {
+        clearInterval(incomingRequestsTimer);
+        incomingRequestsTimer = null;
+    }
+});
 
 window.addEventListener("duckapp:translations-ready", () => {
     loadIncomingRequests();

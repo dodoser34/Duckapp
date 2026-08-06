@@ -17,7 +17,7 @@
         "3hero-text_h3": "すべてのチャットにアヒルを",
         "3hero-text_p": "Duck Appは事務的な連絡だけのものではありません。シンプルでフレンドリーなコミュニケーションを。時々、軽い「クワッ」を添えて。",
         "qhero-text_p": "QRコードをスキャンして、\nDuckAppの機能について詳しく知る。",
-        "Auhero-text": "アクティブユーザー",
+        "Auhero-text": "登録ユーザー数",
         "Uphero-text": "稼働率 (%)",
         "footer": "© 2026 Duck App. All rights reserved.",
         "modal_close": "✖",
@@ -90,7 +90,8 @@
         "feedback_view_loading": "読み込み中...",
         "feedback_view_error": "読み込みに失敗しました。（報告がまだないかもしれません！）",
         "feedback_view_empty": "報告はまだありません。",
-        "feedback_view_user": "ユーザー"
+        "feedback_view_user": "ユーザー",
+        "feedback_view_details_hidden": "詳細はモデレーターのみが閲覧できます"
     },
     "authorization": {
         "title": "DuckAppにログイン",
@@ -106,7 +107,34 @@
         "auth_error": "認証エラー",
         "noAccount": "アカウントをお持ちでないですか？",
         "noAccount_link": "新規登録",
-        "footer": "© 2026 Duck App. All rights reserved."
+        "footer": "© 2026 Duck App. All rights reserved.",
+        "forgot_link": "ログインまたはパスワードをお忘れですか？",
+        "recovery_title": "メールによるアカウント復旧",
+        "recovery_email_input": "アカウントのメールアドレスを入力",
+        "recovery_email": "メールアドレス",
+        "recovery_send_code": "コードを送信",
+        "recovery_sending": "送信中...",
+        "recovery_code_input": "コードを入力",
+        "recovery_code": "コード",
+        "recovery_new_username_input": "新しいログインを入力",
+        "recovery_new_username": "新しいログイン",
+        "recovery_new_password_input": "新しいパスワードを入力",
+        "recovery_new_password": "新しいパスワード",
+        "recovery_confirm_password_input": "新しいパスワードを再入力",
+        "recovery_confirm_password": "パスワードの確認",
+        "recovery_apply": "ログインとパスワードを変更",
+        "recovery_saving": "保存中...",
+        "recovery_invalid_email": "有効なメールアドレスを入力してください",
+        "recovery_code_sent": "コードをメールに送信しました",
+        "recovery_reset_success": "アカウントを更新しました。サインインできます。",
+        "recovery_password_mismatch": "パスワードが一致しません",
+        "recovery_invalid_code": "6桁のコードを入力してください",
+        "recovery_invalid_or_expired_code": "コードが無効か、有効期限が切れています",
+        "recovery_delivery_missing": "メール送信が設定されていません",
+        "recovery_delivery_failed": "復旧メールを送信できませんでした",
+        "recovery_username_taken": "そのログインは既に使われています",
+        "recovery_password_too_short": "パスワードは8文字以上にしてください",
+        "recovery_error": "復旧エラー"
     },
     "register": {
         "title": "DuckAppに登録",
@@ -141,7 +169,8 @@
         "password_mismatch_error": "パスワードが一致しません",
         "session_check_error": "セッション確認エラー",
         "unknown_error": "不明なエラー",
-        "footer": "© 2026 Duck App. All rights reserved."
+        "footer": "© 2026 Duck App. All rights reserved.",
+        "invalid_email_error": "有効なメールアドレスを入力してください"
     },
     "main_chat": {
         "title": "DuckApp チャット",
@@ -229,6 +258,10 @@
         "profile_avatar_history_preset": "デフォルト",
         "profile_avatar_history_error_load": "履歴を読み込めませんでした。",
         "profile_avatar_history_error_delete": "アバターを削除できませんでした。",
-        "profile_avatar_history_error_current_delete": "使用中のアバターは削除できません。"
+        "profile_avatar_history_error_current_delete": "使用中のアバターは削除できません。",
+        "chat_load_older": "以前のメッセージを表示",
+        "chat_gif_alt": "GIF",
+        "profile_avatar_history_quota_hint": "利用可能な上限のうち使用済みのアップロード数",
+        "profile_avatar_history_error_limit": "アップロード上限に達しました。先にアップロード済みのアバターを削除してください。"
     }
 }
